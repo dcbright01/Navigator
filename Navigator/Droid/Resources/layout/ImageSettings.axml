@@ -3,18 +3,12 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    <Button
-        android:id="@+id/ok"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/AnimateImage"
-        android:layout_marginLeft="10dip"
-        android:text="Draw grid" />
-    <Button
-        android:id="@+id/ok2"
+    <ToggleButton
+        android:id="@+id/drawGridCB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/ok"
         android:layout_marginLeft="10dip"
-        android:text="Some Other Shit" />
+        android:textOff="Draw the fucking grid"
+        android:textOn="Dont draw the fucking grid" />
 </LinearLayout>

@@ -248,7 +248,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int scrubber_control_pressed_holo=0x7f020006;
     }
     public static final class id {
-        public static final int AnimateImage=0x7f0a0010;
+        public static final int AnimateImage=0x7f0a0011;
         public static final int bottom=0x7f0a0000;
         public static final int center=0x7f0a0001;
         public static final int center_horizontal=0x7f0a0002;
@@ -256,13 +256,13 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int clip=0x7f0a0004;
         public static final int clip_horizontal=0x7f0a0005;
         public static final int clip_vertical=0x7f0a0006;
+        public static final int drawGridCB=0x7f0a000f;
         public static final int end=0x7f0a0007;
         public static final int fill=0x7f0a0008;
         public static final int fill_horizontal=0x7f0a0009;
         public static final int fill_vertical=0x7f0a000a;
         public static final int left=0x7f0a000b;
-        public static final int ok=0x7f0a000f;
-        public static final int ok2=0x7f0a0011;
+        public static final int ok=0x7f0a0010;
         public static final int right=0x7f0a000c;
         public static final int start=0x7f0a000d;
         public static final int top=0x7f0a000e;

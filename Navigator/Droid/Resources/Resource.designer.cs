@@ -368,8 +368,8 @@ namespace Navigator.Droid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f0a0010
-			public const int AnimateImage = 2131361808;
+			// aapt resource value: 0x7f0a0011
+			public const int AnimateImage = 2131361809;
 			
 			// aapt resource value: 0x7f0a0000
 			public const int bottom = 2131361792;
@@ -392,6 +392,9 @@ namespace Navigator.Droid
 			// aapt resource value: 0x7f0a0006
 			public const int clip_vertical = 2131361798;
 			
+			// aapt resource value: 0x7f0a000f
+			public const int drawGridCB = 2131361807;
+			
 			// aapt resource value: 0x7f0a0007
 			public const int end = 2131361799;
 			
@@ -407,11 +410,8 @@ namespace Navigator.Droid
 			// aapt resource value: 0x7f0a000b
 			public const int left = 2131361803;
 			
-			// aapt resource value: 0x7f0a000f
-			public const int ok = 2131361807;
-			
-			// aapt resource value: 0x7f0a0011
-			public const int ok2 = 2131361809;
+			// aapt resource value: 0x7f0a0010
+			public const int ok = 2131361808;
 			
 			// aapt resource value: 0x7f0a000c
 			public const int right = 2131361804;

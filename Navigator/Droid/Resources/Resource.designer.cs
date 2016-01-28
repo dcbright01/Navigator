@@ -338,22 +338,25 @@ namespace Navigator.Droid
 			public const int dcsfloor = 2130837504;
 			
 			// aapt resource value: 0x7f020001
-			public const int monoandroidsplash = 2130837505;
+			public const int dcsFloorGrid = 2130837505;
 			
 			// aapt resource value: 0x7f020002
-			public const int pin_progress_pinned = 2130837506;
+			public const int monoandroidsplash = 2130837506;
 			
 			// aapt resource value: 0x7f020003
-			public const int pin_progress_shadow = 2130837507;
+			public const int pin_progress_pinned = 2130837507;
 			
 			// aapt resource value: 0x7f020004
-			public const int pin_progress_unpinned = 2130837508;
+			public const int pin_progress_shadow = 2130837508;
 			
 			// aapt resource value: 0x7f020005
-			public const int scrubber_control_normal_holo = 2130837509;
+			public const int pin_progress_unpinned = 2130837509;
 			
 			// aapt resource value: 0x7f020006
-			public const int scrubber_control_pressed_holo = 2130837510;
+			public const int scrubber_control_normal_holo = 2130837510;
+			
+			// aapt resource value: 0x7f020007
+			public const int scrubber_control_pressed_holo = 2130837511;
 			
 			static Drawable()
 			{
@@ -367,9 +370,6 @@ namespace Navigator.Droid
 		
 		public partial class Id
 		{
-			
-			// aapt resource value: 0x7f0a0011
-			public const int AnimateImage = 2131361809;
 			
 			// aapt resource value: 0x7f0a0000
 			public const int bottom = 2131361792;
@@ -407,11 +407,11 @@ namespace Navigator.Droid
 			// aapt resource value: 0x7f0a000a
 			public const int fill_vertical = 2131361802;
 			
+			// aapt resource value: 0x7f0a0010
+			public const int imgMap = 2131361808;
+			
 			// aapt resource value: 0x7f0a000b
 			public const int left = 2131361803;
-			
-			// aapt resource value: 0x7f0a0010
-			public const int ok = 2131361808;
 			
 			// aapt resource value: 0x7f0a000c
 			public const int right = 2131361804;

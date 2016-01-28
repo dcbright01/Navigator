@@ -7,7 +7,6 @@
         android:id="@+id/drawGridCB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/ok"
         android:layout_marginLeft="10dip"
         android:textOff="Draw the fucking grid"
         android:textOn="Dont draw the fucking grid" />

@@ -10,7 +10,6 @@ namespace Navigator.Droid.Extensions
             var tab = aBar.NewTab();
             tab.SetText(tabName);
             tab.TabSelected += (sender, args) => { viewFunc(); };
-
             aBar.AddTab(tab);
         }
     }

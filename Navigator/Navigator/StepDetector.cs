@@ -8,9 +8,19 @@ namespace Navigator
 {
     public class StepDetector
     {
+
+        public delegate void StepTakenHandler();
+        public event StepTakenHandler stepTaken;
+
         public StepDetector()
         {
             //constructor
+        }
+
+        private void stepCheck()
+        {
+            //Step checking algo
+            //When you normally increase the counter, call onStepCheck
         }
 
         public void reset()
@@ -20,7 +30,13 @@ namespace Navigator
 
         public void passValue()
         {
-            //receive input from
+            //pre-process values
+            //call stepCheck
+        }
+
+        protected void onStepTaken()
+        {
+            stepTaken();
         }
     }
 }

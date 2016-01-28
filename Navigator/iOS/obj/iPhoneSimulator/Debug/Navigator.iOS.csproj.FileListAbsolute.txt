@@ -1,0 +1,10 @@
+C:\Users\p.amirkhalili\Documents\Navigator\Navigator\iOS\bin\iPhoneSimulator\Debug\NavigatoriOS.exe
+C:\Users\p.amirkhalili\Documents\Navigator\Navigator\iOS\bin\iPhoneSimulator\Debug\NavigatoriOS.pdb
+C:\Users\p.amirkhalili\Documents\Navigator\Navigator\iOS\bin\iPhoneSimulator\Debug\Navigator.dll
+C:\Users\p.amirkhalili\Documents\Navigator\Navigator\iOS\bin\iPhoneSimulator\Debug\Navigator.pdb
+C:\Users\p.amirkhalili\Documents\Navigator\Navigator\iOS\obj\iPhoneSimulator\Debug\optimized\
+C:\Users\p.amirkhalili\Documents\Navigator\Navigator\iOS\obj\iPhoneSimulator\Debug\Navigator.iOS.csprojResolveAssemblyReference.cache
+C:\Users\p.amirkhalili\Documents\Navigator\Navigator\iOS\obj\iPhoneSimulator\Debug\NavigatoriOS.exe
+C:\Users\p.amirkhalili\Documents\Navigator\Navigator\iOS\obj\iPhoneSimulator\Debug\NavigatoriOS.pdb
+C:\Users\p.amirkhalili\Documents\Navigator\Navigator\iOS\obj\iPhoneSimulator\Debug\NavigatoriOS.exe.mdb
+C:\Users\p.amirkhalili\Documents\Navigator\Navigator\iOS\bin\iPhoneSimulator\Debug\NavigatoriOS.exe.mdb

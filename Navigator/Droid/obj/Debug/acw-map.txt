@@ -1,0 +1,4 @@
+Navigator.Droid.MainActivity, Navigator.Droid;md5de3e4e12328e7bfb314929f9c1ff4a2c.MainActivity
+Navigator.Droid.MainActivity, Navigator.Droid, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md5de3e4e12328e7bfb314929f9c1ff4a2c.MainActivity
+Navigator.Droid.MainActivity;md5de3e4e12328e7bfb314929f9c1ff4a2c.MainActivity
+navigator.droid.MainActivity;md5de3e4e12328e7bfb314929f9c1ff4a2c.MainActivity

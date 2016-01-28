@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Paths>
-  <AdditionalAndroidResourcePaths />
-  <AdditionalJavaLibraryReferences />
-  <AdditionalNativeLibraryReferences />
+  <AdditionalAndroidResourcePaths></AdditionalAndroidResourcePaths>
+  <AdditionalJavaLibraryReferences>C:\Users\Admin\AppData\Local\Xamarin\Android.Support.v4\19.0.1\content\support\v4\android-support-v4.jar</AdditionalJavaLibraryReferences>
+  <AdditionalNativeLibraryReferences></AdditionalNativeLibraryReferences>
 </Paths>

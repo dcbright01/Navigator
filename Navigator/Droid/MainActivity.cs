@@ -7,22 +7,28 @@ namespace Navigator.Droid
 	[Activity (Label = "Navigator", MainLauncher = true, Icon = "@mipmap/icon")]
 	public class MainActivity : Activity
 	{
-		int count = 1;
-
 		protected override void OnCreate (Bundle savedInstanceState)
 		{
-			base.OnCreate (savedInstanceState);
+            base.OnCreate(savedInstanceState);
+			ActionBar.NavigationMode = ActionBarNavigationMode.Tabs;
+            SetContentView(Resource.Layout.ScaleImage);
 
-			// Set our view from the "main" layout resource
-			SetContentView (Resource.Layout.Main);
+            ActionBar.Tab tab = ActionBar.NewTab();
+            tab.SetText("Main");
+		    tab.TabSelected += (sender, args) =>
+		    {
+                SetContentView(Resource.Layout.ScaleImage);
+		    };
+            ActionBar.AddTab(tab);
 
-			// Get our button from the layout resource,
-			// and attach an event to it
-			Button button = FindViewById<Button> (Resource.Id.myButton);
-			
-			button.Click += delegate {
-				button.Text = string.Format ("{0} clicks!", count++);
-			};
+            tab = ActionBar.NewTab();
+            tab.SetText("Settings");
+		    tab.TabSelected += (sender, args) =>
+		    {
+                SetContentView(Resource.Layout.ImageSettings);
+		    };
+            ActionBar.AddTab(tab);
+
 		}
 	}
 }

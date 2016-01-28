@@ -9,18 +9,677 @@ package com.straightouttacompsci.navigator;
 
 public final class R {
     public static final class attr {
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int circleColor=0x7f010003;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int circularProgressBarStyle=0x7f010014;
+        /** <p>Must be one or more (separated by '|') of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>bottom</code></td><td>0x50</td><td></td></tr>
+<tr><td><code>center</code></td><td>0x11</td><td></td></tr>
+<tr><td><code>center_horizontal</code></td><td>0x01</td><td></td></tr>
+<tr><td><code>center_vertical</code></td><td>0x10</td><td></td></tr>
+<tr><td><code>clip</code></td><td>0x88</td><td></td></tr>
+<tr><td><code>clip_horizontal</code></td><td>0x08</td><td></td></tr>
+<tr><td><code>clip_vertical</code></td><td>0x80</td><td></td></tr>
+<tr><td><code>end</code></td><td>0x00800005</td><td></td></tr>
+<tr><td><code>fill</code></td><td>0x77</td><td></td></tr>
+<tr><td><code>fill_horizontal</code></td><td>0x07</td><td></td></tr>
+<tr><td><code>fill_vertical</code></td><td>0x70</td><td></td></tr>
+<tr><td><code>left</code></td><td>0x03</td><td></td></tr>
+<tr><td><code>right</code></td><td>0x05</td><td></td></tr>
+<tr><td><code>start</code></td><td>0x00800003</td><td></td></tr>
+<tr><td><code>top</code></td><td>0x30</td><td></td></tr>
+</table>
+         */
+        public static final int circular_gravity=0x7f01000c;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int circular_indeterminate=0x7f010012;
+        /** <p>Must be an integer value, such as "<code>100</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int circular_indeterminate_interval=0x7f010013;
+        /** <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int circular_marker_progress=0x7f01000f;
+        /** <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int circular_progress=0x7f01000e;
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int circular_progress_background_color=0x7f010011;
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int circular_progress_color=0x7f010010;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int circular_stroke_width=0x7f01000d;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int indeterminate=0x7f01000a;
+        /** <p>Must be an integer value, such as "<code>100</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int indeterminate_interval=0x7f01000b;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int innerSize=0x7f010008;
+        /** <p>Must be an integer value, such as "<code>100</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int max=0x7f010002;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int pinned=0x7f010009;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int pinnedDrawable=0x7f010005;
+        /** <p>Must be an integer value, such as "<code>100</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int progress=0x7f010001;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int progressButtonStyle=0x7f010000;
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int progressColor=0x7f010004;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int shadowDrawable=0x7f010007;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int unpinnedDrawable=0x7f010006;
+    }
+    public static final class color {
+        public static final int progress_default_circle_color=0x7f050000;
+        public static final int progress_default_progress_color=0x7f050001;
+        public static final int refractored_background_dark=0x7f050002;
+        public static final int refractored_background_holo_dark=0x7f050007;
+        public static final int refractored_background_holo_light=0x7f050008;
+        public static final int refractored_background_light=0x7f050003;
+        public static final int refractored_bright_foreground_dark=0x7f050004;
+        public static final int refractored_bright_foreground_dark_disabled=0x7f050006;
+        public static final int refractored_bright_foreground_disabled_holo_dark=0x7f05000b;
+        public static final int refractored_bright_foreground_disabled_holo_light=0x7f05000c;
+        public static final int refractored_bright_foreground_holo_dark=0x7f050009;
+        public static final int refractored_bright_foreground_holo_light=0x7f05000a;
+        public static final int refractored_bright_foreground_light=0x7f050005;
+        public static final int refractored_dim_foreground_disabled_holo_dark=0x7f05000e;
+        public static final int refractored_dim_foreground_disabled_holo_light=0x7f050011;
+        public static final int refractored_dim_foreground_holo_dark=0x7f05000d;
+        public static final int refractored_dim_foreground_holo_light=0x7f050010;
+        public static final int refractored_highlighted_text_holo_dark=0x7f050013;
+        public static final int refractored_highlighted_text_holo_light=0x7f050014;
+        public static final int refractored_hint_foreground_holo_dark=0x7f05000f;
+        public static final int refractored_hint_foreground_holo_light=0x7f050012;
+        /**  A really bright Holo shade of blue 
+         */
+        public static final int refractored_holo_blue_bright=0x7f05001e;
+        /**  A dark Holo shade of blue 
+         */
+        public static final int refractored_holo_blue_dark=0x7f050018;
+        /**  A light Holo shade of blue 
+         */
+        public static final int refractored_holo_blue_light=0x7f050015;
+        /**  A dark Holo shade of green 
+         */
+        public static final int refractored_holo_green_dark=0x7f050019;
+        /**  A light Holo shade of green 
+         */
+        public static final int refractored_holo_green_light=0x7f050016;
+        /**  A dark Holo shade of orange 
+         */
+        public static final int refractored_holo_orange_dark=0x7f05001d;
+        /**  A light Holo shade of orange 
+         */
+        public static final int refractored_holo_orange_light=0x7f05001c;
+        /**  A Holo shade of purple 
+         */
+        public static final int refractored_holo_purple=0x7f05001b;
+        /**  A dark Holo shade of red 
+         */
+        public static final int refractored_holo_red_dark=0x7f05001a;
+        /**  A light Holo shade of red 
+         */
+        public static final int refractored_holo_red_light=0x7f050017;
+    }
+    public static final class dimen {
+        public static final int progress_inner_size=0x7f060000;
+    }
+    public static final class drawable {
+        public static final int dcsfloor=0x7f020000;
+        public static final int monoandroidsplash=0x7f020001;
+        public static final int pin_progress_pinned=0x7f020002;
+        public static final int pin_progress_shadow=0x7f020003;
+        public static final int pin_progress_unpinned=0x7f020004;
+        public static final int scrubber_control_normal_holo=0x7f020005;
+        public static final int scrubber_control_pressed_holo=0x7f020006;
     }
     public static final class id {
-        public static final int myButton=0x7f050000;
+        public static final int AnimateImage=0x7f0a0010;
+        public static final int bottom=0x7f0a0000;
+        public static final int center=0x7f0a0001;
+        public static final int center_horizontal=0x7f0a0002;
+        public static final int center_vertical=0x7f0a0003;
+        public static final int clip=0x7f0a0004;
+        public static final int clip_horizontal=0x7f0a0005;
+        public static final int clip_vertical=0x7f0a0006;
+        public static final int end=0x7f0a0007;
+        public static final int fill=0x7f0a0008;
+        public static final int fill_horizontal=0x7f0a0009;
+        public static final int fill_vertical=0x7f0a000a;
+        public static final int left=0x7f0a000b;
+        public static final int ok=0x7f0a000f;
+        public static final int ok2=0x7f0a0011;
+        public static final int right=0x7f0a000c;
+        public static final int start=0x7f0a000d;
+        public static final int top=0x7f0a000e;
+    }
+    public static final class integer {
+        public static final int circular_indeterminent_interval=0x7f070001;
+        public static final int progressbutton_indeterminent_interval=0x7f070000;
     }
     public static final class layout {
-        public static final int main=0x7f030000;
+        public static final int imagesettings=0x7f040000;
+        public static final int scaleimage=0x7f040001;
     }
     public static final class mipmap {
-        public static final int icon=0x7f020000;
+        public static final int icon=0x7f030000;
     }
     public static final class string {
-        public static final int app_name=0x7f040001;
-        public static final int hello=0x7f040000;
+        public static final int app_name=0x7f090001;
+        public static final int hello=0x7f090000;
     }
+    public static final class style {
+        public static final int CircularProgressBar=0x7f080002;
+        public static final int CircularProgressBarLight=0x7f080003;
+        public static final int Mono_Android_Theme_Splash=0x7f080004;
+        public static final int ProgressButton=0x7f080000;
+        /**  Base theme for the Progress button. 
+         */
+        public static final int ProgressButton_Pin=0x7f080001;
+    }
+    public static final class styleable {
+        /** Attributes that can be used with a HoloCircularProgressBar.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #HoloCircularProgressBar_circular_gravity com.straightouttacompsci.navigator:circular_gravity}</code></td><td></td></tr>
+           <tr><td><code>{@link #HoloCircularProgressBar_circular_indeterminate com.straightouttacompsci.navigator:circular_indeterminate}</code></td><td></td></tr>
+           <tr><td><code>{@link #HoloCircularProgressBar_circular_indeterminate_interval com.straightouttacompsci.navigator:circular_indeterminate_interval}</code></td><td></td></tr>
+           <tr><td><code>{@link #HoloCircularProgressBar_circular_marker_progress com.straightouttacompsci.navigator:circular_marker_progress}</code></td><td></td></tr>
+           <tr><td><code>{@link #HoloCircularProgressBar_circular_progress com.straightouttacompsci.navigator:circular_progress}</code></td><td></td></tr>
+           <tr><td><code>{@link #HoloCircularProgressBar_circular_progress_background_color com.straightouttacompsci.navigator:circular_progress_background_color}</code></td><td></td></tr>
+           <tr><td><code>{@link #HoloCircularProgressBar_circular_progress_color com.straightouttacompsci.navigator:circular_progress_color}</code></td><td></td></tr>
+           <tr><td><code>{@link #HoloCircularProgressBar_circular_stroke_width com.straightouttacompsci.navigator:circular_stroke_width}</code></td><td></td></tr>
+           </table>
+           @see #HoloCircularProgressBar_circular_gravity
+           @see #HoloCircularProgressBar_circular_indeterminate
+           @see #HoloCircularProgressBar_circular_indeterminate_interval
+           @see #HoloCircularProgressBar_circular_marker_progress
+           @see #HoloCircularProgressBar_circular_progress
+           @see #HoloCircularProgressBar_circular_progress_background_color
+           @see #HoloCircularProgressBar_circular_progress_color
+           @see #HoloCircularProgressBar_circular_stroke_width
+         */
+        public static final int[] HoloCircularProgressBar = {
+            0x7f01000c, 0x7f01000d, 0x7f01000e, 0x7f01000f,
+            0x7f010010, 0x7f010011, 0x7f010012, 0x7f010013
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#circular_gravity}
+          attribute's value can be found in the {@link #HoloCircularProgressBar} array.
+
+
+          <p>Must be one or more (separated by '|') of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>bottom</code></td><td>0x50</td><td></td></tr>
+<tr><td><code>center</code></td><td>0x11</td><td></td></tr>
+<tr><td><code>center_horizontal</code></td><td>0x01</td><td></td></tr>
+<tr><td><code>center_vertical</code></td><td>0x10</td><td></td></tr>
+<tr><td><code>clip</code></td><td>0x88</td><td></td></tr>
+<tr><td><code>clip_horizontal</code></td><td>0x08</td><td></td></tr>
+<tr><td><code>clip_vertical</code></td><td>0x80</td><td></td></tr>
+<tr><td><code>end</code></td><td>0x00800005</td><td></td></tr>
+<tr><td><code>fill</code></td><td>0x77</td><td></td></tr>
+<tr><td><code>fill_horizontal</code></td><td>0x07</td><td></td></tr>
+<tr><td><code>fill_vertical</code></td><td>0x70</td><td></td></tr>
+<tr><td><code>left</code></td><td>0x03</td><td></td></tr>
+<tr><td><code>right</code></td><td>0x05</td><td></td></tr>
+<tr><td><code>start</code></td><td>0x00800003</td><td></td></tr>
+<tr><td><code>top</code></td><td>0x30</td><td></td></tr>
+</table>
+          @attr name com.straightouttacompsci.navigator:circular_gravity
+        */
+        public static final int HoloCircularProgressBar_circular_gravity = 0;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#circular_indeterminate}
+          attribute's value can be found in the {@link #HoloCircularProgressBar} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.straightouttacompsci.navigator:circular_indeterminate
+        */
+        public static final int HoloCircularProgressBar_circular_indeterminate = 6;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#circular_indeterminate_interval}
+          attribute's value can be found in the {@link #HoloCircularProgressBar} array.
+
+
+          <p>Must be an integer value, such as "<code>100</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.straightouttacompsci.navigator:circular_indeterminate_interval
+        */
+        public static final int HoloCircularProgressBar_circular_indeterminate_interval = 7;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#circular_marker_progress}
+          attribute's value can be found in the {@link #HoloCircularProgressBar} array.
+
+
+          <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.straightouttacompsci.navigator:circular_marker_progress
+        */
+        public static final int HoloCircularProgressBar_circular_marker_progress = 3;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#circular_progress}
+          attribute's value can be found in the {@link #HoloCircularProgressBar} array.
+
+
+          <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.straightouttacompsci.navigator:circular_progress
+        */
+        public static final int HoloCircularProgressBar_circular_progress = 2;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#circular_progress_background_color}
+          attribute's value can be found in the {@link #HoloCircularProgressBar} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.straightouttacompsci.navigator:circular_progress_background_color
+        */
+        public static final int HoloCircularProgressBar_circular_progress_background_color = 5;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#circular_progress_color}
+          attribute's value can be found in the {@link #HoloCircularProgressBar} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.straightouttacompsci.navigator:circular_progress_color
+        */
+        public static final int HoloCircularProgressBar_circular_progress_color = 4;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#circular_stroke_width}
+          attribute's value can be found in the {@link #HoloCircularProgressBar} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.straightouttacompsci.navigator:circular_stroke_width
+        */
+        public static final int HoloCircularProgressBar_circular_stroke_width = 1;
+        /** Attributes that can be used with a ProgressButton.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #ProgressButton_android_clickable android:clickable}</code></td><td></td></tr>
+           <tr><td><code>{@link #ProgressButton_android_focusable android:focusable}</code></td><td></td></tr>
+           <tr><td><code>{@link #ProgressButton_android_selectableItemBackground android:selectableItemBackground}</code></td><td></td></tr>
+           <tr><td><code>{@link #ProgressButton_circleColor com.straightouttacompsci.navigator:circleColor}</code></td><td></td></tr>
+           <tr><td><code>{@link #ProgressButton_indeterminate com.straightouttacompsci.navigator:indeterminate}</code></td><td></td></tr>
+           <tr><td><code>{@link #ProgressButton_indeterminate_interval com.straightouttacompsci.navigator:indeterminate_interval}</code></td><td></td></tr>
+           <tr><td><code>{@link #ProgressButton_innerSize com.straightouttacompsci.navigator:innerSize}</code></td><td></td></tr>
+           <tr><td><code>{@link #ProgressButton_max com.straightouttacompsci.navigator:max}</code></td><td></td></tr>
+           <tr><td><code>{@link #ProgressButton_pinned com.straightouttacompsci.navigator:pinned}</code></td><td></td></tr>
+           <tr><td><code>{@link #ProgressButton_pinnedDrawable com.straightouttacompsci.navigator:pinnedDrawable}</code></td><td></td></tr>
+           <tr><td><code>{@link #ProgressButton_progress com.straightouttacompsci.navigator:progress}</code></td><td></td></tr>
+           <tr><td><code>{@link #ProgressButton_progressColor com.straightouttacompsci.navigator:progressColor}</code></td><td></td></tr>
+           <tr><td><code>{@link #ProgressButton_shadowDrawable com.straightouttacompsci.navigator:shadowDrawable}</code></td><td></td></tr>
+           <tr><td><code>{@link #ProgressButton_unpinnedDrawable com.straightouttacompsci.navigator:unpinnedDrawable}</code></td><td></td></tr>
+           </table>
+           @see #ProgressButton_android_clickable
+           @see #ProgressButton_android_focusable
+           @see #ProgressButton_android_selectableItemBackground
+           @see #ProgressButton_circleColor
+           @see #ProgressButton_indeterminate
+           @see #ProgressButton_indeterminate_interval
+           @see #ProgressButton_innerSize
+           @see #ProgressButton_max
+           @see #ProgressButton_pinned
+           @see #ProgressButton_pinnedDrawable
+           @see #ProgressButton_progress
+           @see #ProgressButton_progressColor
+           @see #ProgressButton_shadowDrawable
+           @see #ProgressButton_unpinnedDrawable
+         */
+        public static final int[] ProgressButton = {
+            0x010100da, 0x010100e5, 0x0101030e, 0x7f010001,
+            0x7f010002, 0x7f010003, 0x7f010004, 0x7f010005,
+            0x7f010006, 0x7f010007, 0x7f010008, 0x7f010009,
+            0x7f01000a, 0x7f01000b
+        };
+        /**
+          <p>This symbol is the offset where the {@link android.R.attr#clickable}
+          attribute's value can be found in the {@link #ProgressButton} array.
+          @attr name android:clickable
+        */
+        public static final int ProgressButton_android_clickable = 1;
+        /**
+          <p>This symbol is the offset where the {@link android.R.attr#focusable}
+          attribute's value can be found in the {@link #ProgressButton} array.
+          @attr name android:focusable
+        */
+        public static final int ProgressButton_android_focusable = 0;
+        /**
+          <p>This symbol is the offset where the {@link android.R.attr#selectableItemBackground}
+          attribute's value can be found in the {@link #ProgressButton} array.
+          @attr name android:selectableItemBackground
+        */
+        public static final int ProgressButton_android_selectableItemBackground = 2;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#circleColor}
+          attribute's value can be found in the {@link #ProgressButton} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.straightouttacompsci.navigator:circleColor
+        */
+        public static final int ProgressButton_circleColor = 5;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#indeterminate}
+          attribute's value can be found in the {@link #ProgressButton} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.straightouttacompsci.navigator:indeterminate
+        */
+        public static final int ProgressButton_indeterminate = 12;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#indeterminate_interval}
+          attribute's value can be found in the {@link #ProgressButton} array.
+
+
+          <p>Must be an integer value, such as "<code>100</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.straightouttacompsci.navigator:indeterminate_interval
+        */
+        public static final int ProgressButton_indeterminate_interval = 13;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#innerSize}
+          attribute's value can be found in the {@link #ProgressButton} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.straightouttacompsci.navigator:innerSize
+        */
+        public static final int ProgressButton_innerSize = 10;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#max}
+          attribute's value can be found in the {@link #ProgressButton} array.
+
+
+          <p>Must be an integer value, such as "<code>100</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.straightouttacompsci.navigator:max
+        */
+        public static final int ProgressButton_max = 4;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#pinned}
+          attribute's value can be found in the {@link #ProgressButton} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.straightouttacompsci.navigator:pinned
+        */
+        public static final int ProgressButton_pinned = 11;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#pinnedDrawable}
+          attribute's value can be found in the {@link #ProgressButton} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name com.straightouttacompsci.navigator:pinnedDrawable
+        */
+        public static final int ProgressButton_pinnedDrawable = 7;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#progress}
+          attribute's value can be found in the {@link #ProgressButton} array.
+
+
+          <p>Must be an integer value, such as "<code>100</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.straightouttacompsci.navigator:progress
+        */
+        public static final int ProgressButton_progress = 3;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#progressColor}
+          attribute's value can be found in the {@link #ProgressButton} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.straightouttacompsci.navigator:progressColor
+        */
+        public static final int ProgressButton_progressColor = 6;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#shadowDrawable}
+          attribute's value can be found in the {@link #ProgressButton} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name com.straightouttacompsci.navigator:shadowDrawable
+        */
+        public static final int ProgressButton_shadowDrawable = 9;
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#unpinnedDrawable}
+          attribute's value can be found in the {@link #ProgressButton} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name com.straightouttacompsci.navigator:unpinnedDrawable
+        */
+        public static final int ProgressButton_unpinnedDrawable = 8;
+        /** Attributes that can be used with a Theme.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #Theme_circularProgressBarStyle com.straightouttacompsci.navigator:circularProgressBarStyle}</code></td><td></td></tr>
+           </table>
+           @see #Theme_circularProgressBarStyle
+         */
+        public static final int[] Theme = {
+            0x7f010014
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.straightouttacompsci.navigator.R.attr#circularProgressBarStyle}
+          attribute's value can be found in the {@link #Theme} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name com.straightouttacompsci.navigator:circularProgressBarStyle
+        */
+        public static final int Theme_circularProgressBarStyle = 0;
+    };
 }

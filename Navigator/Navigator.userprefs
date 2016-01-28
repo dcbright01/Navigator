@@ -1,1 +1,12 @@
-﻿<Properties StartupItem="iOS/Navigator.iOS.csproj" />
+﻿<Properties StartupItem="iOS\Navigator.iOS.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Navigator\HeadingDetector.cs">
+    <Files>
+      <File FileName="Navigator\HeadingDetector.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

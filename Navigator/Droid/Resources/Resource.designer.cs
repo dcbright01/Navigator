@@ -60,8 +60,14 @@ namespace Navigator.Droid
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f070001
+			public const int azimuth = 2131165185;
+			
 			// aapt resource value: 0x7f070000
 			public const int myButton = 2131165184;
+			
+			// aapt resource value: 0x7f070002
+			public const int stepCounter = 2131165186;
 			
 			static Id()
 			{

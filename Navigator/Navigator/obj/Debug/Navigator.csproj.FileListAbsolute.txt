@@ -5,5 +5,7 @@ C:\Users\p.amirkhalili\Documents\Navigator\Navigator\Navigator\obj\Debug\Navigat
 C:\Users\p.amirkhalili\Documents\Navigator\Navigator\Navigator\obj\Debug\Navigator.csprojResolveAssemblyReference.cache
 C:\Users\p.amirkhalili\Documents\Navigator\Navigator\Navigator\obj\Debug\Navigator.dll.mdb
 C:\Users\p.amirkhalili\Documents\Navigator\Navigator\Navigator\bin\Debug\Navigator.dll.mdb
-C:\Users\p.amirkhalili\Documents\Navigator\Navigator\Navigator\obj\Debug\Navigator.dll.mdb
-C:\Users\p.amirkhalili\Documents\Navigator\Navigator\Navigator\bin\Debug\Navigator.dll.mdb
+C:\Users\Varun\Desktop\Warwick\Year 4 stuff\4th Year Project\Navigator\Navigator\bin\Debug\Navigator.dll
+C:\Users\Varun\Desktop\Warwick\Year 4 stuff\4th Year Project\Navigator\Navigator\bin\Debug\Navigator.pdb
+C:\Users\Varun\Desktop\Warwick\Year 4 stuff\4th Year Project\Navigator\Navigator\obj\Debug\Navigator.dll
+C:\Users\Varun\Desktop\Warwick\Year 4 stuff\4th Year Project\Navigator\Navigator\obj\Debug\Navigator.pdb

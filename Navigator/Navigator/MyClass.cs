@@ -1,12 +1,6 @@
-﻿using System;
-
-namespace Navigator
+﻿namespace Navigator
 {
-	public class MyClass
-	{
-		public MyClass ()
-		{
-		}
-	}
+    public class MyClass
+    {
+    }
 }
-

@@ -40,7 +40,6 @@ namespace Navigator.Droid
             {
                 SetContentView(Resource.Layout.ScaleImage);
                 _imgMap = FindViewById<CustomImageView>(Resource.Id.imgMap);
-                _imgMap.LongClick += ImgMapOnLongClick;
                 // Reset to saved state
                 if (_currentMapImage != null)
                     _imgMap.SetImageBitmap(_currentMapImage);
@@ -58,10 +57,6 @@ namespace Navigator.Droid
             });
         }
 
-        private void ImgMapOnLongClick(object sender, View.LongClickEventArgs longClickEventArgs)
-        {
-            
-        }
 
 
         private void DrawGridButtonToggle(object sender, EventArgs eventArgs)

@@ -1,25 +1,21 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
 using Android.Content;
 using Android.Graphics;
-using Android.OS;
-using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Navigator.Primitives;
+using Size = Navigator.Primitives.Size;
 
 namespace Navigator.Droid.UIElements
 {
     public class CustomImageViewGestureDetector : GestureDetector.SimpleOnGestureListener
     {
-        private readonly CustomImageView m_ScaleImageView;
+        private readonly CustomImageView _imgView;
+
         public CustomImageViewGestureDetector(CustomImageView imageView)
         {
-            m_ScaleImageView = imageView;
+            _imgView = imageView;
         }
 
         public override bool OnDown(MotionEvent e)
@@ -29,219 +25,213 @@ namespace Navigator.Droid.UIElements
 
         public override bool OnDoubleTap(MotionEvent e)
         {
-            m_ScaleImageView.MaxZoomTo((int)e.GetX(), (int)e.GetY());
-            m_ScaleImageView.Cutting();
+            _imgView.MaxZoomTo((int) e.GetX(), (int) e.GetY());
+            _imgView.PostTransitionCutting();
             return true;
         }
     }
+
     public class CustomImageView : ImageView, View.IOnTouchListener
     {
-        private Context m_Context;
+        #region < Properties>
 
-        private float m_MaxScale = 2.0f;
+        // Element base
+        private readonly Context _context;
 
-        private Matrix m_Matrix;
-        private float[] m_MatrixValues = new float[9];
-        private int m_Width;
-        private int m_Height;
-        private int m_IntrinsicWidth;
-        private int m_IntrinsicHeight;
-        private float m_Scale;
-        private float m_MinScale;
-        private float m_PreviousDistance;
-        private int m_PreviousMoveX;
-        private int m_PreviousMoveY;
+        // Translation stuff
+        private Matrix _matrix;
+        private Size _elementSize;
+        private Size _translationSize;
+        private float _scale;
+        private float _minScale;
+        private readonly float _maxScale = 2.0f;
+        private float _lastDistance;
+        private Vector2 _lastMove;
 
-        private bool m_IsScaling;
-        private GestureDetector m_GestureDetector;
+        private bool _isScaling;
+        private GestureDetector _gestureDetector;
 
-        public CustomImageView(Context context, IAttributeSet attrs) :
-            base(context, attrs)
+        public float Scale
         {
-            m_Context = context;
-            Initialize();
+            get { return GetMatrixValue(Matrix.MscaleX); }
         }
 
-        public CustomImageView(Context context, IAttributeSet attrs, int defStyle) :
-            base(context, attrs, defStyle)
+        public float TranslateX
         {
-            m_Context = context;
-            Initialize();
+            get { return GetMatrixValue(Matrix.MtransX); }
         }
+
+        public float TranslateY
+        {
+            get { return GetMatrixValue(Matrix.MtransY); }
+        }
+
+        public float TotalElementDistance
+        {
+            get { return (float) Math.Sqrt(Math.Pow(_elementSize.Width, 2) + Math.Pow(_elementSize.Height, 2)); }
+        }
+
+        #endregion
+
+        #region < InheritedConstructors & Methods >
+
+        public CustomImageView(Context context, IAttributeSet attrs) : base(context, attrs)
+        {
+            _context = context;
+            InitializeElement();
+        }
+
+        public CustomImageView(Context context, IAttributeSet attrs, int defStyle) : base(context, attrs, defStyle)
+        {
+            _context = context;
+            InitializeElement();
+        }
+
+        public bool OnTouch(View v, MotionEvent e)
+        {
+            return OnTouchEvent(e);
+        }
+
+        #endregion
+
+        /// <summary>
+        ///     Sets up some of the local variables as well as Intrinsic and gesture detector
+        /// </summary>
+        private void InitializeElement()
+        {
+            SetScaleType(ScaleType.Matrix);
+            _matrix = new Matrix();
+
+            // If the current element is drawable
+            if (Drawable != null)
+            {
+                _translationSize = new Size(Drawable.IntrinsicHeight, Drawable.IntrinsicWidth);
+                SetOnTouchListener(this);
+            }
+
+            _gestureDetector = new GestureDetector(_context, new CustomImageViewGestureDetector(this));
+        }
+
+
+        private float GetMatrixValue(int identifier)
+        {
+            var _values = new float[9];
+            _matrix.GetValues(_values);
+            return _values[identifier];
+        }
+
+
+        /// <summary>
+        ///     Updates the matrix to correspond to zooming to a specific location on a defined scale
+        /// </summary>
+        public void ZoomTo(int x, int y, float scale)
+        {
+            // If we have a min scale defined and we would go under
+            var scaling = Scale*scale;
+
+            if (scaling < _minScale)
+                scale = _minScale/Scale;
+            else if (scale > 1 && scaling > _maxScale) // Same as above but for max scale
+                scale = _maxScale/Scale;
+
+            // Scale the same for width and height
+            _matrix.PostScale(scale, scale);
+            // Calculate post-scaling center values
+            var scaleTranslateX = -(_elementSize.Width*scale - _elementSize.Width)/2;
+            var scaleTranslateY = -(_elementSize.Height*scale - _elementSize.Height)/2;
+            _matrix.PostTranslate(scaleTranslateX, scaleTranslateY);
+
+            // Move the specified x and Y distance
+            _matrix.PostTranslate(-(x - (_elementSize.Width/2))*scale, 0);
+            _matrix.PostTranslate(0, -(y - (_elementSize.Height/2))*scale);
+
+            ImageMatrix = _matrix;
+        }
+
+        public void PostTransitionCutting()
+        {
+            var width = (int) (_translationSize.Width*Scale);
+            var height = (int) (_translationSize.Height*Scale);
+            if (TranslateX < -(width - _elementSize.Width))
+            {
+                _matrix.PostTranslate(-(TranslateX + width - _elementSize.Width), 0);
+            }
+
+            if (TranslateX > 0)
+            {
+                _matrix.PostTranslate(-TranslateX, 0);
+            }
+
+            if (TranslateY < -(height - _elementSize.Height))
+            {
+                _matrix.PostTranslate(0, -(TranslateY + height - _elementSize.Height));
+            }
+
+            if (TranslateY > 0)
+            {
+                _matrix.PostTranslate(0, -TranslateY);
+            }
+
+            if (width < _elementSize.Width)
+            {
+                _matrix.PostTranslate((_elementSize.Width - width)/2, 0);
+            }
+
+            if (height < _elementSize.Height)
+            {
+                _matrix.PostTranslate(0, (_elementSize.Height - height)/2);
+            }
+
+            ImageMatrix = _matrix;
+        }
+
 
         public override void SetImageBitmap(Bitmap bm)
         {
             base.SetImageBitmap(bm);
-            this.Initialize();
+            InitializeElement();
         }
 
         public override void SetImageResource(int resId)
         {
             base.SetImageResource(resId);
-            this.Initialize();
-        }
-
-        private void Initialize()
-        {
-            this.SetScaleType(ImageView.ScaleType.Matrix);
-            m_Matrix = new Matrix();
-
-            if (Drawable != null)
-            {
-                m_IntrinsicWidth = Drawable.IntrinsicWidth;
-                m_IntrinsicHeight = Drawable.IntrinsicHeight;
-                this.SetOnTouchListener(this);
-            }
-
-            m_GestureDetector = new GestureDetector(m_Context, new CustomImageViewGestureDetector(this));
+            InitializeElement();
         }
 
         protected override bool SetFrame(int l, int t, int r, int b)
         {
-            m_Width = r - l;
-            m_Height = b - t;
-
-            m_Matrix.Reset();
+            _elementSize = new Size(r - l, b - t);
+            _matrix.Reset();
             var r_norm = r - l;
-            m_Scale = (float)r_norm / (float)m_IntrinsicWidth;
+            _scale = r_norm/(float) _translationSize.Width;
 
             var paddingHeight = 0;
             var paddingWidth = 0;
-            if (m_Scale * m_IntrinsicHeight > m_Height)
+            if (_scale*_translationSize.Height > _elementSize.Height)
             {
-                m_Scale = (float)m_Height / (float)m_IntrinsicHeight;
-                m_Matrix.PostScale(m_Scale, m_Scale);
-                paddingWidth = (r - m_Width) / 2;
+                _scale = _translationSize.Width/(float) _translationSize.Height;
+                _matrix.PostScale(_scale, _scale);
+                paddingWidth = (r - _elementSize.Width)/2;
             }
             else
             {
-                m_Matrix.PostScale(m_Scale, m_Scale);
-                paddingHeight = (b - m_Height) / 2;
+                _matrix.PostScale(_scale, _scale);
+                paddingHeight = (b - _elementSize.Height)/2;
             }
 
-            m_Matrix.PostTranslate(paddingWidth, paddingHeight);
-            ImageMatrix = m_Matrix;
-            m_MinScale = m_Scale;
-            ZoomTo(m_Scale, m_Width / 2, m_Height / 2);
-            Cutting();
+            _matrix.PostTranslate(paddingWidth, paddingHeight);
+            ImageMatrix = _matrix;
+            _minScale = _scale;
+            ZoomTo(_elementSize.Width/2, _elementSize.Height/2, _scale);
+            PostTransitionCutting();
             return base.SetFrame(l, t, r, b);
-        }
-
-        private float GetValue(Matrix matrix, int whichValue)
-        {
-            matrix.GetValues(m_MatrixValues);
-            return m_MatrixValues[whichValue];
-        }
-
-
-
-        public float Scale
-        {
-            get { return this.GetValue(m_Matrix, Matrix.MscaleX); }
-        }
-
-        public float TranslateX
-        {
-            get { return this.GetValue(m_Matrix, Matrix.MtransX); }
-        }
-
-        public float TranslateY
-        {
-            get { return this.GetValue(m_Matrix, Matrix.MtransY); }
-        }
-
-        public void MaxZoomTo(int x, int y)
-        {
-            if (this.m_MinScale != this.Scale && (Scale - m_MinScale) > 0.1f)
-            {
-                var scale = m_MinScale / Scale;
-                ZoomTo(scale, x, y);
-            }
-            else
-            {
-                var scale = m_MaxScale / Scale;
-                ZoomTo(scale, x, y);
-            }
-        }
-
-        public void ZoomTo(float scale, int x, int y)
-        {
-            if (Scale * scale < m_MinScale)
-            {
-                scale = m_MinScale / Scale;
-            }
-            else
-            {
-                if (scale >= 1 && Scale * scale > m_MaxScale)
-                {
-                    scale = m_MaxScale / Scale;
-                }
-            }
-            m_Matrix.PostScale(scale, scale);
-            //move to center
-            m_Matrix.PostTranslate(-(m_Width * scale - m_Width) / 2, -(m_Height * scale - m_Height) / 2);
-
-            //move x and y distance
-            m_Matrix.PostTranslate(-(x - (m_Width / 2)) * scale, 0);
-            m_Matrix.PostTranslate(0, -(y - (m_Height / 2)) * scale);
-            ImageMatrix = m_Matrix;
-        }
-
-        public void Cutting()
-        {
-            var width = (int)(m_IntrinsicWidth * Scale);
-            var height = (int)(m_IntrinsicHeight * Scale);
-            if (TranslateX < -(width - m_Width))
-            {
-                m_Matrix.PostTranslate(-(TranslateX + width - m_Width), 0);
-            }
-
-            if (TranslateX > 0)
-            {
-                m_Matrix.PostTranslate(-TranslateX, 0);
-            }
-
-            if (TranslateY < -(height - m_Height))
-            {
-                m_Matrix.PostTranslate(0, -(TranslateY + height - m_Height));
-            }
-
-            if (TranslateY > 0)
-            {
-                m_Matrix.PostTranslate(0, -TranslateY);
-            }
-
-            if (width < m_Width)
-            {
-                m_Matrix.PostTranslate((m_Width - width) / 2, 0);
-            }
-
-            if (height < m_Height)
-            {
-                m_Matrix.PostTranslate(0, (m_Height - height) / 2);
-            }
-
-            ImageMatrix = m_Matrix;
-        }
-
-        private float Distance(float x0, float x1, float y0, float y1)
-        {
-            var x = x0 - x1;
-            var y = y0 - y1;
-            return FloatMath.Sqrt(x * x + y * y);
-        }
-
-        private float DispDistance()
-        {
-            return FloatMath.Sqrt(m_Width * m_Width + m_Height * m_Height);
         }
 
         public override bool OnTouchEvent(MotionEvent e)
         {
-            if (m_GestureDetector.OnTouchEvent(e))
+            if (_gestureDetector.OnTouchEvent(e))
             {
-                m_PreviousMoveX = (int)e.GetX();
-                m_PreviousMoveY = (int)e.GetY();
+                _lastMove = new Vector2(e.GetX(), e.GetY());
                 return true;
             }
 
@@ -251,57 +241,69 @@ namespace Navigator.Droid.UIElements
                 case MotionEventActions.Down:
                 case MotionEventActions.Pointer1Down:
                 case MotionEventActions.Pointer2Down:
+                {
+                    if (touchCount >= 2)
                     {
-                        if (touchCount >= 2)
-                        {
-                            var distance = this.Distance(e.GetX(0), e.GetX(1), e.GetY(0), e.GetY(1));
-                            m_PreviousDistance = distance;
-                            m_IsScaling = true;
-                        }
+                        var touchOne = new Vector2(e.GetX(0), e.GetY(0));
+                        var touchTwo = new Vector2(e.GetX(1), e.GetY(1));
+                        var distance = touchOne.DistanceTo(touchTwo);
+                        _lastDistance = distance;
+                        _isScaling = true;
                     }
+                }
                     break;
 
                 case MotionEventActions.Move:
+                {
+                    if (touchCount >= 2 && _isScaling)
                     {
-                        if (touchCount >= 2 && m_IsScaling)
-                        {
-                            var distance = this.Distance(e.GetX(0), e.GetX(1), e.GetY(0), e.GetY(1));
-                            var scale = (distance - m_PreviousDistance) / this.DispDistance();
-                            m_PreviousDistance = distance;
-                            scale += 1;
-                            scale = scale * scale;
-                            this.ZoomTo(scale, m_Width / 2, m_Height / 2);
-                            this.Cutting();
-                        }
-                        else if (!m_IsScaling)
-                        {
-                            var distanceX = m_PreviousMoveX - (int)e.GetX();
-                            var distanceY = m_PreviousMoveY - (int)e.GetY();
-                            m_PreviousMoveX = (int)e.GetX();
-                            m_PreviousMoveY = (int)e.GetY();
-
-                            m_Matrix.PostTranslate(-distanceX, -distanceY);
-                            this.Cutting();
-                        }
+                        var touchOne = new Vector2(e.GetX(0), e.GetY(0));
+                        var touchTwo = new Vector2(e.GetX(1), e.GetY(1));
+                        var distance = touchOne.DistanceTo(touchTwo);
+                        var scale = (distance - _lastDistance)/TotalElementDistance;
+                        _lastDistance = distance;
+                        scale += 1;
+                        scale = scale*scale;
+                        ZoomTo(_elementSize.Width/2, _elementSize.Height/2, scale);
+                        PostTransitionCutting();
                     }
+                    else if (!_isScaling)
+                    {
+                        var distanceX = _lastMove.X - e.GetX();
+                        var distanceY = _lastMove.Y - (int) e.GetY();
+                        _lastMove = new Vector2(e.GetX(), e.GetY());
+
+                        _matrix.PostTranslate(-distanceX, -distanceY);
+                        PostTransitionCutting();
+                    }
+                }
                     break;
                 case MotionEventActions.Up:
                 case MotionEventActions.Pointer1Up:
                 case MotionEventActions.Pointer2Up:
+                {
+                    if (touchCount <= 1)
                     {
-                        if (touchCount <= 1)
-                        {
-                            m_IsScaling = false;
-                        }
+                        _isScaling = false;
                     }
+                }
                     break;
             }
             return true;
         }
 
-        public bool OnTouch(View v, MotionEvent e)
+        public void MaxZoomTo(int x, int y)
         {
-            return OnTouchEvent(e);
+            if (_minScale != Scale && (Scale - _minScale) > 0.1f)
+            {
+                var scale = _minScale/Scale;
+                ZoomTo(x, y, scale);
+            }
+            else
+            {
+                var scale = _maxScale/Scale;
+                ZoomTo(x, y, scale);
+            }
         }
     }
 }

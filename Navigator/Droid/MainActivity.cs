@@ -35,6 +35,7 @@ namespace Navigator.Droid
             base.OnCreate(savedInstanceState);
 
             // Small pathfinding test
+            /*
             var asset = Assets.Open("pbSmall.xml");
             var g = Graph.Load(asset);
 
@@ -42,7 +43,7 @@ namespace Navigator.Droid
             var end = g.Vertices.OrderBy(x => x.DistanceTo(new Vertex() { X = 621, Y = 149 })).First();
             var path = g.FindPath(start,end);
             var path2 = g.FindPath(start,end);
-            
+            */
             // Set nav mode
             ActionBar.NavigationMode = ActionBarNavigationMode.Tabs;
             SetContentView(Resource.Layout.ScaleImage);
@@ -52,6 +53,7 @@ namespace Navigator.Droid
             {
                 SetContentView(Resource.Layout.ScaleImage);
                 _imgMap = FindViewById<CustomImageView>(Resource.Id.imgMap);
+                _imgMap.LongPress += ImgMapOnLongPress;
                 // Reset to saved state
                 if (_currentMapImage != null)
                     _imgMap.SetImageBitmap(_currentMapImage);
@@ -69,6 +71,21 @@ namespace Navigator.Droid
             });
         }
 
+        private void ImgMapOnLongPress(object sender, MotionEvent motionEvent)
+        {
+            new AlertDialog.Builder(this)
+                .SetPositiveButton("(Start) Its a trap !", (s, args) =>
+                {
+                    // User pressed yes
+                })
+                .SetNegativeButton("(End) Its still a fucking trap !", (s, args) =>
+                {
+                    // User pressed no 
+                })
+                .SetMessage("O noes ! A long press ! What do what do !?!")
+                .SetTitle("Pick some shit")
+                .Show();
+        }
 
 
         private void DrawGridButtonToggle(object sender, EventArgs eventArgs)

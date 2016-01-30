@@ -32,13 +32,18 @@ namespace Navigator.Droid.UIElements
 
         public override void OnLongPress(MotionEvent e)
         {
-            
+            _imgView.OnLongPress(e);
         }
     }
+
+    public delegate void LongPressHandler(object sender, MotionEvent e);
 
     public class CustomImageView : ImageView, View.IOnTouchListener
     {
         #region < Properties>
+
+        // Event stuff
+        public event LongPressHandler LongPress;
 
         // Element base
         private readonly Context _context;
@@ -75,6 +80,14 @@ namespace Navigator.Droid.UIElements
         {
             get { return (float) Math.Sqrt(Math.Pow(_elementSize.Width, 2) + Math.Pow(_elementSize.Height, 2)); }
         }
+
+        public virtual void OnLongPress(MotionEvent e)
+        {
+            if (LongPress != null)
+                LongPress(this, e);
+        }
+
+        public Context Context { get { return _context; } }
 
         #endregion
 

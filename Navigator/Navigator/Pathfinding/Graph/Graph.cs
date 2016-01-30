@@ -118,10 +118,7 @@ namespace Navigator.Pathfinding.Graph
             {
                 observer.TryGetPath(end, out path);
             }
-            catch (Exception ex)
-            {
-                
-            }
+            catch { }
             return path.ToList();
         }
     }

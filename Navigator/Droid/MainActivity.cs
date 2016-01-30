@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using Android.App;
 using Android.Graphics;
 using Android.OS;
@@ -6,6 +8,7 @@ using Android.Views;
 using Android.Widget;
 using Navigator.Droid.Extensions;
 using Navigator.Droid.UIElements;
+using Navigator.Pathfinding.Graph;
 
 namespace Navigator.Droid
 {
@@ -31,6 +34,15 @@ namespace Navigator.Droid
         {
             base.OnCreate(savedInstanceState);
 
+            // Small pathfinding test
+            var asset = Assets.Open("pbSmall.xml");
+            var g = Graph.Load(asset);
+
+            var start = g.Vertices.OrderBy(x => x.DistanceTo(new Vertex() { X = 201, Y = 379 })).First();
+            var end = g.Vertices.OrderBy(x => x.DistanceTo(new Vertex() { X = 621, Y = 149 })).First();
+            var path = g.FindPath(start,end);
+            var path2 = g.FindPath(start,end);
+            
             // Set nav mode
             ActionBar.NavigationMode = ActionBarNavigationMode.Tabs;
             SetContentView(Resource.Layout.ScaleImage);

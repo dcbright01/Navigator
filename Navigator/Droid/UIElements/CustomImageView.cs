@@ -29,6 +29,11 @@ namespace Navigator.Droid.UIElements
             _imgView.PostTransitionCutting();
             return true;
         }
+
+        public override void OnLongPress(MotionEvent e)
+        {
+            
+        }
     }
 
     public class CustomImageView : ImageView, View.IOnTouchListener

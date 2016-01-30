@@ -108,4 +108,11 @@
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\dcsfloor.jpg" />
+    <BundleResource Include="Images\dcsFloorGrid.jpg" />
+  </ItemGroup>
 </Project>

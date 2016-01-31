@@ -12,8 +12,10 @@ namespace Navigator
 		private double[] accelValues = new double[3];
 		private double lastPeakValue = -1;
 		private double lastTroughValue = -1;
+        private int stepCounter = 0;
 
-		public event EventHandler Taken;
+        public delegate void StepHandler(int steps);
+		public event StepHandler Taken;
 
 		public StepDetector()
 		{
@@ -41,9 +43,10 @@ namespace Navigator
 				// the thresholds that we use in order to filter out false positives
 				if (difference > 0.5 && difference < 2.2)
 				{
-					Taken(this, new EventArgs());
 					lastPeakValue = accelValues[1];
-				}
+                    stepCounter++;
+                    stepped();
+                }
 			}
 
 			if (isTrough())
@@ -138,5 +141,10 @@ namespace Navigator
 
 			return output;
 		}
+
+        public void stepped()
+        {
+            Taken(stepCounter);
+        }
 	}
 }

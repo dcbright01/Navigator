@@ -51,7 +51,7 @@ namespace Navigator.Droid
 		public void OnSensorChanged(SensorEvent e)
 		{
 			var sensor = e.Sensor;
-			step.Taken += Step_Taken;
+            step.Taken += Step_Taken;
 			switch (sensor.Type) 
 			{
 				case SensorType.Accelerometer:
@@ -77,11 +77,10 @@ namespace Navigator.Droid
 
 		public int stepCounter = 0;
 
-		public void Step_Taken(object sender, System.EventArgs e)
+		public void Step_Taken(int steps)
 		{
-			stepCounter++;
 			TextView stepText = FindViewById<TextView>(Resource.Id.stepCounter);
-			stepText.Text = string.Format("Steps: {0}", stepCounter);
+			stepText.Text = string.Format("Steps: {0}", steps);
 		}
 
 		// http://www.codingforandroid.com/2011/01/using-orientation-sensors-simple.html

@@ -122,7 +122,7 @@ namespace Navigator.Droid
 			_imgMap.SetImageBitmap(_currentMapImage);
 
 			// Avoiding a memory leak upon redrawing the image many times
-			bitmap.Dispose();
+			//bitmap.Dispose();
 		}
 
         private void DrawGridButtonToggle(object sender, EventArgs eventArgs)

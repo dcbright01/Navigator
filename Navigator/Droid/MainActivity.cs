@@ -100,12 +100,16 @@ namespace Navigator.Droid
 			myOptions.InMutable = true;
 			Bitmap bitmap;
 
-			// Make sure to get the correct bitmap
-			if (!_isDrawingGrid) {
-				bitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor, myOptions);
-			} else {
-				bitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid, myOptions);
+			// If the current map image is not initialised, initialise it to the correct one.
+			if (_currentMapImage == null) {
+				if (!_isDrawingGrid) {
+					_currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor, myOptions);
+				} else {
+					_currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid, myOptions);
+				}
 			}
+
+			bitmap = _currentMapImage;
 
 			Paint paint = new Paint();
 			paint.AntiAlias = true;

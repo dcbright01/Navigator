@@ -25,6 +25,10 @@ namespace Navigator.iOS
 		[GeneratedCode ("iOS Designer", "1.0")]
 		UIButton OptionsButton { get; set; }
 
+		[Outlet]
+		[GeneratedCode ("iOS Designer", "1.0")]
+		UIButton simulationButton { get; set; }
+
 		void ReleaseDesignerOutlets ()
 		{
 			if (Button != null) {
@@ -38,6 +42,10 @@ namespace Navigator.iOS
 			if (OptionsButton != null) {
 				OptionsButton.Dispose ();
 				OptionsButton = null;
+			}
+			if (simulationButton != null) {
+				simulationButton.Dispose ();
+				simulationButton = null;
 			}
 		}
 	}

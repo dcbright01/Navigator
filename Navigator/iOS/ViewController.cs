@@ -15,51 +15,68 @@ namespace Navigator.iOS
         {
             base.ViewDidLoad();
 
-			UIImageView floorplanImage;
-			UIImageView floorplanImageNoGrid;
-			UIImageView floorplanImageWithGrid;
+			UIView container = new UIView ();
+			UIImageView floorplanImageView = new UIImageView();
 
 
-			floorplanImageNoGrid = new UIImageView (UIImage.FromBundle ("Images/dcsfloor.jpg"));
-			floorplanImageWithGrid = new UIImageView (UIImage.FromBundle ("Images/dcsFloorGrid.jpg"));
-			floorplanImage = floorplanImageNoGrid;
+			UIImage floorplanImageNoGrid;
+			UIImage floorplanImageWithGrid;
+			LocationArrowImageView locationArrow;
 
-			floorplanView.ContentSize = floorplanImage.Image.Size;
-			floorplanView.AddSubview (floorplanImage);
 
-			floorplanView.MaximumZoomScale = 3f;
+			floorplanImageNoGrid = UIImage.FromBundle ("Images/dcsfloor.jpg");
+			floorplanImageWithGrid = UIImage.FromBundle ("Images/dcsFloorGrid.jpg");
+			locationArrow = new LocationArrowImageView ();
+			locationArrow.setLocation (650, 850);
+			locationArrow.ScaleFactor = floorplanView.ZoomScale;
+
+			floorplanView.ContentSize = floorplanImageNoGrid.Size;
+			container.AddSubview (floorplanImageView);
+			container.AddSubview (locationArrow);
+			changeFloorPlanImage (floorplanImageView, floorplanImageNoGrid);
+			container.SizeToFit ();
+
+			floorplanView.MaximumZoomScale = 1f;
 			floorplanView.MinimumZoomScale = .25f;
-			floorplanView.ViewForZoomingInScrollView += (UIScrollView sv) => { return floorplanImage; };
+			floorplanView.AddSubview (container);
+			floorplanView.ViewForZoomingInScrollView += (UIScrollView sv) => { return floorplanImageView; };
+
+			floorplanView.DidZoom += (sender, e) => {
+				locationArrow.ScaleFactor = floorplanView.ZoomScale;
+			};
 
             // Perform any additional setup after loading the view, typically from a nib.
-            Button.AccessibilityIdentifier = "myButton";
             Button.TouchUpInside += delegate
             {
 				if (toggle == 1) {
                 	var title = string.Format("Set to normal floorplan");
 					Button.SetTitle(title, UIControlState.Normal);
-
-					floorplanImage = floorplanImageWithGrid;
-					floorplanView.AddSubview (floorplanImage);
-					floorplanView.ViewForZoomingInScrollView += (UIScrollView sv) => { return floorplanImage; };
-
-
+					changeFloorPlanImage(floorplanImageView, floorplanImageWithGrid);
 					toggle = 0;
 				}
 				else {
 					var title = string.Format("Set to floorplan with grid");
 					Button.SetTitle(title, UIControlState.Normal);
-
-					floorplanImage = floorplanImageNoGrid;
-					floorplanView.AddSubview (floorplanImage);
-					floorplanView.ViewForZoomingInScrollView += (UIScrollView sv) => { return floorplanImage; };
-
+					changeFloorPlanImage(floorplanImageView, floorplanImageNoGrid);
 					toggle = 1;
 				}
             };
+
+			simulationButton.TouchUpInside += delegate {
+				for(int i = 0; i<10;i++){
+					locationArrow.modLocation(0, -1);
+					System.Threading.Thread.Sleep(1);
+				}
+			};
 				
 
         }
+
+		private void changeFloorPlanImage(UIImageView imageView, UIImage image){
+			imageView.Image = image;
+			imageView.SizeToFit ();
+
+		}
 
         public override void DidReceiveMemoryWarning()
         {

@@ -97,6 +97,7 @@ namespace Navigator.Droid
 			myOptions.InScaled = false;
 			myOptions.InPreferredConfig = Bitmap.Config.Argb8888;
 			myOptions.InPurgeable = true;
+			myOptions.InMutable = true;
 			Bitmap bitmap;
 
 			// Make sure to get the correct bitmap
@@ -110,24 +111,18 @@ namespace Navigator.Droid
 			paint.AntiAlias = true;
 			paint.Color = Color.Magenta;
 
-			// Creating a bitmap that is mutable so we can draw on it.
-			Bitmap workingBitmap = Bitmap.CreateBitmap(bitmap);
-			Bitmap mutableBitmap = workingBitmap.Copy(Bitmap.Config.Argb8888, true);
-
 			// Draw the damn point.
-			Canvas canvas = new Canvas(mutableBitmap);
+			Canvas canvas = new Canvas(bitmap);
 			canvas.DrawCircle(x, y, 20, paint);
 
 			// Change the displayed image to the new one and update current map image
 			// to ensure that change is consistent when tabs are changed.
 			_imgMap.SetAdjustViewBounds(true);
-			_currentMapImage = mutableBitmap;
+			_currentMapImage = bitmap;
 			_imgMap.SetImageBitmap(_currentMapImage);
 
 			// Avoiding a memory leak upon redrawing the image many times
-			workingBitmap.Dispose();
 			bitmap.Dispose();
-			mutableBitmap.Dispose();
 		}
 
         private void DrawGridButtonToggle(object sender, EventArgs eventArgs)

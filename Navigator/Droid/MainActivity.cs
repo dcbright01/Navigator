@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using Android.App;
 using Android.Graphics;
 using Android.OS;
@@ -6,6 +8,7 @@ using Android.Views;
 using Android.Widget;
 using Navigator.Droid.Extensions;
 using Navigator.Droid.UIElements;
+using Navigator.Pathfinding.Graph;
 
 namespace Navigator.Droid
 {
@@ -31,6 +34,16 @@ namespace Navigator.Droid
         {
             base.OnCreate(savedInstanceState);
 
+            // Small pathfinding test
+            /*
+            var asset = Assets.Open("pbSmall.xml");
+            var g = Graph.Load(asset);
+
+            var start = g.Vertices.OrderBy(x => x.DistanceTo(new Vertex() { X = 201, Y = 379 })).First();
+            var end = g.Vertices.OrderBy(x => x.DistanceTo(new Vertex() { X = 621, Y = 149 })).First();
+            var path = g.FindPath(start,end);
+            var path2 = g.FindPath(start,end);
+            */
             // Set nav mode
             ActionBar.NavigationMode = ActionBarNavigationMode.Tabs;
             SetContentView(Resource.Layout.ScaleImage);
@@ -40,6 +53,7 @@ namespace Navigator.Droid
             {
                 SetContentView(Resource.Layout.ScaleImage);
                 _imgMap = FindViewById<CustomImageView>(Resource.Id.imgMap);
+                _imgMap.LongPress += ImgMapOnLongPress;
                 // Reset to saved state
                 if (_currentMapImage != null)
                     _imgMap.SetImageBitmap(_currentMapImage);
@@ -57,7 +71,59 @@ namespace Navigator.Droid
             });
         }
 
+        private void ImgMapOnLongPress(object sender, MotionEvent motionEvent)
+        {
+            new AlertDialog.Builder(this)
+                .SetPositiveButton("(Start) Its a trap !", (s, args) =>
+                {
+                    // User pressed yes
+					DrawPointOnMap((int)motionEvent.GetX(), (int)motionEvent.GetY());
+                })
+                .SetNegativeButton("(End) Its still a fucking trap !", (s, args) =>
+                {
+                    // User pressed no 
+                })
+                .SetMessage("O noes ! A long press ! What do what do !?!")
+                .SetTitle("Pick some shit")
+                .Show();
+        }
 
+		// Draws a point on the bitmap floorplan image at a specified (x,y). Colour is magenta
+		// so it stands out.
+		private void DrawPointOnMap(int x, int y)
+		{
+			BitmapFactory.Options myOptions = new BitmapFactory.Options ();
+			myOptions.InDither = true;
+			myOptions.InScaled = false;
+			myOptions.InPreferredConfig = Bitmap.Config.Argb8888;
+			myOptions.InPurgeable = true;
+			myOptions.InMutable = true;
+			Bitmap bitmap;
+
+			// Make sure to get the correct bitmap
+			if (!_isDrawingGrid) {
+				bitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor, myOptions);
+			} else {
+				bitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid, myOptions);
+			}
+
+			Paint paint = new Paint();
+			paint.AntiAlias = true;
+			paint.Color = Color.Magenta;
+
+			// Draw the damn point.
+			Canvas canvas = new Canvas(bitmap);
+			canvas.DrawCircle(x, y, 20, paint);
+
+			// Change the displayed image to the new one and update current map image
+			// to ensure that change is consistent when tabs are changed.
+			_imgMap.SetAdjustViewBounds(true);
+			_currentMapImage = bitmap;
+			_imgMap.SetImageBitmap(_currentMapImage);
+
+			// Avoiding a memory leak upon redrawing the image many times
+			//bitmap.Dispose();
+		}
 
         private void DrawGridButtonToggle(object sender, EventArgs eventArgs)
         {

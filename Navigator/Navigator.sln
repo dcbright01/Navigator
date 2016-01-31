@@ -1,9 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Navigator.iOS", "iOS\Navigator.iOS.csproj", "{A99B53C8-560E-40C5-860F-FD70193DC957}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9D543BE7-9B91-413E-8E6E-6169A62B4138} = {9D543BE7-9B91-413E-8E6E-6169A62B4138}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Navigator.Droid", "Droid\Navigator.Droid.csproj", "{547673AB-0627-459E-BDDA-C47774E07969}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9D543BE7-9B91-413E-8E6E-6169A62B4138} = {9D543BE7-9B91-413E-8E6E-6169A62B4138}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Navigator", "Navigator\Navigator.csproj", "{9D543BE7-9B91-413E-8E6E-6169A62B4138}"
 EndProject

@@ -77,6 +77,7 @@ namespace Navigator.Droid
                 .SetPositiveButton("(Start) Its a trap !", (s, args) =>
                 {
                     // User pressed yes
+					DrawPointOnMap((int)motionEvent.GetX(), (int)motionEvent.GetY());
                 })
                 .SetNegativeButton("(End) Its still a fucking trap !", (s, args) =>
                 {
@@ -87,6 +88,47 @@ namespace Navigator.Droid
                 .Show();
         }
 
+		// Draws a point on the bitmap floorplan image at a specified (x,y). Colour is magenta
+		// so it stands out.
+		private void DrawPointOnMap(int x, int y)
+		{
+			BitmapFactory.Options myOptions = new BitmapFactory.Options ();
+			myOptions.InDither = true;
+			myOptions.InScaled = false;
+			myOptions.InPreferredConfig = Bitmap.Config.Argb8888;
+			myOptions.InPurgeable = true;
+			Bitmap bitmap;
+
+			// Make sure to get the correct bitmap
+			if (!_isDrawingGrid) {
+				bitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor, myOptions);
+			} else {
+				bitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid, myOptions);
+			}
+
+			Paint paint = new Paint();
+			paint.AntiAlias = true;
+			paint.Color = Color.Magenta;
+
+			// Creating a bitmap that is mutable so we can draw on it.
+			Bitmap workingBitmap = Bitmap.CreateBitmap(bitmap);
+			Bitmap mutableBitmap = workingBitmap.Copy(Bitmap.Config.Argb8888, true);
+
+			// Draw the damn point.
+			Canvas canvas = new Canvas(mutableBitmap);
+			canvas.DrawCircle(x, y, 20, paint);
+
+			// Change the displayed image to the new one and update current map image
+			// to ensure that change is consistent when tabs are changed.
+			_imgMap.SetAdjustViewBounds(true);
+			_currentMapImage = mutableBitmap;
+			_imgMap.SetImageBitmap(_currentMapImage);
+
+			// Avoiding a memory leak upon redrawing the image many times
+			workingBitmap.Dispose();
+			bitmap.Dispose();
+			mutableBitmap.Dispose();
+		}
 
         private void DrawGridButtonToggle(object sender, EventArgs eventArgs)
         {

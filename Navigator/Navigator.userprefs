@@ -1,8 +1,9 @@
 ﻿<Properties StartupItem="iOS/Navigator.iOS.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPhone6s.9.2" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="iOS/ViewController.designer.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="iOS/LocationArrow.cs">
     <Files>
-      <File FileName="iOS/ViewController.designer.cs" Line="1" Column="1" />
+      <File FileName="iOS/ViewController.cs" Line="56" Column="6" />
+      <File FileName="iOS/LocationArrow.cs" Line="33" Column="4" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

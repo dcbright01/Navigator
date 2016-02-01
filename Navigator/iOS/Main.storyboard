@@ -32,11 +32,18 @@
                                 </variation>
                             </scrollView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="234" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
-                                <rect key="frame" x="109" y="631" width="161" height="30"/>
+                                <rect key="frame" x="0.0" y="631" width="161" height="30"/>
                                 <state key="normal" title="Start Simulation">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                             </button>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Label" lineBreakMode="tailTruncation" minimumFontSize="10" id="259" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="198" y="636" width="157" height="21"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" customColorSpace="calibratedWhite" colorSpace="calibratedWhite" white="1" alpha="1"/>
                     </view>
@@ -45,11 +52,12 @@
                         <outlet property="floorplanView" destination="13" id="name-outlet-13"/>
                         <outlet property="OptionsButton" destination="103" id="name-outlet-103"/>
                         <outlet property="simulationButton" destination="234" id="name-outlet-234"/>
+                        <outlet property="debugLabel" destination="259" id="name-outlet-259"/>
                     </connections>
                     <navigationItem title="Floorplan" id="87" key="navigationItem">
                         <barButtonItem style="plain" id="104" key="rightBarButtonItem">
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="103" translatesAutoresizingMaskIntoConstraints="NO" key="customView">
-                                <rect key="frame" x="0.0" y="0.0" width="46" height="30"/>
+                                <rect key="frame" x="0.0" y="0.0" width="83" height="30"/>
                                 <state key="normal" title="Options">
                                     <color key="titleShadowColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>

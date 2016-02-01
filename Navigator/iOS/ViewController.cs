@@ -17,6 +17,8 @@ namespace Navigator.iOS
 
 			UIView container = new UIView ();
 			UIImageView floorplanImageView = new UIImageView();
+			PathView pathView = new PathView ();
+
 
 
 			UIImage floorplanImageNoGrid;
@@ -29,10 +31,14 @@ namespace Navigator.iOS
 			locationArrow = new LocationArrowImageView ();
 			locationArrow.setLocation (650, 850);
 			locationArrow.ScaleFactor = floorplanView.ZoomScale;
+			pathView.ScaleFactor = floorplanView.ZoomScale;
 
 			floorplanView.ContentSize = floorplanImageNoGrid.Size;
+			pathView.Frame = new CoreGraphics.CGRect (new CoreGraphics.CGPoint (0, 0), floorplanImageNoGrid.Size); 
+				
 			container.AddSubview (floorplanImageView);
 			container.AddSubview (locationArrow);
+			floorplanImageView.AddSubview (pathView);
 			changeFloorPlanImage (floorplanImageView, floorplanImageNoGrid);
 			container.SizeToFit ();
 
@@ -43,6 +49,7 @@ namespace Navigator.iOS
 
 			floorplanView.DidZoom += (sender, e) => {
 				locationArrow.ScaleFactor = floorplanView.ZoomScale;
+				pathView.ScaleFactor = floorplanView.ZoomScale;
 			};
 
             // Perform any additional setup after loading the view, typically from a nib.
@@ -63,10 +70,16 @@ namespace Navigator.iOS
             };
 
 			simulationButton.TouchUpInside += delegate {
-				for(int i = 0; i<10;i++){
-					locationArrow.modLocation(0, -1);
-					System.Threading.Thread.Sleep(1);
-				}
+				var currentX = locationArrow.X;
+				var currentY = locationArrow.Y;
+				pathView.setPoints(new CoreGraphics.CGPoint[]{
+					new CoreGraphics.CGPoint(currentX, currentY),
+					new CoreGraphics.CGPoint(currentX-50, currentY),
+					new CoreGraphics.CGPoint(currentX-50, currentY+50),
+					new CoreGraphics.CGPoint(currentX+50, currentY+50)
+				});
+
+				debugLabel.Text = "scaleFactor " + floorplanView.ZoomScale;
 			};
 				
 

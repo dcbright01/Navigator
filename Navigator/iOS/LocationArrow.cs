@@ -1,5 +1,6 @@
 ﻿using System;
 using UIKit;
+using CoreGraphics;
 
 namespace Navigator.iOS
 {
@@ -37,6 +38,12 @@ namespace Navigator.iOS
 			Y += y;
 			calculateRelPositions ();
 		}
+
+
+		public void moveForwards(double distance){
+
+		}
+
 			
 		public void calculateRelPositions(){
 			this.Center = new CoreGraphics.CGPoint (X * _scaleFactor, Y * _scaleFactor);

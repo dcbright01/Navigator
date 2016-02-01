@@ -19,6 +19,10 @@ namespace Navigator.iOS
 
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
+		UILabel debugLabel { get; set; }
+
+		[Outlet]
+		[GeneratedCode ("iOS Designer", "1.0")]
 		UIScrollView floorplanView { get; set; }
 
 		[Outlet]
@@ -34,6 +38,10 @@ namespace Navigator.iOS
 			if (Button != null) {
 				Button.Dispose ();
 				Button = null;
+			}
+			if (debugLabel != null) {
+				debugLabel.Dispose ();
+				debugLabel = null;
 			}
 			if (floorplanView != null) {
 				floorplanView.Dispose ();

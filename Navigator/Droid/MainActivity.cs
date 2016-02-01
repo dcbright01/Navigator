@@ -115,9 +115,18 @@ namespace Navigator.Droid
 			paint.AntiAlias = true;
 			paint.Color = Color.Magenta;
 
-			// Draw the damn point.
+            // Calculate inverse matrix
+            Matrix inverse = new Matrix();
+            _imgMap.ImageMatrix.Invert(inverse);
+
+            // Map the touch point to the correct position on the image.
+            float[] point = new float[] { x, y };
+            inverse.MapPoints(point);
+
+            // Draw the damn point.
 			Canvas canvas = new Canvas(bitmap);
-			canvas.DrawCircle(x, y, 20, paint);
+            //canvas.DrawCircle(x, y, 20, paint);
+            canvas.DrawCircle(point[0], point[1], 20, paint);
 
 			// Change the displayed image to the new one and update current map image
 			// to ensure that change is consistent when tabs are changed.

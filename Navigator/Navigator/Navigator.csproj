@@ -30,6 +30,7 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="StepDetector.cs" />
     <Compile Include="MyClass.cs" />
     <Compile Include="Pathfinding\Graph\Edge.cs" />
     <Compile Include="Pathfinding\Graph\Graph.cs" />

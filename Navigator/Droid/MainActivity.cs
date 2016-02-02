@@ -50,7 +50,7 @@ namespace Navigator.Droid
             base.OnCreate(savedInstanceState);
 
             _sensorManager = (SensorManager)GetSystemService(SensorService);
-
+            _step.Taken += _step_Taken;
             // Small pathfinding test
             /*
             var asset = Assets.Open("pbSmall.xml");
@@ -99,8 +99,6 @@ namespace Navigator.Droid
             });
         }
 
-        
-
         protected override void OnResume()
         {
             base.OnResume();
@@ -124,7 +122,7 @@ namespace Navigator.Droid
         public void OnSensorChanged(SensorEvent e)
         {
             var sensor = e.Sensor;
-            _step.Taken += _step_Taken;
+            
             switch (sensor.Type)
             {
                 case SensorType.Accelerometer:
@@ -150,14 +148,14 @@ namespace Navigator.Droid
 
         private void _step_Taken(int steps)
         {
-
+            _stepCount = steps;
             if (inDebug)
             {
-                //SetContentView(Resource.Layout.Debug);
-                //_stepText = FindViewById<TextView>(Resource.Id.stepCounter);
-                //_stepText.Text = string.Format("Steps: {0}", _stepCount);
-            }
-            _stepCount = steps;
+                SetContentView(Resource.Layout.Debug);
+                _stepText = FindViewById<TextView>(Resource.Id.stepCounter);
+                string x = string.Format("Steps: {0}", _stepCount);
+                _stepText.Text = x;
+            }   
         }
 
         //http://www.codingforandroid.com/2011/01/using-orientation-sensors-simple.html

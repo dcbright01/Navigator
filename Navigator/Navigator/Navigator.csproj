@@ -39,6 +39,7 @@
     <Compile Include="Primitives\Size.cs" />
     <Compile Include="Primitives\Vector2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StepDetector.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3">

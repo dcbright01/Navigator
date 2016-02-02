@@ -13,9 +13,12 @@ namespace Navigator.iOS
 		CLLocationManager locationManager = null;
 		LocationArrowImageView locationArrow;
 		UIImageView floorplanImageView;
+		StepDetector stepDetector = new StepDetector();
 
 		UIImage floorplanImageNoGrid;
 		UIImage floorplanImageWithGrid;
+
+		int counter = 0;
 
         public ViewController(IntPtr handle) : base(handle)
         {
@@ -25,8 +28,10 @@ namespace Navigator.iOS
         {
             base.ViewDidLoad();
 
+			stepDetector.Taken += stepHandler;
+
 			var motionManager = new CMMotionManager ();
-			motionManager.AccelerometerUpdateInterval = 0.01; // 100Hz
+			motionManager.AccelerometerUpdateInterval = 0.1; // 10Hz
 
 			UIView container = new UIView ();
 			floorplanImageView = new UIImageView();
@@ -59,9 +64,11 @@ namespace Navigator.iOS
 				pathView.ScaleFactor = floorplanView.ZoomScale;
 			};
 
-			motionManager.StartDeviceMotionUpdates (NSOperationQueue.CurrentQueue, (gyroData, error) => {
-				//locationArrow.lookAtHeading (gyroData.Attitude.Yaw);
+			motionManager.StartAccelerometerUpdates (NSOperationQueue.CurrentQueue, (data, error) => {
+				stepDetector.passValue(data.Acceleration.X*9.8, data.Acceleration.Y*9.8, data.Acceleration.Z*9.8);
 			});
+
+		
 
 			locationManager = new CLLocationManager ();
 			locationManager.DesiredAccuracy = CLLocation.AccuracyBest;
@@ -113,6 +120,12 @@ namespace Navigator.iOS
 
 			//floorplanImageView.Layer.AnchorPoint = new CGPoint (locationArrow.X/floorplanImageNoGrid.Size.Width, locationArrow.Y/floorplanImageNoGrid.Size.Height);
 			locationArrow.lookAtHeading((float)newRad);
+
+		}
+
+		void stepHandler (int steps) {
+			counter++;
+			debugLabel.Text = "s:" + steps + "c:" + counter;
 
 		}
 			

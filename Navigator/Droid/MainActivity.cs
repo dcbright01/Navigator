@@ -88,7 +88,18 @@ namespace Navigator.Droid
                 .Show();
         }
 
-		// Draws a point on the bitmap floorplan image at a specified (x,y). Colour is magenta
+        // Translates coordinates of the imageview touch event to coordinates of the bitmap image
+        // so that points can be drawn on the correct place to account for any offset.
+        private float[] RelativeToAbsoluteCoordinates(int x, int y)
+        {
+            float[] point = new float[] { x, y };
+            Matrix inverse = new Matrix();
+            _imgMap.ImageMatrix.Invert(inverse);
+            inverse.MapPoints(point);
+            return point;
+        }
+
+        // Draws a point on the bitmap floorplan image at a specified (x,y). Colour is magenta
 		// so it stands out.
 		private void DrawPointOnMap(int x, int y)
 		{
@@ -115,17 +126,9 @@ namespace Navigator.Droid
 			paint.AntiAlias = true;
 			paint.Color = Color.Magenta;
 
-            // Calculate inverse matrix
-            Matrix inverse = new Matrix();
-            _imgMap.ImageMatrix.Invert(inverse);
-
-            // Map the touch point to the correct position on the image.
-            float[] point = new float[] { x, y };
-            inverse.MapPoints(point);
-
             // Draw the damn point.
-			Canvas canvas = new Canvas(bitmap);
-            //canvas.DrawCircle(x, y, 20, paint);
+            float[] point = RelativeToAbsoluteCoordinates(x, y);
+            Canvas canvas = new Canvas(bitmap);
             canvas.DrawCircle(point[0], point[1], 20, paint);
 
 			// Change the displayed image to the new one and update current map image

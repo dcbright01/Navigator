@@ -3,10 +3,11 @@
 
 # Build/test output
 
-obj/
-bin/
+Navigator/Droid/obj/
+Navigator/iOS/obj/
+Navigator/Droid/bin/
+Navigator/iOS/bin/
 test-results/
-Debug/
 
 # VS sometimes writes these for no apparent reason
 
@@ -22,6 +23,7 @@ UpgradeLog.*
 *.usertasks
 *.user
 Navigator/Navigator.userprefs
+Navigator/Droid/Resources/Resource.designer.cs
 
 # ReSharper
 *_Resharper.*

@@ -28,7 +28,7 @@ namespace Navigator.iOS
         {
             base.ViewDidLoad();
 
-			stepDetector.Taken += stepHandler;
+			stepDetector.OnStep += stepHandler;
 
 			var motionManager = new CMMotionManager ();
 			motionManager.AccelerometerUpdateInterval = 0.1; // 10Hz

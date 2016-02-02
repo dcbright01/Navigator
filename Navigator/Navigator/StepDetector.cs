@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace Navigator
 {
+    public delegate void StepHandler(int stepsTaken);
+
     public class StepDetector
     {
 
@@ -14,8 +16,7 @@ namespace Navigator
         private double lastTroughValue = -1;
         private int stepCounter = 0;
 
-        public delegate void StepHandler(int steps);
-        public event StepHandler Taken;
+        public event StepHandler OnStep;
 
         public StepDetector()
         {
@@ -45,7 +46,7 @@ namespace Navigator
                 {
                     lastPeakValue = accelValues[1];
                     stepCounter++;
-                    stepped();
+                    OnStepTaken();
                 }
             }
 
@@ -56,7 +57,7 @@ namespace Navigator
             //When you normally increase the counter, call onStepCheck
         }
 
-        private Boolean isTrough()
+        private bool isTrough()
         {
             double oldDifference = accelValues[1] - accelValues[0];
             double newDifference = accelValues[2] - accelValues[1];
@@ -69,7 +70,7 @@ namespace Navigator
             return false;
         }
 
-        private Boolean isPeak()
+        private bool isPeak()
         {
             double oldDifference = accelValues[1] - accelValues[0];
             double newDifference = accelValues[2] - accelValues[1];
@@ -142,9 +143,10 @@ namespace Navigator
             return output;
         }
 
-        public void stepped()
+        public virtual void OnStepTaken()
         {
-            Taken(stepCounter);
+            if (OnStep != null)
+                OnStep(stepCounter);
         }
     }
 }

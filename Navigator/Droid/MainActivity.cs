@@ -48,9 +48,8 @@ namespace Navigator.Droid
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
+            _step.OnStep += OnStepTaken;
             _sensorManager = (SensorManager)GetSystemService(SensorService);
-            _step.Taken += _step_Taken;
             // Small pathfinding test
             /*
             var asset = Assets.Open("pbSmall.xml");
@@ -92,11 +91,12 @@ namespace Navigator.Droid
             {
                 inDebug = true;
                 SetContentView(Resource.Layout.Debug);
-                _azimuthText = FindViewById<TextView>(Resource.Id.azimuth);
-                _azimuthText.Text = string.Format("Azimuth is {0:F1}", RadianToDegree(_azimuth));
-                _stepText = FindViewById<TextView>(Resource.Id.stepCounter);
-                _stepText.Text = string.Format("Steps: {0}", _stepCount);
             });
+        }
+
+        private void OnStepTaken(int steps)
+        {
+            _stepCount = steps;
         }
 
         protected override void OnResume()
@@ -144,22 +144,16 @@ namespace Navigator.Droid
             }
 
             calculateAzimuth();
-        }
-
-        private void _step_Taken(int steps)
-        {
-            _stepCount = steps;
             if (inDebug)
             {
-                SetContentView(Resource.Layout.Debug);
                 _stepText = FindViewById<TextView>(Resource.Id.stepCounter);
-                string x = string.Format("Steps: {0}", _stepCount);
-                _stepText.Text = x;
-            }   
+                string currentText = string.Format("Steps: {0}", _stepCount);
+                RunOnUiThread(() => _stepText.Text = currentText);
+            }
         }
 
         //http://www.codingforandroid.com/2011/01/using-orientation-sensors-simple.html
-        public void calculateAzimuth()
+        private void calculateAzimuth()
         {
             if (mGravity != null && mGeomagnetic != null)
             {
@@ -238,11 +232,13 @@ namespace Navigator.Droid
 
 			bitmap = _currentMapImage;
 
-			Paint paint = new Paint();
-			paint.AntiAlias = true;
-			paint.Color = Color.Magenta;
+		    Paint paint = new Paint
+		    {
+		        AntiAlias = true,
+		        Color = Color.Magenta
+		    };
 
-            // Draw the damn point.
+		    // Draw the damn point.
             float[] point = RelativeToAbsoluteCoordinates(x, y);
             Canvas canvas = new Canvas(bitmap);
             canvas.DrawCircle(point[0], point[1], 20, paint);

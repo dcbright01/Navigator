@@ -106,6 +106,8 @@
     <Compile Include="ViewController.designer.cs">
       <DependentUpon>ViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="LocationArrow.cs" />
+    <Compile Include="PathView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -114,5 +116,6 @@
   <ItemGroup>
     <BundleResource Include="Images\dcsfloor.jpg" />
     <BundleResource Include="Images\dcsFloorGrid.jpg" />
+    <BundleResource Include="Images\location-arrow-solid.png" />
   </ItemGroup>
 </Project>

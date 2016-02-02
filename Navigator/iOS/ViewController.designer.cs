@@ -19,17 +19,29 @@ namespace Navigator.iOS
 
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
+		UILabel debugLabel { get; set; }
+
+		[Outlet]
+		[GeneratedCode ("iOS Designer", "1.0")]
 		UIScrollView floorplanView { get; set; }
 
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
 		UIButton OptionsButton { get; set; }
 
+		[Outlet]
+		[GeneratedCode ("iOS Designer", "1.0")]
+		UIButton simulationButton { get; set; }
+
 		void ReleaseDesignerOutlets ()
 		{
 			if (Button != null) {
 				Button.Dispose ();
 				Button = null;
+			}
+			if (debugLabel != null) {
+				debugLabel.Dispose ();
+				debugLabel = null;
 			}
 			if (floorplanView != null) {
 				floorplanView.Dispose ();
@@ -38,6 +50,10 @@ namespace Navigator.iOS
 			if (OptionsButton != null) {
 				OptionsButton.Dispose ();
 				OptionsButton = null;
+			}
+			if (simulationButton != null) {
+				simulationButton.Dispose ();
+				simulationButton = null;
 			}
 		}
 	}

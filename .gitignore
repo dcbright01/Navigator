@@ -5,6 +5,7 @@
 obj
 bin
 test-results
+Debug
 
 # VS sometimes writes these for no apparent reason
 _UpgradeReport_Files
@@ -17,6 +18,7 @@ UpgradeLog.*
 *.userprefs
 *.usertasks
 *.user
+Navigator/Navigator.userprefs
 
 # ReSharper
 *_Resharper.*

@@ -25,8 +25,6 @@ namespace Navigator.iOS
 			BackgroundColor = UIColor.Clear;
 
 			path = new CGPath ();
-
-
 		}
 
 		public CGPoint getLatestPoint(){
@@ -49,7 +47,6 @@ namespace Navigator.iOS
 				//set up drawing attributes
 				g.SetLineWidth (2/_scaleFactor);
 				UIColor.Red.SetStroke ();
-
 
 				//use a dashed line
 				g.SetLineDash (0, new nfloat[]{5, 2/_scaleFactor});

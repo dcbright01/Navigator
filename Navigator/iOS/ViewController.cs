@@ -1,11 +1,21 @@
 ﻿using System;
 using UIKit;
+using CoreMotion;
+using Foundation;
+using CoreLocation;
+using CoreGraphics;
 
 namespace Navigator.iOS
 {
     public partial class ViewController : UIViewController
     {
         private int toggle = 1;
+		CLLocationManager locationManager = null;
+		LocationArrowImageView locationArrow;
+		UIImageView floorplanImageView;
+
+		UIImage floorplanImageNoGrid;
+		UIImage floorplanImageWithGrid;
 
         public ViewController(IntPtr handle) : base(handle)
         {
@@ -15,15 +25,12 @@ namespace Navigator.iOS
         {
             base.ViewDidLoad();
 
+			var motionManager = new CMMotionManager ();
+			motionManager.AccelerometerUpdateInterval = 0.01; // 100Hz
+
 			UIView container = new UIView ();
-			UIImageView floorplanImageView = new UIImageView();
+			floorplanImageView = new UIImageView();
 			PathView pathView = new PathView ();
-
-
-
-			UIImage floorplanImageNoGrid;
-			UIImage floorplanImageWithGrid;
-			LocationArrowImageView locationArrow;
 
 
 			floorplanImageNoGrid = UIImage.FromBundle ("Images/dcsfloor.jpg");
@@ -52,6 +59,18 @@ namespace Navigator.iOS
 				pathView.ScaleFactor = floorplanView.ZoomScale;
 			};
 
+			motionManager.StartDeviceMotionUpdates (NSOperationQueue.CurrentQueue, (gyroData, error) => {
+				//locationArrow.lookAtHeading (gyroData.Attitude.Yaw);
+			});
+
+			locationManager = new CLLocationManager ();
+			locationManager.DesiredAccuracy = CLLocation.AccuracyBest;
+			locationManager.HeadingFilter = 1;
+
+			locationManager.UpdatedHeading += HandleUpdatedHeading;
+			locationManager.StartUpdatingHeading();
+
+	
             // Perform any additional setup after loading the view, typically from a nib.
             Button.TouchUpInside += delegate
             {
@@ -79,11 +98,29 @@ namespace Navigator.iOS
 					new CoreGraphics.CGPoint(currentX+50, currentY+50)
 				});
 
-				debugLabel.Text = "scaleFactor " + floorplanView.ZoomScale;
+				locationArrow.lookAtHeading((float)-2);
+				//locationArrow.setLocation (650, 850);
+
+				debugLabel.Text = "" + floorplanImageView.Layer.AnchorPoint.X;
 			};
-				
 
         }
+
+		void HandleUpdatedHeading (object sender, CLHeadingUpdatedEventArgs e)
+		{
+			//double oldRad = -locationManager.Heading.TrueHeading * Math.PI / 180D;
+			double newRad = -e.NewHeading.TrueHeading * Math.PI / 180D;
+
+			//floorplanImageView.Layer.AnchorPoint = new CGPoint (locationArrow.X/floorplanImageNoGrid.Size.Width, locationArrow.Y/floorplanImageNoGrid.Size.Height);
+			locationArrow.lookAtHeading((float)newRad);
+
+		}
+			
+		private void floorplanLookAtHeading(float angle) 
+		{
+			floorplanImageView.Transform = CGAffineTransform.MakeRotation(angle);
+
+		}
 
 		private void changeFloorPlanImage(UIImageView imageView, UIImage image){
 			imageView.Image = image;

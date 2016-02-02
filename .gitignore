@@ -2,16 +2,19 @@
 *~
 
 # Build/test output
-obj
-bin
-test-results
-Debug
+
+obj/
+bin/
+test-results/
+Debug/
 
 # VS sometimes writes these for no apparent reason
+
 _UpgradeReport_Files
 UpgradeLog.*
 
 # Per-user data
+
 *.DS_Store
 *.sln.cache
 *.suo

@@ -84,6 +84,7 @@ namespace Navigator.Pathfinding.Graph
                 var target = Vertices.First(x => x.getGraphId() == edge.Target);
                 _pathfindingGraph.AddEdge(new UndirectedEdge<Vertex>(source, target));
             }
+
         }
 
         /// <summary>

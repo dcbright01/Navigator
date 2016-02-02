@@ -7,6 +7,8 @@ Navigator/Droid/obj/
 Navigator/iOS/obj/
 Navigator/Droid/bin/
 Navigator/iOS/bin/
+Navigator/Navigator/bin/
+Navigator/Navigator/obj/
 test-results/
 
 # VS sometimes writes these for no apparent reason
@@ -31,3 +33,4 @@ Navigator/Droid/Resources/Resource.designer.cs
 
 # dotCover
 *.dotCover
+

@@ -10,6 +10,7 @@ using Android.Hardware;
 using Navigator.Droid.Extensions;
 using Navigator.Droid.UIElements;
 using Navigator.Pathfinding.Graph;
+using Navigator.Primitives;
 
 namespace Navigator.Droid
 {
@@ -42,6 +43,13 @@ namespace Navigator.Droid
         private float[] mGravity;
         private float[] mGeomagnetic;
         private bool inDebug = false;
+
+        #endregion
+
+        #region <Position Data>
+
+        private Vector2 startPoint;
+        private Vector2 endPoint;
 
         #endregion
 
@@ -184,18 +192,91 @@ namespace Navigator.Droid
         private void ImgMapOnLongPress(object sender, MotionEvent motionEvent)
         {
             new AlertDialog.Builder(this)
-                .SetPositiveButton("(Start) Its a trap !", (s, args) =>
+                .SetPositiveButton("Start Location", (s, args) =>
                 {
                     // User pressed yes
-					DrawPointOnMap((int)motionEvent.GetX(), (int)motionEvent.GetY());
+                    ResetMap();
+                    startPoint = new Vector2(motionEvent.GetX(), motionEvent.GetY());
+                    DrawPointsOnMap();
                 })
-                .SetNegativeButton("(End) Its still a fucking trap !", (s, args) =>
+                .SetNegativeButton("End Location", (s, args) =>
                 {
-                    // User pressed no 
+                    // User pressed no
+                    ResetMap();
+                    endPoint = new Vector2(motionEvent.GetX(), motionEvent.GetY());
+                    DrawPointsOnMap();
                 })
-                .SetMessage("O noes ! A long press ! What do what do !?!")
+                .SetMessage("Start or end location?")
                 .SetTitle("Pick some shit")
                 .Show();
+        }
+
+        // Draws the current start/end points on the map.
+        private void DrawPointsOnMap()
+        {
+            BitmapFactory.Options myOptions = new BitmapFactory.Options ();
+            myOptions.InDither = true;
+            myOptions.InScaled = false;
+            myOptions.InPreferredConfig = Bitmap.Config.Argb8888;
+            myOptions.InPurgeable = true;
+            myOptions.InMutable = true;
+            Bitmap bitmap;
+
+            // If the current map image is not initialised, initialise it to the correct one.
+            if (_currentMapImage == null) {
+                if (!_isDrawingGrid) {
+                    _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor, myOptions);
+                } else {
+                    _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid, myOptions);
+                }
+            }
+
+            bitmap = _currentMapImage;
+
+            Paint paint = new Paint
+            {
+                AntiAlias = true,
+                Color = Color.Magenta
+            };
+
+            // Draw the damn points.
+            Canvas canvas = new Canvas(bitmap);
+            float[] point;
+
+            if(startPoint != null) {
+                point = RelativeToAbsoluteCoordinates((int)startPoint.X, (int)startPoint.Y);
+                canvas.DrawCircle(point[0], point[1], 20, paint);
+            }
+
+            if(endPoint != null) {
+                point = RelativeToAbsoluteCoordinates((int)endPoint.X, (int)endPoint.Y);
+                canvas.DrawCircle(point[0], point[1], 20, paint); 
+            }
+
+            // Change the displayed image to the new one and update current map image
+            // to ensure that change is consistent when tabs are changed.
+            _imgMap.SetAdjustViewBounds(true);
+            _currentMapImage = bitmap;
+            _imgMap.SetImageBitmap(_currentMapImage);
+        }
+
+        // Resets the floorplan bitmap to a mutable un-edited version
+        private void ResetMap()
+        {
+            BitmapFactory.Options myOptions = new BitmapFactory.Options ();
+            myOptions.InDither = true;
+            myOptions.InScaled = false;
+            myOptions.InPreferredConfig = Bitmap.Config.Argb8888;
+            myOptions.InPurgeable = true;
+            myOptions.InMutable = true;
+
+            if (!_isDrawingGrid) {
+                _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor, myOptions);
+            } else {
+                _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid, myOptions);
+            }
+
+            _imgMap.SetImageBitmap(_currentMapImage);
         }
 
         // Translates coordinates of the imageview touch event to coordinates of the bitmap image
@@ -208,51 +289,7 @@ namespace Navigator.Droid
             inverse.MapPoints(point);
             return point;
         }
-
-        // Draws a point on the bitmap floorplan image at a specified (x,y). Colour is magenta
-		// so it stands out.
-		private void DrawPointOnMap(int x, int y)
-		{
-			BitmapFactory.Options myOptions = new BitmapFactory.Options ();
-			myOptions.InDither = true;
-			myOptions.InScaled = false;
-			myOptions.InPreferredConfig = Bitmap.Config.Argb8888;
-			myOptions.InPurgeable = true;
-			myOptions.InMutable = true;
-			Bitmap bitmap;
-
-			// If the current map image is not initialised, initialise it to the correct one.
-			if (_currentMapImage == null) {
-				if (!_isDrawingGrid) {
-					_currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor, myOptions);
-				} else {
-					_currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid, myOptions);
-				}
-			}
-
-			bitmap = _currentMapImage;
-
-		    Paint paint = new Paint
-		    {
-		        AntiAlias = true,
-		        Color = Color.Magenta
-		    };
-
-		    // Draw the damn point.
-            float[] point = RelativeToAbsoluteCoordinates(x, y);
-            Canvas canvas = new Canvas(bitmap);
-            canvas.DrawCircle(point[0], point[1], 20, paint);
-
-			// Change the displayed image to the new one and update current map image
-			// to ensure that change is consistent when tabs are changed.
-			_imgMap.SetAdjustViewBounds(true);
-			_currentMapImage = bitmap;
-			_imgMap.SetImageBitmap(_currentMapImage);
-
-			// Avoiding a memory leak upon redrawing the image many times
-			//bitmap.Dispose();
-		}
-
+            
         private void DrawGridButtonToggle(object sender, EventArgs eventArgs)
         {
             if (_btnDrawGridToggle.Checked)
@@ -266,7 +303,5 @@ namespace Navigator.Droid
                 _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor);
             }
         }
-
-
     }
 }

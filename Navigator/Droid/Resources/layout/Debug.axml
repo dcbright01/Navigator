@@ -10,6 +10,24 @@
         android:layout_height="wrap_content"
         android:id="@+id/azimuth" />
     <TextView
+        android:text="East Accel is"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/XAccel" />
+    <TextView
+        android:text="North Accel is"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/YAccel" />
+    <TextView
+        android:text="Forward Accel is"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ZAccel" />
+    <TextView
         android:text="Steps: ??"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"

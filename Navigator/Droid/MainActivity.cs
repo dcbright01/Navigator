@@ -39,9 +39,14 @@ namespace Navigator.Droid
         private int _stepCount;
         private TextView _azimuthText;
         private TextView _stepText;
+		private TextView _XAccelText; 
+		private TextView _YAccelText; 
+		private TextView _ZAccelText; 
         private double _azimuth;
         private float[] mGravity;
         private float[] mGeomagnetic;
+		private float[] mAccelerometer; 
+		private float[] mLinear; 
         private bool inDebug = false;
 
         #endregion
@@ -112,8 +117,10 @@ namespace Navigator.Droid
             base.OnResume();
             _sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.Accelerometer),
                 SensorDelay.Ui);
-            _sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.Gyroscope), SensorDelay.Ui);
+            // _sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.Gyroscope), SensorDelay.Ui);
             _sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.MagneticField), SensorDelay.Ui);
+			// _sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.LinearAcceleration), SensorDelay.Ui);
+			_sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.Gravity), SensorDelay.Ui);
         }
 
         protected override void OnPause()
@@ -129,36 +136,68 @@ namespace Navigator.Droid
 
         public void OnSensorChanged(SensorEvent e)
         {
-            var sensor = e.Sensor;
-            
-            switch (sensor.Type)
-            {
-                case SensorType.Accelerometer:
-                    mGravity = e.Values.ToArray();
+			//long currentMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+			// only want 10 values per second to be fed 
+			//if ((currentMilliseconds - initialMilliseconds) > 100) 
+			//{
+				//initialMilliseconds = currentMilliseconds;
+				var sensor = e.Sensor;
 
-                    long currentMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-                    // only want 10 values per second to be fed 
-                    if ((currentMilliseconds - initialMilliseconds) > 100)
-                    {
-                        _step.passValue((double)mGravity[0], (double)mGravity[1], (double)mGravity[2]);
-                        initialMilliseconds = currentMilliseconds;
-                    }
-                    break;
-                case SensorType.Gyroscope:
-                    break;
-                case SensorType.MagneticField:
-                    mGeomagnetic = e.Values.ToArray();
-                    break;
-            }
+				switch (sensor.Type)
+				{
+					case SensorType.Accelerometer:
+						mAccelerometer = e.Values.ToArray(); 
+						_step.passValue((double)mAccelerometer[0], (double)mAccelerometer[1], (double)mAccelerometer[2]);
+						break;
+					// case SensorType.Gyroscope:
+					//	break;
+					case SensorType.MagneticField:
+						mGeomagnetic = e.Values.ToArray();
+						break;
+					// case SensorType.LinearAcceleration:
+					//	mLinear = e.Values.ToArray();
+					//	break;
+					case SensorType.Gravity:
+						mGravity = e.Values.ToArray();
+						break;
+				}
+					
+				getHorizontalAcceleration (); 
 
-            calculateAzimuth();
-            if (inDebug)
-            {
-                _stepText = FindViewById<TextView>(Resource.Id.stepCounter);
-                string currentText = string.Format("Steps: {0}", _stepCount);
-                RunOnUiThread(() => _stepText.Text = currentText);
-            }
+				if (inDebug)
+				{
+					_stepText = FindViewById<TextView>(Resource.Id.stepCounter);
+					string currentText = string.Format("Steps: {0}", _stepCount);
+					RunOnUiThread(() => _stepText.Text = currentText);
+				}
+			//}
         }
+
+		private void getHorizontalAcceleration()
+		{
+			if (mGravity != null && mGeomagnetic != null) 
+			{
+				float[] R = new float[9];
+				float[] I = new float[9];
+				SensorManager.GetRotationMatrix (R, I, mGravity, mGeomagnetic);
+
+				float[] A_W = new float[3];
+				A_W [0] = R [0] * mAccelerometer [0] + R [1] * mAccelerometer [1] + R [2] * mAccelerometer [2];
+				A_W [1] = R [3] * mAccelerometer [0] + R [4] * mAccelerometer [1] + R [5] * mAccelerometer [2];
+				A_W [2] = R [6] * mAccelerometer [0] + R [7] * mAccelerometer [1] + R [8] * mAccelerometer [2];
+
+				if (inDebug) 
+				{
+					SetContentView (Resource.Layout.Debug);
+					_XAccelText = FindViewById<TextView> (Resource.Id.XAccel);
+					_YAccelText = FindViewById<TextView> (Resource.Id.YAccel);
+					_ZAccelText = FindViewById<TextView> (Resource.Id.ZAccel);
+					_XAccelText.Text = string.Format ("East accel is {0:F1}", A_W [0]);
+					_YAccelText.Text = string.Format ("North accel is {0:F1}", A_W [1]);
+					_ZAccelText.Text = string.Format ("Forward accel is {0:F1}", A_W [2]);
+				}
+			}
+		}
 
         //http://www.codingforandroid.com/2011/01/using-orientation-sensors-simple.html
         private void calculateAzimuth()

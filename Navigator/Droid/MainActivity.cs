@@ -117,9 +117,7 @@ namespace Navigator.Droid
             base.OnResume();
             _sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.Accelerometer),
                 SensorDelay.Ui);
-            // _sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.Gyroscope), SensorDelay.Ui);
             _sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.MagneticField), SensorDelay.Ui);
-			// _sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.LinearAcceleration), SensorDelay.Ui);
 			_sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.Gravity), SensorDelay.Ui);
         }
 
@@ -147,22 +145,16 @@ namespace Navigator.Droid
 				{
 					case SensorType.Accelerometer:
 						mAccelerometer = e.Values.ToArray(); 
-						_step.passValue((double)mAccelerometer[0], (double)mAccelerometer[1], (double)mAccelerometer[2]);
 						break;
-					// case SensorType.Gyroscope:
-					//	break;
 					case SensorType.MagneticField:
 						mGeomagnetic = e.Values.ToArray();
 						break;
-					// case SensorType.LinearAcceleration:
-					//	mLinear = e.Values.ToArray();
-					//	break;
 					case SensorType.Gravity:
 						mGravity = e.Values.ToArray();
 						break;
 				}
 					
-				getHorizontalAcceleration (); 
+				getHorizontalAcceleration(); 
 
 				if (inDebug)
 				{
@@ -185,6 +177,8 @@ namespace Navigator.Droid
 				A_W [0] = R [0] * mAccelerometer [0] + R [1] * mAccelerometer [1] + R [2] * mAccelerometer [2];
 				A_W [1] = R [3] * mAccelerometer [0] + R [4] * mAccelerometer [1] + R [5] * mAccelerometer [2];
 				A_W [2] = R [6] * mAccelerometer [0] + R [7] * mAccelerometer [1] + R [8] * mAccelerometer [2];
+
+				_step.passValue((double) A_W[0], (double) A_W[1], (double) A_W[2]);
 
 				if (inDebug) 
 				{

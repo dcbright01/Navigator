@@ -15,6 +15,7 @@ namespace Navigator
         private double lastPeakValue = -1;
         private double lastTroughValue = -1;
         private int stepCounter = 0;
+		private long initialMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
         public event StepHandler OnStep;
 
@@ -42,11 +43,16 @@ namespace Navigator
                 // average = (totalOfDifferences / numberOfDifferences); 
 
                 // the thresholds that we use in order to filter out false positives
-                if (difference > 0.5 && difference < 2.2)
+                if (difference > 1.5 && difference < 3)
                 {
-                    lastPeakValue = accelValues[1];
-                    stepCounter++;
-                    OnStepTaken();
+					long currentMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+					if ((currentMilliseconds - initialMilliseconds) > 500) 
+					{
+						initialMilliseconds = currentMilliseconds; 
+						lastPeakValue = accelValues [1];
+						stepCounter++;
+						OnStepTaken ();
+					}
                 }
             }
 
@@ -96,7 +102,7 @@ namespace Navigator
             if (functionCalledCounter < 3)
             {
                 // we have a window of 3 values, so for the first 3 values just fill in the window
-                accelValues[functionCalledCounter] = getFilteredVectorMagnitude(accelValueX, accelValueY, accelValueZ);
+                accelValues[functionCalledCounter] = getFilteredMagnitude(accelValueX, accelValueY, accelValueZ);
                 functionCalledCounter++;
                 if (functionCalledCounter == 2)
                 {
@@ -108,20 +114,21 @@ namespace Navigator
             // last 2 values of previous window become first 2 of new window
             Array.Copy(accelValues, 1, accelValues, 0, accelValues.Length - 1);
             // last value of new window is the filtered vector magnitude
-            accelValues[2] = getFilteredVectorMagnitude(accelValueX, accelValueY, accelValueZ);
+            accelValues[2] = getFilteredMagnitude(accelValueX, accelValueY, accelValueZ);
             functionCalledCounter++;
             stepCheck();
         }
 
         private double[] filteredAccelVals = null;
 
-        public double getFilteredVectorMagnitude(double accelValueX, double accelValueY, double accelValueZ)
+        public double getFilteredMagnitude(double accelValueX, double accelValueY, double accelValueZ)
         {
             double[] newAccelVals = { accelValueX, accelValueY, accelValueZ };
 
             filteredAccelVals = lowPass(newAccelVals, filteredAccelVals);
 
-            return Math.Sqrt(Math.Pow(filteredAccelVals[0], 2) + Math.Pow(filteredAccelVals[1], 2) + Math.Pow(filteredAccelVals[2], 2));
+			// only looking at the Z value for now
+			return filteredAccelVals[2];
         }
 
         public static double[] lowPass(double[] input, double[] output)

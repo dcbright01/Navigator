@@ -7,6 +7,7 @@ using Android.OS;
 using Android.Views;
 using Android.Widget;
 using Android.Hardware;
+using Android.Opengl; 
 using Navigator.Droid.Extensions;
 using Navigator.Droid.UIElements;
 using Navigator.Pathfinding.Graph;
@@ -134,11 +135,6 @@ namespace Navigator.Droid
 
         public void OnSensorChanged(SensorEvent e)
         {
-			//long currentMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-			// only want 10 values per second to be fed 
-			//if ((currentMilliseconds - initialMilliseconds) > 100) 
-			//{
-				//initialMilliseconds = currentMilliseconds;
 				var sensor = e.Sensor;
 
 				switch (sensor.Type)
@@ -162,21 +158,27 @@ namespace Navigator.Droid
 					string currentText = string.Format("Steps: {0}", _stepCount);
 					RunOnUiThread(() => _stepText.Text = currentText);
 				}
-			//}
         }
 
 		private void getHorizontalAcceleration()
 		{
 			if (mGravity != null && mGeomagnetic != null) 
 			{
-				float[] R = new float[9];
-				float[] I = new float[9];
+				float[] R = new float[16];
+				float[] I = new float[16];
 				SensorManager.GetRotationMatrix (R, I, mGravity, mGeomagnetic);
+				float[] relativacc = new float[4];
+				float[] inv = new float[16];
 
-				float[] A_W = new float[3];
-				A_W [0] = R [0] * mAccelerometer [0] + R [1] * mAccelerometer [1] + R [2] * mAccelerometer [2];
-				A_W [1] = R [3] * mAccelerometer [0] + R [4] * mAccelerometer [1] + R [5] * mAccelerometer [2];
-				A_W [2] = R [6] * mAccelerometer [0] + R [7] * mAccelerometer [1] + R [8] * mAccelerometer [2];
+				relativacc[0] = mAccelerometer[0];
+				relativacc[1] = mAccelerometer[1];
+				relativacc[2] = mAccelerometer[2];
+				relativacc[3] = 0;
+
+				float[] A_W = new float[4]; 
+
+				Android.Opengl.Matrix.InvertM (inv, 0, R, 0); 
+				Android.Opengl.Matrix.MultiplyMV (A_W, 0, inv, 0, relativacc, 0); 
 
 				_step.passValue((double) A_W[0], (double) A_W[1], (double) A_W[2]);
 
@@ -317,7 +319,7 @@ namespace Navigator.Droid
         private float[] RelativeToAbsoluteCoordinates(int x, int y)
         {
             float[] point = new float[] { x, y };
-            Matrix inverse = new Matrix();
+			Android.Graphics.Matrix inverse = new Android.Graphics.Matrix();
             _imgMap.ImageMatrix.Invert(inverse);
             inverse.MapPoints(point);
             return point;

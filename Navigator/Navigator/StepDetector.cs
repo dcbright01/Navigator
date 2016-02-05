@@ -36,24 +36,26 @@ namespace Navigator
                     return;
                 }
 
-                double difference = Math.Abs(accelValues[1] - lastTroughValue);
+				double difference = Math.Abs((accelValues[1] - lastTroughValue));
 
                 // totalOfDifferences += difference; 
                 // numberOfDifferences++; 
                 // average = (totalOfDifferences / numberOfDifferences); 
 
                 // the thresholds that we use in order to filter out false positives
-                if (difference > 1.5 && difference < 3)
+				if (difference > 1 && difference < 6 && maxAccelMagnitudeSeen > 0.6)
                 {
 					long currentMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-					if ((currentMilliseconds - initialMilliseconds) > 500) 
-					{
+					//if ((currentMilliseconds - initialMilliseconds) > 500) 
+					//{
 						initialMilliseconds = currentMilliseconds; 
 						lastPeakValue = accelValues [1];
 						stepCounter++;
 						OnStepTaken ();
-					}
+					//}
                 }
+
+				maxAccelMagnitudeSeen = 0; 
             }
 
             if (isTrough())
@@ -120,14 +122,20 @@ namespace Navigator
         }
 
         private double[] filteredAccelVals = null;
+		private double[] unfilteredAccelVals = null; 
+		private double maxAccelMagnitudeSeen = 0; 
 
         public double getFilteredMagnitude(double accelValueX, double accelValueY, double accelValueZ)
         {
             double[] newAccelVals = { accelValueX, accelValueY, accelValueZ };
+			unfilteredAccelVals = newAccelVals; 
 
             filteredAccelVals = lowPass(newAccelVals, filteredAccelVals);
+			if (Math.Abs (filteredAccelVals [0]) > maxAccelMagnitudeSeen) 
+			{
+				maxAccelMagnitudeSeen = filteredAccelVals [0]; 
+			}
 
-			// only looking at the Z value for now
 			return filteredAccelVals[2];
         }
 

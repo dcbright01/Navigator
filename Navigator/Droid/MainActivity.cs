@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
 using Android.App;
 using Android.Graphics;
 using Android.OS;
@@ -10,7 +11,7 @@ using Android.Hardware;
 using Android.Opengl; 
 using Navigator.Droid.Extensions;
 using Navigator.Droid.UIElements;
-using Navigator.Pathfinding.Graph;
+using Navigator.Pathfinding;
 using Navigator.Primitives;
 
 namespace Navigator.Droid
@@ -65,15 +66,18 @@ namespace Navigator.Droid
             _step.OnStep += OnStepTaken;
             _sensorManager = (SensorManager)GetSystemService(SensorService);
             // Small pathfinding test
-            /*
-            var asset = Assets.Open("pbSmall.xml");
+            
+            var asset = Assets.Open("test.xml");
+			Stopwatch sw = new Stopwatch ();
+			sw.Start ();
             var g = Graph.Load(asset);
-
-            var start = g.Vertices.OrderBy(x => x.DistanceTo(new Vertex() { X = 201, Y = 379 })).First();
-            var end = g.Vertices.OrderBy(x => x.DistanceTo(new Vertex() { X = 621, Y = 149 })).First();
+			sw.Stop ();
+			long time = (sw.ElapsedMilliseconds / 1000);
+			var start = g.Vertices.First(x=>x=="789-717");
+			var end = g.Vertices.First(x => x == "1479-1167");
             var path = g.FindPath(start,end);
             var path2 = g.FindPath(start,end);
-            */
+            
             // Set nav mode
             ActionBar.NavigationMode = ActionBarNavigationMode.Tabs;
             SetContentView(Resource.Layout.ScaleImage);

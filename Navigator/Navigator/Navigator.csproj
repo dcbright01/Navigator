@@ -30,13 +30,10 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Pathfinding\Serialisation.cs" />
     <Compile Include="StepDetector.cs" />
     <Compile Include="MyClass.cs" />
-    <Compile Include="Pathfinding\Graph\Edge.cs" />
-    <Compile Include="Pathfinding\Graph\Graph.cs" />
-    <Compile Include="Pathfinding\Graph\GraphIdentifiable.cs" />
-    <Compile Include="Pathfinding\Graph\SerializeableKeyValue.cs" />
-    <Compile Include="Pathfinding\Graph\Vertex.cs" />
+    <Compile Include="Pathfinding\Graph.cs" />
     <Compile Include="Primitives\Size.cs" />
     <Compile Include="Primitives\Vector2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

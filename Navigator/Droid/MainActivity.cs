@@ -235,14 +235,18 @@ namespace Navigator.Droid
                 {
                     // User pressed yes
                     ResetMap();
-                    startPoint = new Vector2(motionEvent.GetX(), motionEvent.GetY());
+
+                    float[] point = RelativeToAbsoluteCoordinates((int)motionEvent.GetX(), (int)motionEvent.GetY());
+                    startPoint = new Vector2(point[0], point[1]);
                     DrawPointsOnMap();
                 })
                 .SetNegativeButton("End Location", (s, args) =>
                 {
                     // User pressed no
                     ResetMap();
-                    endPoint = new Vector2(motionEvent.GetX(), motionEvent.GetY());
+                    
+                    float[] point = RelativeToAbsoluteCoordinates((int)motionEvent.GetX(), (int)motionEvent.GetY());
+                    endPoint = new Vector2(point[0], point[1]);
                     DrawPointsOnMap();
                 })
                 .SetMessage("Start or end location?")
@@ -280,16 +284,13 @@ namespace Navigator.Droid
 
             // Draw the damn points.
             Canvas canvas = new Canvas(bitmap);
-            float[] point;
 
             if(startPoint != null) {
-                point = RelativeToAbsoluteCoordinates((int)startPoint.X, (int)startPoint.Y);
-                canvas.DrawCircle(point[0], point[1], 20, paint);
+                canvas.DrawCircle(startPoint.X, startPoint.Y, 20, paint);
             }
 
             if(endPoint != null) {
-                point = RelativeToAbsoluteCoordinates((int)endPoint.X, (int)endPoint.Y);
-                canvas.DrawCircle(point[0], point[1], 20, paint); 
+                canvas.DrawCircle(endPoint.X, endPoint.Y, 20, paint);
             }
 
             // Change the displayed image to the new one and update current map image

@@ -43,6 +43,9 @@ namespace Navigator.Droid
 		private TextView _XAccelText; 
 		private TextView _YAccelText; 
 		private TextView _ZAccelText; 
+		private TextView _LinearXAccelText;
+		private TextView _LinearYAccelText;
+		private TextView _LinearZAccelText; 
         private double _azimuth;
         private float[] mGravity;
         private float[] mGeomagnetic;
@@ -120,6 +123,7 @@ namespace Navigator.Droid
                 SensorDelay.Ui);
             _sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.MagneticField), SensorDelay.Ui);
 			_sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.Gravity), SensorDelay.Ui);
+			_sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.LinearAcceleration), SensorDelay.Ui);
         }
 
         protected override void OnPause()
@@ -148,6 +152,9 @@ namespace Navigator.Droid
 					case SensorType.Gravity:
 						mGravity = e.Values.ToArray();
 						break;
+					case SensorType.LinearAcceleration:
+						mLinear = e.Values.ToArray(); 
+						break; 
 				}
 					
 				getHorizontalAcceleration(); 
@@ -188,13 +195,19 @@ namespace Navigator.Droid
 					_XAccelText = FindViewById<TextView> (Resource.Id.XAccel);
 					_YAccelText = FindViewById<TextView> (Resource.Id.YAccel);
 					_ZAccelText = FindViewById<TextView> (Resource.Id.ZAccel);
+					_LinearXAccelText = FindViewById<TextView> (Resource.Id.linearXAccel);
+					_LinearYAccelText = FindViewById<TextView> (Resource.Id.linearYAccel);
+					_LinearZAccelText = FindViewById<TextView> (Resource.Id.linearZAccel);
 					_XAccelText.Text = string.Format ("East accel is {0:F1}", A_W [0]);
 					_YAccelText.Text = string.Format ("North accel is {0:F1}", A_W [1]);
 					_ZAccelText.Text = string.Format ("Forward accel is {0:F1}", A_W [2]);
+					_LinearXAccelText.Text = string.Format ("X linear accel is {0:F1}", mLinear[0]);
+					_LinearYAccelText.Text = string.Format ("Y linear accel is {0:F1}", mLinear[1]);
+					_LinearZAccelText.Text = string.Format ("Z linear accel is {0:F1}", mLinear[2]);
 				}
 			}
 		}
-
+			
         //http://www.codingforandroid.com/2011/01/using-orientation-sensors-simple.html
         private void calculateAzimuth()
         {

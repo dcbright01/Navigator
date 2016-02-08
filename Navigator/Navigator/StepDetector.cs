@@ -43,16 +43,16 @@ namespace Navigator
                 // average = (totalOfDifferences / numberOfDifferences); 
 
                 // the thresholds that we use in order to filter out false positives
-				if (difference > 1 && difference < 6 && maxAccelMagnitudeSeen > 0.6)
+				if (difference > 1)
                 {
 					long currentMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-					//if ((currentMilliseconds - initialMilliseconds) > 500) 
-					//{
+					if ((currentMilliseconds - initialMilliseconds) > 200 && (currentMilliseconds - initialMilliseconds) < 600) 
+					{
 						initialMilliseconds = currentMilliseconds; 
 						lastPeakValue = accelValues [1];
 						stepCounter++;
 						OnStepTaken ();
-					//}
+					}
                 }
 
 				maxAccelMagnitudeSeen = 0; 
@@ -129,12 +129,12 @@ namespace Navigator
         {
             double[] newAccelVals = { accelValueX, accelValueY, accelValueZ };
 			unfilteredAccelVals = newAccelVals; 
+			if (Math.Abs (unfilteredAccelVals [1]) > maxAccelMagnitudeSeen) 
+			{
+				maxAccelMagnitudeSeen = Math.Abs(unfilteredAccelVals [1]); 
+			}
 
             filteredAccelVals = lowPass(newAccelVals, filteredAccelVals);
-			if (Math.Abs (filteredAccelVals [0]) > maxAccelMagnitudeSeen) 
-			{
-				maxAccelMagnitudeSeen = filteredAccelVals [0]; 
-			}
 
 			return filteredAccelVals[2];
         }

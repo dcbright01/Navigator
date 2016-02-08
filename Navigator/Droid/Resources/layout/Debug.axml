@@ -33,4 +33,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/stepCounter" />
+    <TextView
+        android:text="Linear Accel X"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearXAccel" />
+    <TextView
+        android:text="Linear Accel Y"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearYAccel" />
+    <TextView
+        android:text="Linear Accel Z"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearZAccel" />
 </LinearLayout>

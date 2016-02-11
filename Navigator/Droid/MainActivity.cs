@@ -238,7 +238,7 @@ namespace Navigator.Droid
 
                     float[] point = RelativeToAbsoluteCoordinates((int)motionEvent.GetX(), (int)motionEvent.GetY());
                     startPoint = new Vector2(point[0], point[1]);
-                    DrawPointsOnMap();
+                    DrawOnMap();
                 })
                 .SetNegativeButton("End Location", (s, args) =>
                 {
@@ -247,15 +247,15 @@ namespace Navigator.Droid
                     
                     float[] point = RelativeToAbsoluteCoordinates((int)motionEvent.GetX(), (int)motionEvent.GetY());
                     endPoint = new Vector2(point[0], point[1]);
-                    DrawPointsOnMap();
+                    DrawOnMap();
                 })
                 .SetMessage("Start or end location?")
                 .SetTitle("Pick some shit")
                 .Show();
         }
 
-        // Draws the current start/end points on the map.
-        private void DrawPointsOnMap()
+        // Draws the current points and lines on the map.
+        private void DrawOnMap()
         {
             BitmapFactory.Options myOptions = new BitmapFactory.Options ();
             myOptions.InDither = true;
@@ -291,6 +291,11 @@ namespace Navigator.Droid
 
             if(endPoint != null) {
                 canvas.DrawCircle(endPoint.X, endPoint.Y, 20, paint);
+            }
+
+            if((startPoint != null) && (endPoint != null)) {
+                paint.StrokeWidth = 10;
+                canvas.DrawLine(startPoint.X, startPoint.Y, endPoint.X, endPoint.Y, paint);
             }
 
             // Change the displayed image to the new one and update current map image
@@ -332,15 +337,24 @@ namespace Navigator.Droid
             
         private void DrawGridButtonToggle(object sender, EventArgs eventArgs)
         {
+            BitmapFactory.Options myOptions = new BitmapFactory.Options();
+            myOptions.InDither = true;
+            myOptions.InScaled = false;
+            myOptions.InPreferredConfig = Bitmap.Config.Argb8888;
+            myOptions.InPurgeable = true;
+            myOptions.InMutable = true;
+
             if (_btnDrawGridToggle.Checked)
             {
                 _isDrawingGrid = true;
-                _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid);
+                _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid, myOptions);
+                DrawOnMap();
             }
             else
             {
                 _isDrawingGrid = false;
-                _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor);
+                _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor, myOptions);
+                DrawOnMap();
             }
         }
     }

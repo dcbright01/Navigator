@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
+using System.Linq; 
 using Android.App;
 using Android.Graphics;
 using Android.OS;
@@ -50,7 +50,6 @@ namespace Navigator.Droid
         private float[] mGravity;
         private float[] mGeomagnetic;
 		private float[] mAccelerometer; 
-		private float[] mLinear; 
         private bool inDebug = false;
 
         #endregion
@@ -120,10 +119,9 @@ namespace Navigator.Droid
         {
             base.OnResume();
             _sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.Accelerometer),
-                SensorDelay.Ui);
-            _sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.MagneticField), SensorDelay.Ui);
-			_sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.Gravity), SensorDelay.Ui);
-			_sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.LinearAcceleration), SensorDelay.Ui);
+                SensorDelay.Fastest);
+			_sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.MagneticField), SensorDelay.Fastest);
+			_sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.Gravity), SensorDelay.Fastest);
         }
 
         protected override void OnPause()
@@ -139,32 +137,31 @@ namespace Navigator.Droid
 
         public void OnSensorChanged(SensorEvent e)
         {
-				var sensor = e.Sensor;
+			long currentMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+			if ((currentMilliseconds - initialMilliseconds) > 10) {
+				initialMilliseconds = currentMilliseconds;
+				var sensor = e.Sensor; 
 
-				switch (sensor.Type)
-				{
-					case SensorType.Accelerometer:
-						mAccelerometer = e.Values.ToArray(); 
-						break;
-					case SensorType.MagneticField:
-						mGeomagnetic = e.Values.ToArray();
-						break;
-					case SensorType.Gravity:
-						mGravity = e.Values.ToArray();
-						break;
-					case SensorType.LinearAcceleration:
-						mLinear = e.Values.ToArray(); 
-						break; 
+				switch (sensor.Type) {
+				case SensorType.Accelerometer:
+					mAccelerometer = e.Values.ToArray (); 
+					break;
+				case SensorType.MagneticField:
+					mGeomagnetic = e.Values.ToArray ();
+					break;
+				case SensorType.Gravity:
+					mGravity = e.Values.ToArray ();
+					break;
 				}
 					
-				getHorizontalAcceleration(); 
+				getHorizontalAcceleration (); 
 
-				if (inDebug)
-				{
-					_stepText = FindViewById<TextView>(Resource.Id.stepCounter);
-					string currentText = string.Format("Steps: {0}", _stepCount);
-					RunOnUiThread(() => _stepText.Text = currentText);
+				if (inDebug) {
+					_stepText = FindViewById<TextView> (Resource.Id.stepCounter);
+					string currentText = string.Format ("Steps: {0}", _stepCount);
+					RunOnUiThread (() => _stepText.Text = currentText);
 				}
+			}
         }
 
 		private void getHorizontalAcceleration()
@@ -187,7 +184,9 @@ namespace Navigator.Droid
 				Android.Opengl.Matrix.InvertM (inv, 0, R, 0); 
 				Android.Opengl.Matrix.MultiplyMV (A_W, 0, inv, 0, relativacc, 0); 
 
-				_step.passValue((double) A_W[0], (double) A_W[1], (double) A_W[2]);
+				// change this temporarily
+				// _step.passValue((double) A_W[0], (double) A_W[1], (double) A_W[2]);
+				_step.passValue((double) mAccelerometer[0], (double) mAccelerometer[1], (double) mAccelerometer[2]); 
 
 				if (inDebug) 
 				{
@@ -201,9 +200,6 @@ namespace Navigator.Droid
 					_XAccelText.Text = string.Format ("East accel is {0:F1}", A_W [0]);
 					_YAccelText.Text = string.Format ("North accel is {0:F1}", A_W [1]);
 					_ZAccelText.Text = string.Format ("Forward accel is {0:F1}", A_W [2]);
-					_LinearXAccelText.Text = string.Format ("X linear accel is {0:F1}", mLinear[0]);
-					_LinearYAccelText.Text = string.Format ("Y linear accel is {0:F1}", mLinear[1]);
-					_LinearZAccelText.Text = string.Format ("Z linear accel is {0:F1}", mLinear[2]);
 				}
 			}
 		}

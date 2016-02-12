@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Navigator.Primitives
 {
@@ -24,7 +20,7 @@ namespace Navigator.Primitives
             Y = values[1];
         }
 
-        public float DistanceTo(Vector2 otherVector)
+        public float Distance2D(Vector2 otherVector)
         {
             return (float) Math.Sqrt(Math.Pow(X - otherVector.X, 2) + Math.Pow(Y - otherVector.Y, 2));
         }

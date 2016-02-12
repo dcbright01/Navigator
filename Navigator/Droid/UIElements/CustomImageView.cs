@@ -5,7 +5,6 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Navigator.Primitives;
-using Size = Navigator.Primitives.Size;
 
 namespace Navigator.Droid.UIElements
 {
@@ -40,78 +39,6 @@ namespace Navigator.Droid.UIElements
 
     public class CustomImageView : ImageView, View.IOnTouchListener
     {
-        #region < Properties>
-
-        // Event stuff
-        public event LongPressHandler LongPress;
-
-        // Element base
-        private readonly Context _context;
-
-        // Translation stuff
-        private Matrix _matrix;
-        private Size _elementSize;
-        private Size _translationSize;
-        private float _scale;
-        private float _minScale;
-        private readonly float _maxScale = 2.0f;
-        private float _lastDistance;
-        private Vector2 _lastMove;
-
-        private bool _isScaling;
-        private GestureDetector _gestureDetector;
-
-        public float Scale
-        {
-            get { return GetMatrixValue(Matrix.MscaleX); }
-        }
-
-        public float TranslateX
-        {
-            get { return GetMatrixValue(Matrix.MtransX); }
-        }
-
-        public float TranslateY
-        {
-            get { return GetMatrixValue(Matrix.MtransY); }
-        }
-
-        public float TotalElementDistance
-        {
-            get { return (float) Math.Sqrt(Math.Pow(_elementSize.Width, 2) + Math.Pow(_elementSize.Height, 2)); }
-        }
-
-        public virtual void OnLongPress(MotionEvent e)
-        {
-            if (LongPress != null)
-                LongPress(this, e);
-        }
-
-        public Context Context { get { return _context; } }
-
-        #endregion
-
-        #region < InheritedConstructors & Methods >
-
-        public CustomImageView(Context context, IAttributeSet attrs) : base(context, attrs)
-        {
-            _context = context;
-            InitializeElement();
-        }
-
-        public CustomImageView(Context context, IAttributeSet attrs, int defStyle) : base(context, attrs, defStyle)
-        {
-            _context = context;
-            InitializeElement();
-        }
-
-        public bool OnTouch(View v, MotionEvent e)
-        {
-            return OnTouchEvent(e);
-        }
-
-        #endregion
-
         /// <summary>
         ///     Sets up some of the local variables as well as Intrinsic and gesture detector
         /// </summary>
@@ -160,8 +87,8 @@ namespace Navigator.Droid.UIElements
             _matrix.PostTranslate(scaleTranslateX, scaleTranslateY);
 
             // Move the specified x and Y distance
-            _matrix.PostTranslate(-(x - (_elementSize.Width/2))*scale, 0);
-            _matrix.PostTranslate(0, -(y - (_elementSize.Height/2))*scale);
+            _matrix.PostTranslate(-(x - _elementSize.Width/2)*scale, 0);
+            _matrix.PostTranslate(0, -(y - _elementSize.Height/2)*scale);
 
             ImageMatrix = _matrix;
         }
@@ -264,7 +191,7 @@ namespace Navigator.Droid.UIElements
                     {
                         var touchOne = new Vector2(e.GetX(0), e.GetY(0));
                         var touchTwo = new Vector2(e.GetX(1), e.GetY(1));
-                        var distance = touchOne.DistanceTo(touchTwo);
+                        var distance = touchOne.Distance2D(touchTwo);
                         _lastDistance = distance;
                         _isScaling = true;
                     }
@@ -277,7 +204,7 @@ namespace Navigator.Droid.UIElements
                     {
                         var touchOne = new Vector2(e.GetX(0), e.GetY(0));
                         var touchTwo = new Vector2(e.GetX(1), e.GetY(1));
-                        var distance = touchOne.DistanceTo(touchTwo);
+                        var distance = touchOne.Distance2D(touchTwo);
                         var scale = (distance - _lastDistance)/TotalElementDistance;
                         _lastDistance = distance;
                         scale += 1;
@@ -312,7 +239,7 @@ namespace Navigator.Droid.UIElements
 
         public void MaxZoomTo(int x, int y)
         {
-            if (_minScale != Scale && (Scale - _minScale) > 0.1f)
+            if (_minScale != Scale && Scale - _minScale > 0.1f)
             {
                 var scale = _minScale/Scale;
                 ZoomTo(x, y, scale);
@@ -323,5 +250,75 @@ namespace Navigator.Droid.UIElements
                 ZoomTo(x, y, scale);
             }
         }
+
+        #region < Properties>
+
+        // Event stuff
+        public event LongPressHandler LongPress;
+
+        // Element base
+        private readonly Context _context;
+
+        // Translation stuff
+        private Matrix _matrix;
+        private Size _elementSize;
+        private Size _translationSize;
+        private float _scale;
+        private float _minScale;
+        private readonly float _maxScale = 2.0f;
+        private float _lastDistance;
+        private Vector2 _lastMove;
+
+        private bool _isScaling;
+        private GestureDetector _gestureDetector;
+
+        public float Scale
+        {
+            get { return GetMatrixValue(Matrix.MscaleX); }
+        }
+
+        public float TranslateX
+        {
+            get { return GetMatrixValue(Matrix.MtransX); }
+        }
+
+        public float TranslateY
+        {
+            get { return GetMatrixValue(Matrix.MtransY); }
+        }
+
+        public float TotalElementDistance
+        {
+            get { return (float) Math.Sqrt(Math.Pow(_elementSize.Width, 2) + Math.Pow(_elementSize.Height, 2)); }
+        }
+
+        public virtual void OnLongPress(MotionEvent e)
+        {
+            if (LongPress != null)
+                LongPress(this, e);
+        }
+
+        #endregion
+
+        #region < InheritedConstructors & Methods >
+
+        public CustomImageView(Context context, IAttributeSet attrs) : base(context, attrs)
+        {
+            _context = context;
+            InitializeElement();
+        }
+
+        public CustomImageView(Context context, IAttributeSet attrs, int defStyle) : base(context, attrs, defStyle)
+        {
+            _context = context;
+            InitializeElement();
+        }
+
+        public bool OnTouch(View v, MotionEvent e)
+        {
+            return OnTouchEvent(e);
+        }
+
+        #endregion
     }
 }

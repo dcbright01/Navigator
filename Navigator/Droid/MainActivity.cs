@@ -1,17 +1,14 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
-using System.Diagnostics;
 using Android.App;
 using Android.Graphics;
+using Android.Hardware;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
-using Android.Hardware;
-using Android.Opengl; 
 using Navigator.Droid.Extensions;
+using Navigator.Droid.Sensors;
 using Navigator.Droid.UIElements;
-using Navigator.Pathfinding;
+using Navigator.Helpers;
 using Navigator.Primitives;
 
 namespace Navigator.Droid
@@ -19,53 +16,28 @@ namespace Navigator.Droid
     [Activity(Label = "Navigator", MainLauncher = true, Icon = "@mipmap/icon")]
     public class MainActivity : Activity, ISensorEventListener
     {
-        #region < Properties > 
+        #region <ISensorEventListener>
+        public void OnAccuracyChanged(Sensor sensor, SensorStatus accuracy)
+        {
+        }
 
-        private Bitmap _currentMapImage;
-        private bool _isDrawingGrid;
-
-        #endregion
-
-        #region <UI Elements>
-
-        private ToggleButton _btnDrawGridToggle;
-        private CustomImageView _imgMap;
-
-        #endregion
-
-        #region <Sensors>
-
-        private SensorManager _sensorManager;
-        private StepDetector _step = new StepDetector();
-        private long initialMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-        private int _stepCount;
-        private TextView _azimuthText;
-        private TextView _stepText;
-		private TextView _XAccelText; 
-		private TextView _YAccelText; 
-		private TextView _ZAccelText; 
-        private double _azimuth;
-        private float[] mGravity;
-        private float[] mGeomagnetic;
-		private float[] mAccelerometer; 
-        private bool inDebug = false;
-
-        #endregion
-
-        #region <Position Data>
-
-        private Vector2 startPoint;
-        private Vector2 endPoint;
-
+        public void OnSensorChanged(SensorEvent e)
+        {
+            _sensorListener.OnSensorChanged(e);
+        }
         #endregion
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            _step.OnStep += OnStepTaken;
-            _sensorManager = (SensorManager)GetSystemService(SensorService);
+            _sensorManager = (SensorManager) GetSystemService(SensorService);
+            _sensorListener = new CustomListener(_sensorManager);
+            _sensorListener.AccelerationProcessor.OnValueChanged += AccelerationProcessorOnValueChanged;
+            _sensorListener.RotationProcessor.OnValueChanged += RotationProcessorOnValueChanged;
+            _sensorListener.StepDetector.OnStep += StepDetectorOnStep;
             // Small pathfinding test
-            
+
+            /*
             var asset = Assets.Open("test.xml");
 			Stopwatch sw = new Stopwatch ();
 			sw.Start ();
@@ -76,7 +48,8 @@ namespace Navigator.Droid
 			var end = g.Vertices.First(x => x == "1479-1167");
             var path = g.FindPath(start,end);
             var path2 = g.FindPath(start,end);
-            
+            */
+
             // Set nav mode
             ActionBar.NavigationMode = ActionBarNavigationMode.Tabs;
             SetContentView(Resource.Layout.ScaleImage);
@@ -91,7 +64,6 @@ namespace Navigator.Droid
                 // Reset to saved state
                 if (_currentMapImage != null)
                     _imgMap.SetImageBitmap(_currentMapImage);
-
             });
             ActionBar.AddNewTab("Settings", () =>
             {
@@ -108,127 +80,58 @@ namespace Navigator.Droid
             {
                 inDebug = true;
                 SetContentView(Resource.Layout.Debug);
+                _stepText = FindViewById<TextView>(Resource.Id.stepCounter);
+                _azimuthText = FindViewById<TextView>(Resource.Id.azimuth);
+                _XAccelText = FindViewById<TextView>(Resource.Id.XAccel);
+                _YAccelText = FindViewById<TextView>(Resource.Id.YAccel);
+                _ZAccelText = FindViewById<TextView>(Resource.Id.ZAccel);
             });
         }
 
-        private void OnStepTaken(int steps)
+        private void StepDetectorOnStep(int stepsTaken)
         {
-            _stepCount = steps;
+            if (inDebug)
+            {
+                RunOnUiThread(() => { _stepText.Text = string.Format("Steps: {0}", stepsTaken); });
+            }
+        }
+
+        private void RotationProcessorOnValueChanged(double value)
+        {
+            if (inDebug)
+            {
+                RunOnUiThread(
+                    () => { _azimuthText.Text = string.Format("Azimuth: {0}", VarunMaths.RadianToDegree(value)); });
+            }
+        }
+
+        private void AccelerationProcessorOnValueChanged(Vector3 value)
+        {
+            if (inDebug)
+            {
+                RunOnUiThread(() =>
+                {
+                    _XAccelText.Text = string.Format("East accel : {0}", value.X);
+                    _YAccelText.Text = string.Format("North accel : {0}", value.Y);
+                    _ZAccelText.Text = string.Format("Forward accel : {0}", value.Z);
+                });
+            }
         }
 
         protected override void OnResume()
         {
             base.OnResume();
             _sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.Accelerometer),
-                SensorDelay.Fastest);
-			_sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.MagneticField), SensorDelay.Fastest);
-			_sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.Gravity), SensorDelay.Fastest);
+                SensorDelay.Ui);
+            _sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.MagneticField),
+                SensorDelay.Ui);
+            _sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.Gravity), SensorDelay.Ui);
         }
 
         protected override void OnPause()
         {
             base.OnPause();
             _sensorManager.UnregisterListener(this);
-        }
-
-        public void OnAccuracyChanged(Sensor sensor, SensorStatus accuracy)
-        {
-
-        }
-
-        public void OnSensorChanged(SensorEvent e)
-        {
-			long currentMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-			if ((currentMilliseconds - initialMilliseconds) > 10) {
-				initialMilliseconds = currentMilliseconds;
-				var sensor = e.Sensor; 
-
-				switch (sensor.Type) {
-				case SensorType.Accelerometer:
-					mAccelerometer = e.Values.ToArray (); 
-					break;
-				case SensorType.MagneticField:
-					mGeomagnetic = e.Values.ToArray ();
-					break;
-				case SensorType.Gravity:
-					mGravity = e.Values.ToArray ();
-					break;
-				}
-					
-				getHorizontalAcceleration (); 
-
-				if (inDebug) {
-					_stepText = FindViewById<TextView> (Resource.Id.stepCounter);
-					string currentText = string.Format ("Steps: {0}", _stepCount);
-					RunOnUiThread (() => _stepText.Text = currentText);
-				}
-			}
-        }
-
-		private void getHorizontalAcceleration()
-		{
-			if (mGravity != null && mGeomagnetic != null) 
-			{
-				float[] R = new float[16];
-				float[] I = new float[16];
-				SensorManager.GetRotationMatrix (R, I, mGravity, mGeomagnetic);
-				float[] relativacc = new float[4];
-				float[] inv = new float[16];
-
-				relativacc[0] = mAccelerometer[0];
-				relativacc[1] = mAccelerometer[1];
-				relativacc[2] = mAccelerometer[2];
-				relativacc[3] = 0;
-
-				float[] A_W = new float[4]; 
-
-				Android.Opengl.Matrix.InvertM (inv, 0, R, 0); 
-				Android.Opengl.Matrix.MultiplyMV (A_W, 0, inv, 0, relativacc, 0); 
-
-				// change this temporarily
-				// _step.passValue((double) A_W[0], (double) A_W[1], (double) A_W[2]);
-				_step.passValue((double) mAccelerometer[0], (double) mAccelerometer[1], (double) mAccelerometer[2]); 
-
-				if (inDebug) 
-				{
-					SetContentView (Resource.Layout.Debug);
-					_XAccelText = FindViewById<TextView> (Resource.Id.XAccel);
-					_YAccelText = FindViewById<TextView> (Resource.Id.YAccel);
-					_ZAccelText = FindViewById<TextView> (Resource.Id.ZAccel);
-					_XAccelText.Text = string.Format ("East accel is {0:F1}", A_W [0]);
-					_YAccelText.Text = string.Format ("North accel is {0:F1}", A_W [1]);
-					_ZAccelText.Text = string.Format ("Forward accel is {0:F1}", A_W [2]);
-				}
-			}
-		}
-			
-        //http://www.codingforandroid.com/2011/01/using-orientation-sensors-simple.html
-        private void calculateAzimuth()
-        {
-            if (mGravity != null && mGeomagnetic != null)
-            {
-                float[] R = new float[9];
-                float[] I = new float[9];
-                bool success = SensorManager.GetRotationMatrix(R, I, mGravity, mGeomagnetic);
-                if (success)
-                {
-                    float[] orientation = new float[3];
-                    SensorManager.GetOrientation(R, orientation);
-                    _azimuth = orientation[0]; // orientation contains: azimut, pitch and roll
-
-                    if(inDebug)
-                    {
-                        SetContentView(Resource.Layout.Debug);
-                        _azimuthText = FindViewById<TextView>(Resource.Id.azimuth);
-                        _azimuthText.Text = string.Format("Azimuth is {0:F1}", RadianToDegree(_azimuth));
-                    }
-                }
-            }
-        }
-
-        private double RadianToDegree(double angle)
-        {
-            return angle * (180.0 / Math.PI);
         }
 
         private void ImgMapOnLongPress(object sender, MotionEvent motionEvent)
@@ -239,7 +142,7 @@ namespace Navigator.Droid
                     // User pressed yes
                     ResetMap();
 
-                    float[] point = RelativeToAbsoluteCoordinates((int)motionEvent.GetX(), (int)motionEvent.GetY());
+                    var point = RelativeToAbsoluteCoordinates((int) motionEvent.GetX(), (int) motionEvent.GetY());
                     startPoint = new Vector2(point[0], point[1]);
                     DrawOnMap();
                 })
@@ -247,8 +150,8 @@ namespace Navigator.Droid
                 {
                     // User pressed no
                     ResetMap();
-                    
-                    float[] point = RelativeToAbsoluteCoordinates((int)motionEvent.GetX(), (int)motionEvent.GetY());
+
+                    var point = RelativeToAbsoluteCoordinates((int) motionEvent.GetX(), (int) motionEvent.GetY());
                     endPoint = new Vector2(point[0], point[1]);
                     DrawOnMap();
                 })
@@ -260,7 +163,7 @@ namespace Navigator.Droid
         // Draws the current points and lines on the map.
         private void DrawOnMap()
         {
-            BitmapFactory.Options myOptions = new BitmapFactory.Options ();
+            var myOptions = new BitmapFactory.Options();
             myOptions.InDither = true;
             myOptions.InScaled = false;
             myOptions.InPreferredConfig = Bitmap.Config.Argb8888;
@@ -269,34 +172,41 @@ namespace Navigator.Droid
             Bitmap bitmap;
 
             // If the current map image is not initialised, initialise it to the correct one.
-            if (_currentMapImage == null) {
-                if (!_isDrawingGrid) {
+            if (_currentMapImage == null)
+            {
+                if (!_isDrawingGrid)
+                {
                     _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor, myOptions);
-                } else {
+                }
+                else
+                {
                     _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid, myOptions);
                 }
             }
 
             bitmap = _currentMapImage;
 
-            Paint paint = new Paint
+            var paint = new Paint
             {
                 AntiAlias = true,
                 Color = Color.Magenta
             };
 
             // Draw the damn points.
-            Canvas canvas = new Canvas(bitmap);
+            var canvas = new Canvas(bitmap);
 
-            if(startPoint != null) {
+            if (startPoint != null)
+            {
                 canvas.DrawCircle(startPoint.X, startPoint.Y, 20, paint);
             }
 
-            if(endPoint != null) {
+            if (endPoint != null)
+            {
                 canvas.DrawCircle(endPoint.X, endPoint.Y, 20, paint);
             }
 
-            if((startPoint != null) && (endPoint != null)) {
+            if ((startPoint != null) && (endPoint != null))
+            {
                 paint.StrokeWidth = 10;
                 canvas.DrawLine(startPoint.X, startPoint.Y, endPoint.X, endPoint.Y, paint);
             }
@@ -311,16 +221,19 @@ namespace Navigator.Droid
         // Resets the floorplan bitmap to a mutable un-edited version
         private void ResetMap()
         {
-            BitmapFactory.Options myOptions = new BitmapFactory.Options ();
+            var myOptions = new BitmapFactory.Options();
             myOptions.InDither = true;
             myOptions.InScaled = false;
             myOptions.InPreferredConfig = Bitmap.Config.Argb8888;
             myOptions.InPurgeable = true;
             myOptions.InMutable = true;
 
-            if (!_isDrawingGrid) {
+            if (!_isDrawingGrid)
+            {
                 _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor, myOptions);
-            } else {
+            }
+            else
+            {
                 _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid, myOptions);
             }
 
@@ -331,16 +244,16 @@ namespace Navigator.Droid
         // so that points can be drawn on the correct place to account for any offset.
         private float[] RelativeToAbsoluteCoordinates(int x, int y)
         {
-            float[] point = new float[] { x, y };
-			Android.Graphics.Matrix inverse = new Android.Graphics.Matrix();
+            float[] point = {x, y};
+            var inverse = new Matrix();
             _imgMap.ImageMatrix.Invert(inverse);
             inverse.MapPoints(point);
             return point;
         }
-            
+
         private void DrawGridButtonToggle(object sender, EventArgs eventArgs)
         {
-            BitmapFactory.Options myOptions = new BitmapFactory.Options();
+            var myOptions = new BitmapFactory.Options();
             myOptions.InDither = true;
             myOptions.InScaled = false;
             myOptions.InPreferredConfig = Bitmap.Config.Argb8888;
@@ -360,5 +273,40 @@ namespace Navigator.Droid
                 DrawOnMap();
             }
         }
+
+        #region < Properties > 
+
+        private Bitmap _currentMapImage;
+        private bool _isDrawingGrid;
+
+        #endregion
+
+        #region <UI Elements>
+
+        private ToggleButton _btnDrawGridToggle;
+        private CustomImageView _imgMap;
+
+        #endregion
+
+        #region <Sensors>
+
+        private SensorManager _sensorManager;
+        private long initialMilliseconds = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
+        private TextView _azimuthText;
+        private TextView _stepText;
+        private TextView _XAccelText;
+        private TextView _YAccelText;
+        private TextView _ZAccelText;
+        private bool inDebug;
+        private CustomListener _sensorListener;
+
+        #endregion
+
+        #region <Position Data>
+
+        private Vector2 startPoint;
+        private Vector2 endPoint;
+
+        #endregion
     }
 }

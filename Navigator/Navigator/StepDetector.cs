@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,8 +17,6 @@ namespace Navigator
         private double lastTroughValue = -1;
         private int stepCounter = 0;
 		private long initialMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-		private ButterworthLowPassFilter lowPassFilter = new ButterworthLowPassFilter(); 
-		private double troughToPeakDifference = -1; 
 
         public event StepHandler OnStep;
 
@@ -38,38 +37,31 @@ namespace Navigator
                     return;
                 }
 
-				// set last peak to impossible negative value in case step conditions below are not satisifed 
-				lastPeakValue = -1; 
+				double difference = Math.Abs((accelValues[1] - lastTroughValue));
 
-				troughToPeakDifference = Math.Abs((accelValues[1] - lastTroughValue));
+                // totalOfDifferences += difference; 
+                // numberOfDifferences++; 
+                // average = (totalOfDifferences / numberOfDifferences); 
 
-				long currentMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
                 // the thresholds that we use in order to filter out false positives
-				//if ((currentMilliseconds - initialMilliseconds) > 500 && (currentMilliseconds - initialMilliseconds) < 900)
-                //{
-					if (troughToPeakDifference > 1 && troughToPeakDifference < 8)  
-					{
+				if (difference > 1 && difference < 6 && maxAccelMagnitudeSeen > 0.6)
+                {
+					long currentMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+					//if ((currentMilliseconds - initialMilliseconds) > 500) 
+					//{
+						initialMilliseconds = currentMilliseconds; 
 						lastPeakValue = accelValues [1];
-					}
-                //}
-					
-				initialMilliseconds = currentMilliseconds; 
+						stepCounter++;
+						OnStepTaken ();
+					//}
+                }
+
+				maxAccelMagnitudeSeen = 0; 
             }
 
             if (isTrough())
-            {	
+            {
                 lastTroughValue = accelValues[1];
-				// only check for steps if min. difference condition above has been satisfied 
-				if (lastPeakValue != -1) 
-				{
-					double peakToTroughDifference = Math.Abs (lastTroughValue - lastPeakValue); 
-					// check if peak to trough value is within +-20% of trough to peak one
-					if (peakToTroughDifference > 0.8 * troughToPeakDifference && peakToTroughDifference < 1.2 * troughToPeakDifference) 
-					{
-						stepCounter++;
-						OnStepTaken ();
-					}
-				}
             }
             //When you normally increase the counter, call onStepCheck
         }
@@ -108,12 +100,17 @@ namespace Navigator
 
         private int functionCalledCounter = 0;
 
+        public void passValue(float[] values)
+        {
+            passValue(values[0],values[1],values[2]);
+        }
+
         public void passValue(double accelValueX, double accelValueY, double accelValueZ)
         {
             if (functionCalledCounter < 3)
             {
                 // we have a window of 3 values, so for the first 3 values just fill in the window
-				accelValues[functionCalledCounter] = getFilteredMagnitude(accelValueX, accelValueY, accelValueZ);
+                accelValues[functionCalledCounter] = getFilteredMagnitude(accelValueX, accelValueY, accelValueZ);
                 functionCalledCounter++;
                 if (functionCalledCounter == 2)
                 {
@@ -125,17 +122,47 @@ namespace Navigator
             // last 2 values of previous window become first 2 of new window
             Array.Copy(accelValues, 1, accelValues, 0, accelValues.Length - 1);
             // last value of new window is the filtered vector magnitude
-			accelValues[2] = getFilteredMagnitude(accelValueX, accelValueY, accelValueZ);
+            accelValues[2] = getFilteredMagnitude(accelValueX, accelValueY, accelValueZ);
             functionCalledCounter++;
             stepCheck();
         }
 
-		public double getFilteredMagnitude(double accelValueX, double accelValueY, double accelValueZ)
+        private double[] filteredAccelVals = null;
+		private double[] unfilteredAccelVals = null; 
+		private double maxAccelMagnitudeSeen = 0; 
+
+        public double getFilteredMagnitude(double accelValueX, double accelValueY, double accelValueZ)
         {
-			double magnitude = Math.Sqrt(Math.Pow(accelValueX, 2) + Math.Pow(accelValueY, 2) + Math.Pow(accelValueZ, 2));
-			return lowPassFilter.getNewFilteredValue(magnitude); 
+            double[] newAccelVals = { accelValueX, accelValueY, accelValueZ };
+			unfilteredAccelVals = newAccelVals; 
+
+            filteredAccelVals = lowPass(newAccelVals, filteredAccelVals);
+			if (Math.Abs (filteredAccelVals [0]) > maxAccelMagnitudeSeen) 
+			{
+				maxAccelMagnitudeSeen = filteredAccelVals [0]; 
+			}
+
+			return filteredAccelVals[2];
         }
 
+        public static double[] lowPass(double[] input, double[] output)
+        {
+
+            double ALPHA = 0.25;
+
+            if (output == null)
+            {
+                return input;
+            }
+
+            // the new output is the output from the previous step + a small difference caused by the new input
+            for (int i = 0; i < input.Length; i++)
+            {
+                output[i] = output[i] + ALPHA * (input[i] - output[i]);
+            }
+
+            return output;
+        }
 
         public virtual void OnStepTaken()
         {

@@ -17,6 +17,7 @@ namespace Navigator
         private int stepCounter = 0;
 		private long initialMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 		private ButterworthLowPassFilter lowPassFilter = new ButterworthLowPassFilter(); 
+		private double troughToPeakDifference = -1; 
 
         public event StepHandler OnStep;
 
@@ -37,30 +38,38 @@ namespace Navigator
                     return;
                 }
 
-				double difference = Math.Abs((accelValues[1] - lastTroughValue));
+				// set last peak to impossible negative value in case step conditions below are not satisifed 
+				lastPeakValue = -1; 
 
-                // totalOfDifferences += difference; 
-                // numberOfDifferences++; 
-                // average = (totalOfDifferences / numberOfDifferences); 
+				troughToPeakDifference = Math.Abs((accelValues[1] - lastTroughValue));
 
 				long currentMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
                 // the thresholds that we use in order to filter out false positives
-				if ((currentMilliseconds - initialMilliseconds) > 500 && (currentMilliseconds - initialMilliseconds) < 900)
-                {
-					if (difference > 2.5 && difference < 8)  
+				//if ((currentMilliseconds - initialMilliseconds) > 500 && (currentMilliseconds - initialMilliseconds) < 900)
+                //{
+					if (troughToPeakDifference > 1 && troughToPeakDifference < 8)  
 					{
 						lastPeakValue = accelValues [1];
-						stepCounter++;
-						OnStepTaken ();
 					}
-                }
-
+                //}
+					
 				initialMilliseconds = currentMilliseconds; 
             }
 
             if (isTrough())
-            {
+            {	
                 lastTroughValue = accelValues[1];
+				// only check for steps if min. difference condition above has been satisfied 
+				if (lastPeakValue != -1) 
+				{
+					double peakToTroughDifference = Math.Abs (lastTroughValue - lastPeakValue); 
+					// check if peak to trough value is within +-20% of trough to peak one
+					if (peakToTroughDifference > 0.8 * troughToPeakDifference && peakToTroughDifference < 1.2 * troughToPeakDifference) 
+					{
+						stepCounter++;
+						OnStepTaken ();
+					}
+				}
             }
             //When you normally increase the counter, call onStepCheck
         }

@@ -4,6 +4,11 @@ using CoreMotion;
 using Foundation;
 using CoreLocation;
 using CoreGraphics;
+using System.Reflection;
+using System.Diagnostics;
+using Navigator.Pathfinding;
+using System.Linq;
+using System.Globalization;
 
 namespace Navigator.iOS
 {
@@ -36,6 +41,19 @@ namespace Navigator.iOS
 			UIView container = new UIView ();
 			floorplanImageView = new UIImageView();
 			PathView pathView = new PathView ();
+
+			var assembly = Assembly.GetExecutingAssembly ();		
+			var asset = assembly.GetManifestResourceStream("Navigator.iOS.Resources.test.xml");
+			Stopwatch sw = new Stopwatch ();
+			sw.Start ();
+			var g = Graph.Load (asset);
+			sw.Stop ();
+
+			long time = (sw.ElapsedMilliseconds);
+			var start = g.Vertices.First(x=>x=="589-517");
+			var end = g.Vertices.First(x => x == "1079-867");
+			var path = g.FindPath(start,end);
+			var path2 = g.FindPath(start,end);
 
 
 			floorplanImageNoGrid = UIImage.FromBundle ("Images/dcsfloor.jpg");
@@ -98,12 +116,29 @@ namespace Navigator.iOS
 			simulationButton.TouchUpInside += delegate {
 				var currentX = locationArrow.X;
 				var currentY = locationArrow.Y;
+
+				var pathLength = path.Count();
+				var pathPoints = new CoreGraphics.CGPoint[pathLength];
+
+
+				for (int i = 0; i < path.Count(); i++) {
+					int dash = path.ElementAt(i).Source.IndexOf("-");
+					float yVal = float.Parse(path.ElementAt(i).Source.Substring(dash+1), CultureInfo.InvariantCulture.NumberFormat);
+					float xVal = float.Parse(path.ElementAt(i).Source.Remove(dash), CultureInfo.InvariantCulture.NumberFormat);
+					pathPoints[i] = new CoreGraphics.CGPoint(xVal, yVal);
+
+
+				}
+				pathView.setPoints(pathPoints);
+
+				/*
 				pathView.setPoints(new CoreGraphics.CGPoint[]{
 					new CoreGraphics.CGPoint(currentX, currentY),
 					new CoreGraphics.CGPoint(currentX-50, currentY),
 					new CoreGraphics.CGPoint(currentX-50, currentY+50),
 					new CoreGraphics.CGPoint(currentX+50, currentY+50)
 				});
+				*/
 
 				locationArrow.lookAtHeading((float)-2);
 				//locationArrow.setLocation (650, 850);

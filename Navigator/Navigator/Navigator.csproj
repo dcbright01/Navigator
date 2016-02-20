@@ -36,7 +36,6 @@
     <Compile Include="Primitives\FixedSizeQueue.cs" />
     <Compile Include="Primitives\Vector3.cs" />
     <Compile Include="StepDetector.cs" />
-    <Compile Include="MyClass.cs" />
     <Compile Include="Pathfinding\Graph.cs" />
     <Compile Include="Primitives\Size.cs" />
     <Compile Include="Primitives\Vector2.cs" />

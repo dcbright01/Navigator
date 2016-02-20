@@ -59,7 +59,7 @@ namespace Navigator.iOS
 			floorplanImageNoGrid = UIImage.FromBundle ("Images/dcsfloor.jpg");
 			floorplanImageWithGrid = UIImage.FromBundle ("Images/dcsFloorGrid.jpg");
 			locationArrow = new LocationArrowImageView ();
-			locationArrow.setLocation (650, 850);
+			locationArrow.setLocation (589 + 96, 517 + 88);
 			locationArrow.ScaleFactor = floorplanView.ZoomScale;
 			pathView.ScaleFactor = floorplanView.ZoomScale;
 
@@ -123,8 +123,8 @@ namespace Navigator.iOS
 
 				for (int i = 0; i < path.Count(); i++) {
 					int dash = path.ElementAt(i).Source.IndexOf("-");
-					float yVal = float.Parse(path.ElementAt(i).Source.Substring(dash+1), CultureInfo.InvariantCulture.NumberFormat);
-					float xVal = float.Parse(path.ElementAt(i).Source.Remove(dash), CultureInfo.InvariantCulture.NumberFormat);
+					float yVal = float.Parse(path.ElementAt(i).Source.Substring(dash+1), CultureInfo.InvariantCulture.NumberFormat) + 88;
+					float xVal = float.Parse(path.ElementAt(i).Source.Remove(dash), CultureInfo.InvariantCulture.NumberFormat) + 96;
 					pathPoints[i] = new CoreGraphics.CGPoint(xVal, yVal);
 
 

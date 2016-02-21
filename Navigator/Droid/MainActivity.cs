@@ -56,12 +56,12 @@ namespace Navigator.Droid
             var path2 = g.FindPath(start,end);
             */
 
-            var asset = Assets.Open("wall.xml");
+            var asset = Assets.Open("test.xml");
             var g = Graph.Load(asset);
 
             _col.addGraph(g);
-            _col.GiveStartingLocation(7.0f, 0.0f);
-            realPos = Tuple.Create<float, float>(7.0f, 0.0f);
+            _col.GiveStartingLocation(787.0f, 717.0f);
+            realPos = Tuple.Create<float, float>(787.0f, 717.0f);
             _col.passHeading(90);
 
             // Set nav mode

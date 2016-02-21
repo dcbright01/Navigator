@@ -24,6 +24,7 @@ namespace Navigator.iOS
 		UIImage floorplanImageWithGrid;
 	
 		int counter = 0;
+        int stepCounter = 0;
 
         public ViewController(IntPtr handle) : base(handle)
         {
@@ -158,9 +159,14 @@ namespace Navigator.iOS
 
 		}
 
-		void stepHandler (int steps) {
+		void stepHandler (bool stationaryStart) {
 			counter++;
-			debugLabel.Text = "s:" + steps + "c:" + counter;
+            if (stationaryStart)
+            {
+                stepCounter += 2;
+            }
+            stepCounter++;
+			debugLabel.Text = "s:" + stepCounter + "c:" + counter;
 
 		}
 			

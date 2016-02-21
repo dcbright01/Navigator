@@ -29,7 +29,7 @@ namespace Navigator.Droid.Sensors
             RotationProcessor.SensorChangedProcess(e);
             if (AccelerationProcessor.HasValue)
             {
-                StepDetector.passValue(AccelerationProcessor.Value);
+				StepDetector.passValue(AccelerationProcessor.Value.X, AccelerationProcessor.Value.Y, AccelerationProcessor.Value.Z);
             }
         }
 

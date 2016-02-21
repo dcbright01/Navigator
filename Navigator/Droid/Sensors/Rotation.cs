@@ -12,7 +12,6 @@ namespace Navigator.Droid.Sensors
         {
             AcceptedSensorTypes.Add(SensorType.MagneticField);
             AcceptedSensorTypes.Add(SensorType.Gravity);
-            ReadingDelay = 500;
         }
 
         public override void SensorChangedProcess(SensorEvent e)

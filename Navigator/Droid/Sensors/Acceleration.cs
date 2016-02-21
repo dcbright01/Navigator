@@ -16,6 +16,7 @@ namespace Navigator.Droid.Sensors
             AcceptedSensorTypes.Add(SensorType.Accelerometer);
             AcceptedSensorTypes.Add(SensorType.MagneticField);
             AcceptedSensorTypes.Add(SensorType.Gravity);
+			ReadingDelay = 10;
         }
 
         public override void SensorChangedProcess(SensorEvent e)
@@ -53,6 +54,7 @@ namespace Navigator.Droid.Sensors
                 Matrix.InvertM(inv, 0, R, 0);
                 Matrix.MultiplyMV(A_W, 0, inv, 0, relativacc, 0);
                 Value = new Vector3(A_W);
+				// Value = new Vector3(_accelerometer);
                 ValueHistory.Enqueue(Value);
                 if (OnValueChanged != null)
                 {

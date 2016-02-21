@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Android.Hardware;
 using Navigator.Primitives;
@@ -29,6 +30,10 @@ namespace Navigator.Droid.Sensors
         /// </summary>
         public T Value { get; protected set; }
 
+        protected long ReadingDelay = 0;
+        protected DateTime LastReading = DateTime.MinValue; 
+        public long MsLastReading { get { return (long) DateTime.Now.Subtract(LastReading).TotalMilliseconds; } }
+
         protected SensorManager _sensorManager { get; private set; }
 
         public bool HasValue
@@ -36,6 +41,23 @@ namespace Navigator.Droid.Sensors
             get { return Value != null; }
         }
 
-        public abstract void OnSensorChanged(SensorEvent e);
+        public abstract void SensorChangedProcess(SensorEvent e);
+
+        public void OnSensorChanged(SensorEvent e)
+        {
+
+            if (!AcceptedSensorTypes.Contains(e.Sensor.Type))
+                return;
+
+            if (MsLastReading < ReadingDelay)
+                return;
+
+            // Two checks passed we now perform the action
+
+            SensorChangedProcess(e);
+
+            // Update time value
+            LastReading = DateTime.Now;
+        }
     }
 }

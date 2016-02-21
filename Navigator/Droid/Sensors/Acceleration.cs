@@ -18,13 +18,9 @@ namespace Navigator.Droid.Sensors
             AcceptedSensorTypes.Add(SensorType.Gravity);
         }
 
-        public override void OnSensorChanged(SensorEvent e)
+        public override void SensorChangedProcess(SensorEvent e)
         {
             // Check if we even want to read this sensor
-
-            if (!AcceptedSensorTypes.Contains(e.Sensor.Type))
-                return;
-
             switch (e.Sensor.Type)
             {
                 case SensorType.Accelerometer:

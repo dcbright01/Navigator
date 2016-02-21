@@ -12,13 +12,11 @@ namespace Navigator.Droid.Sensors
         {
             AcceptedSensorTypes.Add(SensorType.MagneticField);
             AcceptedSensorTypes.Add(SensorType.Gravity);
+            ReadingDelay = 500;
         }
 
-        public override void OnSensorChanged(SensorEvent e)
+        public override void SensorChangedProcess(SensorEvent e)
         {
-            if (!AcceptedSensorTypes.Contains(e.Sensor.Type))
-                return;
-
             switch (e.Sensor.Type)
             {
                 case SensorType.MagneticField:

@@ -14,8 +14,6 @@ namespace Navigator.Droid.Sensors
             RotationProcessor = new Rotation(_sensorManager);
         }
 
-        public IntPtr Handle { get; }
-
         public void Dispose()
         {
         }
@@ -27,8 +25,8 @@ namespace Navigator.Droid.Sensors
 
         public void OnSensorChanged(SensorEvent e)
         {
-            AccelerationProcessor.OnSensorChanged(e);
-            RotationProcessor.OnSensorChanged(e);
+            AccelerationProcessor.SensorChangedProcess(e);
+            RotationProcessor.SensorChangedProcess(e);
             if (AccelerationProcessor.HasValue)
             {
                 StepDetector.passValue(AccelerationProcessor.Value);

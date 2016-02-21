@@ -2,25 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Navigator.Pathfinding;
+using Navigator.Helpers;
 
 namespace Navigator
 {
     //enum for sensor type
-    enum Sensor
-    {
-        Accel,
-        Gryo,
-        Mag
-    };
 
     //delegates to define the output for events
     public delegate void CollisionHandler(float realX, float realY);
-    public delegate void HeadingHandler(int nHeading);
+    //public delegate void HeadingHandler(int nHeading);
 
-    class Collision
+   public class Collision
     {
+
+        public enum Sensor
+        {
+            Accel,
+            Gryo,
+            Mag
+        };
 
         //Values that are being tracked
         private Tuple<float, float> realPosition;
@@ -48,18 +51,24 @@ namespace Navigator
         //also means that on the platform specific level, you know which has happened rather than having to check the values if you want the info
         //remerging is simple if this isn't needed/the concern is invalid
         public event CollisionHandler validMove;
-        public event HeadingHandler newHeading;
+        //public event HeadingHandler newHeading;
 
-        public Collision(Graph nGraph)
+        public Collision()
         {
             //constructor
+            graphPath = new Queue<Tuple<int, int>>();
+
+        }
+
+        public void addGraph(Graph nGraph)
+        {
             g = nGraph;
         }
 
         public void GiveStartingLocation(float startX, float startY)
         {
             realPosition = Tuple.Create(startX, startY);
-            nearestNode();
+            int x = nearestNode();
         }
 
         public void PassSensorReadings(Sensor s, double xVal, double yVal, double zVal)
@@ -73,22 +82,22 @@ namespace Navigator
                 validMove(realPosition.Item1, realPosition.Item2);
         }
 
-        public virtual void HeadingChange()
+        /*public virtual void HeadingChange()
         {
             if (newHeading != null)
                 newHeading(heading);
-        }
+        }*/
 
-        private void nearestNode()
+        private int nearestNode()
         {
             Tuple<int, int> tempNode = new Tuple<int, int>(-1, -1);
             double distanceFromTempToReal = -1;
             double a, b, newDistance;
 
             string nodeCoords;
-            
+
             //there is a more effecient search that would spiral outwards to a set point before searching the corners of the sqaure that this gets, can implement if need be
-            for(int x = (int) realPosition.Item1 - searchDistance; x <= realPosition.Item1 + searchDistance; x++)
+            for (int x = (int) realPosition.Item1 - searchDistance; x <= realPosition.Item1 + searchDistance; x++)
             {
                 for(int y = (int) realPosition.Item2 - searchDistance; y <= realPosition.Item2 + searchDistance; y++)
                 {
@@ -114,63 +123,114 @@ namespace Navigator
             //case where this is the initial position, figure out how for initial to avoid wall hopping
             if(nearestGraphNode == null)
             {
-
+                if (tempNode.Item1 != -1 && tempNode.Item2 != -1){
+                    nearestGraphNode = tempNode;
+                    graphPath.Enqueue(tempNode);
+                    return 0;
+                }
             } else if(!nearestGraphNode.Equals(tempNode)) // for the case where its not the initial and the previous value is different from current
             {
-                start = nearestGraphNode.Item1.ToString() + "-" + nearestGraphNode.Item2.ToString();
+                /*start = nearestGraphNode.Item1.ToString() + "-" + nearestGraphNode.Item2.ToString();
                 end = tempNode.Item1.ToString() + "-" + tempNode.Item2.ToString();
                 var path = g.FindPath(start, end);  
                 if(path.Count < 3)
-                {
-                    if(graphPath.Count == 5)
+                {*/
+                    if(graphPath.Count != null)
                     {
-                        graphPath.Dequeue();
+                        if (graphPath.Count == 5)
+                        {
+                            graphPath.Dequeue();
+                        }
                     }
-                    graphPath.Enqueue(tempNode);
-                    nearestGraphNode = tempNode;
-                } 
+                    if (tempNode.Item1 != -1 && tempNode.Item2 != -1) {
+                        graphPath.Enqueue(tempNode);
+                        nearestGraphNode = tempNode;
+                        return 0;
+                    }
+                //} 
             }
+            if (tempNode.Item1 == -1 && tempNode.Item2 == -1)
+            {
+                return -1;
+            } else
+            {
+                return 0;
+            }
+
         }
 
         //replace with StepDetection Event trigger
-        private void testStepTrigger()
+        public void testStepTrigger()
         {
             string start, end;
+            int nHeading;
+            float x, y;
+            double headRadians;
 
-            int xHeading = (heading - 90) * (int) (Math.PI / 180);
-            float x = realPosition.Item1 + strideLength * (float) Math.Cos(xHeading);
-            float y = realPosition.Item2 + strideLength * (float) Math.Sin(xHeading);
+            if(heading < 90)
+            {
+                headRadians = VarunMaths.RadianToDegree(heading);
+                x = realPosition.Item1 + (strideLength * (float) Math.Sin(headRadians));
+                y = realPosition.Item2 - (strideLength * (float) Math.Cos(headRadians));
+            } else if(heading >= 90 && heading < 180)
+            {
+                nHeading = heading - 90;
+                headRadians = VarunMaths.RadianToDegree(nHeading);
+                x = realPosition.Item1 + (strideLength * (float)Math.Cos(headRadians));
+                y = realPosition.Item2 + (strideLength * (float)Math.Sin(headRadians));
+            } else if(heading >= 180 && heading < 270)
+            {
+                nHeading = heading - 180;
+                headRadians = VarunMaths.RadianToDegree(nHeading);
+                x = realPosition.Item1 - (strideLength * (float)Math.Sin(headRadians));
+                y = realPosition.Item2 + (strideLength * (float)Math.Cos(headRadians));
+            } else
+            {
+                nHeading = heading - 270;
+                headRadians = VarunMaths.RadianToDegree(nHeading);
+                x = realPosition.Item1 - (strideLength * (float)Math.Cos(headRadians));
+                y = realPosition.Item2 - (strideLength * (float)Math.Sin(headRadians));
+            }
+
             Tuple<float, float> newPosition = new Tuple<float, float>(x, y);
 
             Tuple<float, float> realHolder = realPosition;
             Tuple<int, int> nearestHolder = nearestGraphNode;
 
             realPosition = newPosition;
-            nearestNode();
-            if (!nearestHolder.Equals(nearestGraphNode))
+            int check = nearestNode();
+            if (check != -1)
             {
-                start = nearestGraphNode.Item1.ToString() + "-" + nearestGraphNode.Item2.ToString();
-                end = nearestHolder.Item1.ToString() + "-" + nearestHolder.Item2.ToString();
-                var path = g.FindPath(start, end);
-                if(path.Count > 2)
+                if (!nearestHolder.Equals(nearestGraphNode))
                 {
-                    realPosition = realHolder;
-                    nearestGraphNode = nearestHolder;
-                } else
+                    start = nearestGraphNode.Item1.ToString() + "-" + nearestGraphNode.Item2.ToString();
+                    end = nearestHolder.Item1.ToString() + "-" + nearestHolder.Item2.ToString();
+                    var path = g.FindPath(start, end);
+                    if (path.Count > 2)
+                    {
+                        realPosition = realHolder;
+                        nearestGraphNode = nearestHolder;
+                    }
+                    else
+                    {
+                        ValidMoveMade();
+                    }
+                }
+                else
                 {
                     ValidMoveMade();
                 }
             } else
             {
-                ValidMoveMade();
+                realPosition = realHolder;
             }
         }
 
-        //replace with Heading Event trigger
-        private void testHeadingTrigger(int nHeading)
+        
+        public void passHeading(int nHeading)
         {
             heading = nHeading;
-            HeadingChange();
+            //HeadingChange();
         }
     }
 }

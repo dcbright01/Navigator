@@ -160,7 +160,7 @@ namespace Navigator
         }
 
         //replace with StepDetection Event trigger
-        public void testStepTrigger()
+        public Tuple<float, float> testStepTrigger()
         {
             string start, end;
             int nHeading;
@@ -211,19 +211,12 @@ namespace Navigator
                         realPosition = realHolder;
                         nearestGraphNode = nearestHolder;
                     }
-                    else
-                    {
-                        ValidMoveMade();
-                    }
-                }
-                else
-                {
-                    ValidMoveMade();
                 }
             } else
             {
                 realPosition = realHolder;
             }
+            return realPosition;
         }
 
         

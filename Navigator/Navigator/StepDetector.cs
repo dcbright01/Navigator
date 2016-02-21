@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Navigator
 {
-	public delegate void StepHandler(int stepsTaken);
+	public delegate void StepHandler(bool startFromStat);
 
 	public class StepDetector
 	{
@@ -17,7 +17,8 @@ namespace Navigator
 		private int stepCounter = 0;
 		private long initialMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 		private ButterworthLowPassFilter lowPassFilter = new ButterworthLowPassFilter(); 
-		private double troughToPeakDifference = -1; 
+		private double troughToPeakDifference = -1;
+        private bool stationaryStart;
 
 		public event StepHandler OnStep;
 
@@ -64,6 +65,7 @@ namespace Navigator
 						if ((currentMilliseconds - initialMilliseconds) > 300 && (currentMilliseconds - initialMilliseconds) < 2000) {
 							initialMilliseconds = currentMilliseconds; 
 							stepCounter++;
+                            stationaryStart = false;
 							OnStepTaken ();
 						} 
 						// for gaps of more than 2 seconds we can assume user starts from stationary position, so add the 2 steps that the
@@ -72,7 +74,8 @@ namespace Navigator
 						{
 							initialMilliseconds = currentMilliseconds; 
 							stepCounter++;
-							stepCounter = stepCounter + 2; 
+							stepCounter = stepCounter + 2;
+                            stationaryStart = true;
 							OnStepTaken ();
 						}
 					}
@@ -146,8 +149,8 @@ namespace Navigator
 
 		public virtual void OnStepTaken()
 		{
-			if (OnStep != null)
-				OnStep(stepCounter);
+            if (OnStep != null)
+                OnStep(stationaryStart);
 		}
 	}
 }

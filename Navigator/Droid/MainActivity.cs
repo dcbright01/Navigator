@@ -10,6 +10,7 @@ using Navigator.Droid.Sensors;
 using Navigator.Droid.UIElements;
 using Navigator.Helpers;
 using Navigator.Primitives;
+using Navigator.Pathfinding;
 
 namespace Navigator.Droid
 {
@@ -27,6 +28,10 @@ namespace Navigator.Droid
         }
         #endregion
 
+        private Collision _col = new Collision();
+        private int stepCounter = 0;
+        private Tuple<float, float> realPos;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -35,6 +40,7 @@ namespace Navigator.Droid
             _sensorListener.AccelerationProcessor.OnValueChanged += AccelerationProcessorOnValueChanged;
             _sensorListener.RotationProcessor.OnValueChanged += RotationProcessorOnValueChanged;
             _sensorListener.StepDetector.OnStep += StepDetectorOnStep;
+
             // Small pathfinding test
 
             /*
@@ -49,6 +55,14 @@ namespace Navigator.Droid
             var path = g.FindPath(start,end);
             var path2 = g.FindPath(start,end);
             */
+
+            var asset = Assets.Open("wall.xml");
+            var g = Graph.Load(asset);
+
+            _col.addGraph(g);
+            _col.GiveStartingLocation(7.0f, 0.0f);
+            realPos = Tuple.Create<float, float>(7.0f, 0.0f);
+            _col.passHeading(90);
 
             // Set nav mode
             ActionBar.NavigationMode = ActionBarNavigationMode.Tabs;
@@ -85,14 +99,29 @@ namespace Navigator.Droid
                 _XAccelText = FindViewById<TextView>(Resource.Id.XAccel);
                 _YAccelText = FindViewById<TextView>(Resource.Id.YAccel);
                 _ZAccelText = FindViewById<TextView>(Resource.Id.ZAccel);
+                _realX = FindViewById<TextView>(Resource.Id.realX);
+                _realY = FindViewById<TextView>(Resource.Id.realY);
             });
         }
 
-        private void StepDetectorOnStep(int stepsTaken)
+        private void StepDetectorOnStep(bool stationaryStart)
         {
+            Tuple<float, float> tempPos = _col.testStepTrigger();
+            if (!Tuple.Equals(tempPos, realPos))
+            {
+                if (stationaryStart)
+                    stepCounter += 2;
+
+                stepCounter++;
+                realPos = tempPos;
+            }
             if (inDebug)
             {
-                RunOnUiThread(() => { _stepText.Text = string.Format("Steps: {0}", stepsTaken); });
+                RunOnUiThread(() => {
+                    _stepText.Text = string.Format("Steps: {0}", stepCounter);
+                });
+                _realX.Text = string.Format("Real X: {0}", realPos.Item1);
+                _realY.Text = string.Format("Real Y: {0}", realPos.Item2);
             }
         }
 
@@ -297,6 +326,8 @@ namespace Navigator.Droid
         private TextView _XAccelText;
         private TextView _YAccelText;
         private TextView _ZAccelText;
+        private TextView _realX;
+        private TextView _realY;
         private bool inDebug;
         private CustomListener _sensorListener;
 

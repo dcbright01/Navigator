@@ -1,17 +1,11 @@
 ﻿<Properties StartupItem="iOS/Navigator.iOS.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPhone6s.9.1" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="iOS/Main.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="iOS/ViewController.cs">
     <Files>
-      <File FileName="iOS/ViewController.cs" Line="1" Column="1" />
-      <File FileName="Droid/MainActivity.cs" Line="1" Column="1" />
-      <File FileName="Navigator/Pathfinding/Graph.cs" Line="1" Column="1" />
+      <File FileName="Navigator/StepDetector.cs" Line="41" Column="5" />
+      <File FileName="iOS/ViewController.cs" Line="61" Column="45" />
+      <File FileName="iOS/Resources/test.xml" Line="1" Column="1" />
       <File FileName="iOS/PathView.cs" Line="1" Column="1" />
-      <File FileName="Navigator/Pathfinding/Serialisation.cs" Line="1" Column="1" />
-      <File FileName="Navigator/Collision.cs" Line="1" Column="1" />
-      <File FileName="Navigator/Primitives/FixedSizeQueue.cs" Line="1" Column="1" />
-      <File FileName="iOS/Main.cs" Line="1" Column="1" />
-      <File FileName="iOS/AppDelegate.cs" Line="1" Column="1" />
-      <File FileName="Droid/Sensors/SensorProcessorBase.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

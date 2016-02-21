@@ -121,9 +121,9 @@
     <Folder Include="Images\" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Images\dcsfloor.jpg" />
-    <BundleResource Include="Images\dcsFloorGrid.jpg" />
     <BundleResource Include="Images\location-arrow-solid.png" />
+    <BundleResource Include="Images\dcsFloorGrid.png" />
+    <BundleResource Include="Images\dcsfloor.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\test.xml" />

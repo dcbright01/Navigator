@@ -22,7 +22,7 @@ namespace Navigator.iOS
 
 		UIImage floorplanImageNoGrid;
 		UIImage floorplanImageWithGrid;
-
+	
 		int counter = 0;
 
         public ViewController(IntPtr handle) : base(handle)
@@ -50,22 +50,22 @@ namespace Navigator.iOS
 			sw.Stop ();
 
 			long time = (sw.ElapsedMilliseconds);
-			var start = g.Vertices.First(x=>x=="589-517");
-			var end = g.Vertices.First(x => x == "1079-867");
+			var start = g.Vertices.First(x=>x=="476-690");
+			var end = g.Vertices.First(x => x == "1066-760");
 			var path = g.FindPath(start,end);
-			var path2 = g.FindPath(start,end);
 
 
-			floorplanImageNoGrid = UIImage.FromBundle ("Images/dcsfloor.jpg");
-			floorplanImageWithGrid = UIImage.FromBundle ("Images/dcsFloorGrid.jpg");
+			floorplanImageNoGrid = UIImage.FromBundle ("Images/dcsfloor.png");
+			floorplanImageWithGrid = UIImage.FromBundle ("Images/dcsFloorGrid.png");
 			locationArrow = new LocationArrowImageView ();
-			locationArrow.setLocation (589 + 96, 517 + 88);
+			locationArrow.setLocation (687  + 96, 600 + 88);
 			locationArrow.ScaleFactor = floorplanView.ZoomScale;
 			pathView.ScaleFactor = floorplanView.ZoomScale;
 
 			floorplanView.ContentSize = floorplanImageNoGrid.Size;
 			pathView.Frame = new CoreGraphics.CGRect (new CoreGraphics.CGPoint (0, 0), floorplanImageNoGrid.Size); 
-				
+
+
 			container.AddSubview (floorplanImageView);
 			container.AddSubview (locationArrow);
 			floorplanImageView.AddSubview (pathView);
@@ -86,7 +86,16 @@ namespace Navigator.iOS
 				stepDetector.passValue(data.Acceleration.X*9.8, data.Acceleration.Y*9.8, data.Acceleration.Z*9.8);
 			});
 
-		
+
+			var longPressManager = new UILongPressGestureRecognizer ();
+			longPressManager.AllowableMovement = 0;
+
+			longPressManager.AddTarget(() => handleLongPress(longPressManager));
+
+
+
+			floorplanView.AddGestureRecognizer (longPressManager);
+
 
 			locationManager = new CLLocationManager ();
 			locationManager.DesiredAccuracy = CLLocation.AccuracyBest;
@@ -121,24 +130,15 @@ namespace Navigator.iOS
 				var pathPoints = new CoreGraphics.CGPoint[pathLength];
 
 
-				for (int i = 0; i < path.Count(); i++) {
+				for (int i = 0; i < pathLength; i++) {
 					int dash = path.ElementAt(i).Source.IndexOf("-");
-					float yVal = float.Parse(path.ElementAt(i).Source.Substring(dash+1), CultureInfo.InvariantCulture.NumberFormat) + 88;
-					float xVal = float.Parse(path.ElementAt(i).Source.Remove(dash), CultureInfo.InvariantCulture.NumberFormat) + 96;
+					float yVal = float.Parse(path.ElementAt(i).Source.Substring(dash+1), CultureInfo.InvariantCulture.NumberFormat) /* + 88 */ ;
+					float xVal = float.Parse(path.ElementAt(i).Source.Remove(dash), CultureInfo.InvariantCulture.NumberFormat)/* + 96 */ ;
 					pathPoints[i] = new CoreGraphics.CGPoint(xVal, yVal);
 
 
 				}
 				pathView.setPoints(pathPoints);
-
-				/*
-				pathView.setPoints(new CoreGraphics.CGPoint[]{
-					new CoreGraphics.CGPoint(currentX, currentY),
-					new CoreGraphics.CGPoint(currentX-50, currentY),
-					new CoreGraphics.CGPoint(currentX-50, currentY+50),
-					new CoreGraphics.CGPoint(currentX+50, currentY+50)
-				});
-				*/
 
 				locationArrow.lookAtHeading((float)-2);
 				//locationArrow.setLocation (650, 850);
@@ -151,7 +151,7 @@ namespace Navigator.iOS
 		void HandleUpdatedHeading (object sender, CLHeadingUpdatedEventArgs e)
 		{
 			//double oldRad = -locationManager.Heading.TrueHeading * Math.PI / 180D;
-			double newRad = -e.NewHeading.TrueHeading * Math.PI / 180D;
+			double newRad = e.NewHeading.TrueHeading * Math.PI / 180D;
 
 			//floorplanImageView.Layer.AnchorPoint = new CGPoint (locationArrow.X/floorplanImageNoGrid.Size.Width, locationArrow.Y/floorplanImageNoGrid.Size.Height);
 			locationArrow.lookAtHeading((float)newRad);
@@ -173,6 +173,48 @@ namespace Navigator.iOS
 		private void changeFloorPlanImage(UIImageView imageView, UIImage image){
 			imageView.Image = image;
 			imageView.SizeToFit ();
+
+		}
+
+		private void handleLongPress( UILongPressGestureRecognizer gesture ) {
+
+			//debugLabel.Text = "x:" + gesture.LocationInView(floorplanImageView).X + "y:" + gesture.LocationInView(floorplanImageView).Y;
+			// Display the alert
+			var tapX = gesture.LocationInView(floorplanImageView).X;
+			var tapY = gesture.LocationInView (floorplanImageView).Y;
+
+			// Create a new Alert Controller
+			UIAlertController actionSheetAlert = UIAlertController.Create("Options", "Set", UIAlertControllerStyle.Alert);
+
+			// Add Actions
+			actionSheetAlert.AddAction(UIAlertAction.Create("Start Point",UIAlertActionStyle.Default, (action) => setStartPoint(tapX, tapY)));
+
+			actionSheetAlert.AddAction(UIAlertAction.Create("End Point",UIAlertActionStyle.Default, (action) => setEndPoint(tapX, tapY)));
+
+			actionSheetAlert.AddAction(UIAlertAction.Create("Cancel",UIAlertActionStyle.Cancel, null));
+
+			//actionSheetAlert.AddAction(UIAlertAction.Create("Cancel",UIAlertActionStyle.Cancel, (action) => Console.WriteLine ("Cancel button pressed.")));
+
+			CGPoint point = new CGPoint (gesture.LocationInView (floorplanImageView).X, gesture.LocationInView (floorplanImageView).Y);
+
+			UIPopoverPresentationController presentationPopover = actionSheetAlert.PopoverPresentationController;
+			if (presentationPopover!=null) {
+				presentationPopover.SourceRect = new CGRect(point, new CGSize(0.1, 0.1));
+				//presentationPopover.PermittedArrowDirections = UIPopoverArrowDirection.Up;
+			}
+
+
+
+			this.PresentViewController(actionSheetAlert,true,null);
+
+		}
+
+		private void setStartPoint(nfloat x, nfloat y) {
+			locationArrow.setLocation (x, y);
+		}
+
+		private void setEndPoint(nfloat x, nfloat y) {
+			debugLabel.Text = "x:" + x + "y:" + y;
 
 		}
 

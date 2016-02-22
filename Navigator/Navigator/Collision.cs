@@ -159,6 +159,15 @@ namespace Navigator
 
         }
 
+		//For pathfinding on iOS
+		public Tuple<int, int> getNearestNode(float x, float y) {
+			
+			realPosition = Tuple.Create(x, y);
+			nearestNode ();
+			return nearestGraphNode;
+
+		}
+
         //replace with StepDetection Event trigger
         public Tuple<float, float> testStepTrigger()
         {

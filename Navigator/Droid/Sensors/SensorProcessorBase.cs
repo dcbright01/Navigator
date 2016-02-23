@@ -15,12 +15,12 @@ namespace Navigator.Droid.Sensors
         /// <summary>
         ///     Keeps track of the last 10 values produced by this sensor processor
         /// </summary>
-        public FixedSizedQueue<T> ValueHistory;
+        public FixedSizeQueue<T> ValueHistory;
 
 
         protected SensorProcessorBase(SensorManager manager)
         {
-            ValueHistory = new FixedSizedQueue<T>(10);
+            ValueHistory = new FixedSizeQueue<T>(10);
             AcceptedSensorTypes = new List<SensorType>();
             _sensorManager = manager;
         }

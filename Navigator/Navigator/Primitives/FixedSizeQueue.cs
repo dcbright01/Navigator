@@ -1,29 +1,34 @@
-﻿/*using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Navigator.Primitives
 {
-    public class FixedSizedQueue<T> : ConcurrentQueue<T>
+    public class FixedSizeQueue<T> : Queue<T>
     {
-        private readonly object syncObject = new object();
+        private int limit = -1;
 
-        public int Size { get; private set; }
-
-        public FixedSizedQueue(int size)
+        public int Limit
         {
-            Size = size;
+            get { return limit; }
+            set { limit = value; }
         }
 
-        public new void Enqueue(T obj)
+        public FixedSizeQueue(int limit)
+            : base(limit)
         {
-            base.Enqueue(obj);
-            lock (syncObject)
+            this.Limit = limit;
+        }
+
+        public new void Enqueue(T item)
+        {
+            if (this.Count >= this.Limit)
             {
-                while (base.Count > Size)
-                {
-                    T outObj;
-                    base.TryDequeue(out outObj);
-                }
+                this.Dequeue();
             }
+            base.Enqueue(item);
         }
     }
-}*/
+}

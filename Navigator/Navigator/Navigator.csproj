@@ -43,9 +43,6 @@
     <Compile Include="ButterworthLowPassFilter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Collections.Concurrent">
-      <HintPath>C:\Program Files %28x86%29\Reference Assemblies\Microsoft\Framework\.NETPortable\v4.5\System.Collections.Concurrent.dll</HintPath>
-    </Reference>
     <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3">
       <HintPath>..\packages\QuickGraphPCL.3.6.61114.2\lib\portable-win+net4+sl5+wp8+win8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\QuickGraph.dll</HintPath>
     </Reference>

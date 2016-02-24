@@ -7,10 +7,8 @@ namespace Navigator.iOS
 {
 	public class LocationArrowImageView : UIImageView 
 	{
-		public double X {get;private set;}
-		public double Y {get;private set;}
-
-		private double _heading;
+		public float X {get;private set;}
+		public float Y {get;private set;}
 
 		private nfloat _scaleFactor;
 		public nfloat ScaleFactor {
@@ -29,21 +27,18 @@ namespace Navigator.iOS
 			this.SizeToFit();
 		}
 
-		public void setLocation(double x, double y){
+		public void setLocation(float x, float y){
 			X = x;
 			Y = y;
 			calculateRelPositions ();
 		}
 
-		public void modLocation(double x, double y){
+		public void modLocation(float x, float y){
 			X += x;
 			Y += y;
 			calculateRelPositions ();
 		}
-			
-		public void moveForwards(double distance){
 
-		}
 
 		public void lookAtHeading(float angle) {
 			this.Transform = CGAffineTransform.MakeRotation(angle);

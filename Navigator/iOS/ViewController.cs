@@ -15,6 +15,7 @@ namespace Navigator.iOS
     public partial class ViewController : UIViewController
     {
         private int toggle = 1;
+		private int GlobalStepCounter = 0;
 
 		//Location manager for heading information
 		CLLocationManager locationManager = null;
@@ -22,19 +23,19 @@ namespace Navigator.iOS
 		//Instantiate step detector
 		StepDetector stepDetector = new StepDetector();
 	
-		PathView pathView = new PathView ();
 
 		LocationArrowImageView locationArrow;
 
 		UIImageView floorplanImageView;
+		PathView pathView = new PathView ();
+
+		Graph floorPlanGraph;
 
 		UIImage floorplanImageNoGrid;
 		UIImage floorplanImageWithGrid;
 
-		private Collision _col = new Collision ();
-		private Tuple<float, float> realPos;
+		private CollisionDan _col = new CollisionDan ();
 
-		int counter = 0;
         int stepCounter = 0;
 
         public ViewController(IntPtr handle) : base(handle)
@@ -44,8 +45,6 @@ namespace Navigator.iOS
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-			stepDetector.OnStep += StepDetectorOnStep;
 
 			// For accelerometer readings
 			var motionManager = new CMMotionManager ();
@@ -57,28 +56,26 @@ namespace Navigator.iOS
 			//Graph loading code
 			var assembly = Assembly.GetExecutingAssembly ();		
 			var asset = assembly.GetManifestResourceStream("Navigator.iOS.Resources.test.xml");
-			var g = Graph.Load (asset);
+			floorPlanGraph = Graph.Load (asset);
 
 			//Test path
-			var start = g.Vertices.First(x=>x=="476-690");
-			var end = g.Vertices.First(x=>x=="1066-760");
-			var path = g.FindPath(start,end);
+
 
 			//Collision class
-			_col.addGraph(g);
-			_col.GiveStartingLocation(787.0f, 717.0f);
-			realPos = Tuple.Create<float, float>(787.0f, 717.0f);
+			_col.addGraph(floorPlanGraph);
+			_col.SetLocation(707.0f, 677.0f);
 			_col.passHeading(90);
+			_col.StepDetector = stepDetector;
+			_col.PositionChanged += HandleStepsTaken;
 
 
 			UIView container = new UIView ();
-			PathView pathView = new PathView ();
 			floorplanImageView = new UIImageView();	
 
 			floorplanImageNoGrid = UIImage.FromBundle ("Images/dcsfloor.png");
 			floorplanImageWithGrid = UIImage.FromBundle ("Images/dcsFloorGrid.png");
 			locationArrow = new LocationArrowImageView ();
-			locationArrow.setLocation (687  + 96, 600 + 88);
+			locationArrow.setLocation (707.0f, 677.0f);
 			locationArrow.ScaleFactor = floorplanView.ZoomScale;
 			pathView.ScaleFactor = floorplanView.ZoomScale;
 
@@ -103,14 +100,11 @@ namespace Navigator.iOS
 			};
 
 			motionManager.StartAccelerometerUpdates (NSOperationQueue.CurrentQueue, (data, error) => {
-				stepDetector.passValue(data.Acceleration.X*9.8, data.Acceleration.Y*9.8, data.Acceleration.Z*9.8);
-			
+				_col.PassSensorReadings(SensorType.Accel ,data.Acceleration.X*9.8, data.Acceleration.Y*9.8, data.Acceleration.Z*9.8);
 			});
 				
 			longPressManager.AllowableMovement = 0;
-
-			longPressManager.AddTarget(() => handleLongPress(longPressManager, g));
-		
+			longPressManager.AddTarget(() => handleLongPress(longPressManager, floorPlanGraph));
 			floorplanView.AddGestureRecognizer (longPressManager);
 
 			locationManager = new CLLocationManager ();
@@ -119,7 +113,6 @@ namespace Navigator.iOS
 			locationManager.UpdatedHeading += HandleUpdatedHeading;
 			locationManager.StartUpdatingHeading();
 
-            // Perform any additional setup after loading the view, typically from a nib.
             Button.TouchUpInside += delegate
             {
 				if (toggle == 1) {
@@ -137,51 +130,28 @@ namespace Navigator.iOS
             };
 
 			simulationButton.TouchUpInside += delegate {
-				var currentX = locationArrow.X;
-				var currentY = locationArrow.Y;
-
-				var pathLength = path.Count();
-				var pathPoints = new CoreGraphics.CGPoint[pathLength];
-
-
-				for (int i = 0; i < pathLength; i++) {
-					int dash = path.ElementAt(i).Source.IndexOf("-");
-					float yVal = float.Parse(path.ElementAt(i).Source.Substring(dash+1), CultureInfo.InvariantCulture.NumberFormat) /* + 88 */ ;
-					float xVal = float.Parse(path.ElementAt(i).Source.Remove(dash), CultureInfo.InvariantCulture.NumberFormat)/* + 96 */ ;
-					pathPoints[i] = new CoreGraphics.CGPoint(xVal, yVal);
-
-
-				}
-				pathView.setPoints(pathPoints);
-
-				locationArrow.lookAtHeading((float)-2);
-				//locationArrow.setLocation (650, 850);
-
-				debugLabel.Text = "" + floorplanImageView.Layer.AnchorPoint.X;
+				_col.StepTaken(false);
 			};
 
         }
 
-		void HandleUpdatedHeading (object sender, CLHeadingUpdatedEventArgs e)
+		private void HandleUpdatedHeading (object sender, CLHeadingUpdatedEventArgs e)
 		{
-			//double oldRad = -locationManager.Heading.TrueHeading * Math.PI / 180D;
-			double newRad = e.NewHeading.TrueHeading * Math.PI / 180D;
+			float newRad = (float) (e.NewHeading.TrueHeading * Math.PI / 180f);
+			_col.passHeading (newRad);
+			debugLabel.Text = "heading"+newRad;
+
 
 			//floorplanImageView.Layer.AnchorPoint = new CGPoint (locationArrow.X/floorplanImageNoGrid.Size.Width, locationArrow.Y/floorplanImageNoGrid.Size.Height);
 			locationArrow.lookAtHeading((float)newRad);
 
 		}
 
-		void stepHandler (bool stationaryStart) {
-			counter++;
-            if (stationaryStart)
-            {
-                stepCounter += 2;
-            }
-            stepCounter++;
-			debugLabel.Text = "s:" + stepCounter + "c:" + counter;
-
+		private void HandleStepsTaken(object s, PositionChangedHandlerEventArgs args){
+			locationArrow.setLocation(args.newX, args.newY);
+			debugLabel.Text = ""+GlobalStepCounter;
 		}
+
 			
 		private void floorplanLookAtHeading(float angle) 
 		{
@@ -195,6 +165,29 @@ namespace Navigator.iOS
 
 		}
 
+		private void drawPathFromUser(float endX, float endY){
+			var userNode = floorPlanGraph.FindClosestNode (locationArrow.X, locationArrow.Y, 6);
+			var pathStart = floorPlanGraph.Vertices.First(x=>x==userNode.Item1+"-"+userNode.Item2);
+			var destinationNode = floorPlanGraph.FindClosestNode (endX, endY, 6);
+			var pathEnd = floorPlanGraph.Vertices.First(x=>x==destinationNode.Item1+"-"+destinationNode.Item2);
+			var path = floorPlanGraph.FindPath(pathStart,pathEnd);
+
+			var pathLength = path.Count();
+			var pathPoints = new CoreGraphics.CGPoint[pathLength];
+
+
+
+			for (int i = 0; i < pathLength; i++) {
+				int dash = path.ElementAt(i).Source.IndexOf("-");
+				float yVal = float.Parse(path.ElementAt(i).Source.Substring(dash+1), CultureInfo.InvariantCulture.NumberFormat) /* + 88 */ ;
+				float xVal = float.Parse(path.ElementAt(i).Source.Remove(dash), CultureInfo.InvariantCulture.NumberFormat)/* + 96 */ ;
+				pathPoints[i] = new CoreGraphics.CGPoint(xVal, yVal);
+
+
+			}
+			pathView.setPoints(pathPoints);
+		}
+
 
 		private void handleLongPress( UILongPressGestureRecognizer gesture, Graph g ) {
 
@@ -204,12 +197,13 @@ namespace Navigator.iOS
 			var tapX = gesture.LocationInView(floorplanImageView).X;
 			var tapY = gesture.LocationInView (floorplanImageView).Y;
 
+			drawPathFromUser ((float)tapX, (float)tapY);
+
+			/*
 			// Create a new Alert Controller
 			UIAlertController actionSheetAlert = UIAlertController.Create("Options", "Set", UIAlertControllerStyle.Alert);
 
 			// Add Actions
-			actionSheetAlert.AddAction(UIAlertAction.Create("Start Point",UIAlertActionStyle.Default, (action) => setStartPoint(tapX, tapY)));
-			actionSheetAlert.AddAction(UIAlertAction.Create("End Point",UIAlertActionStyle.Default, (action) => setEndPoint(tapX, tapY, g)));
 			actionSheetAlert.AddAction(UIAlertAction.Create("Cancel",UIAlertActionStyle.Cancel, null));
 
 			//actionSheetAlert.AddAction(UIAlertAction.Create("Cancel",UIAlertActionStyle.Cancel, (action) => Console.WriteLine ("Cancel button pressed.")));
@@ -222,59 +216,7 @@ namespace Navigator.iOS
 			}
 				
 			this.PresentViewController(actionSheetAlert,true,null);
-
-		}
-
-		private void setStartPoint(nfloat x, nfloat y) {
-			Tuple<int, int> temp = _col.getNearestNode ((float)x, (float)y);
-
-			//Currently setting the location arrow to nearest node to make it easier to access nearest node value
-			locationArrow.setLocation (temp.Item1, temp.Item2);
-			string nodeStart = "\"" + locationArrow.X + "-" + locationArrow.Y + "\"";
-			debugLabel.Text = nodeStart;
-
-		}
-
-		private void setEndPoint(nfloat X, nfloat Y, Graph g) {
-			Tuple<int, int> temp = _col.getNearestNode ((float)X, (float)Y);
-			debugLabel.Text = "x:" + temp.Item1 + "y:" + temp.Item2;
-
-			string nodeStart = locationArrow.X + "-" + locationArrow.Y ;
-			string nodeEnd = temp.Item1 + "-" + temp.Item2;
-
-			var start = g.Vertices.First (x=>x==nodeStart);
-			var end = g.Vertices.First(x=>x==nodeEnd);
-			var path = g.FindPath (start, end);
-
-			var pathLength = path.Count();
-			debugLabel.Text = "" + pathLength;
-
-			var pathPoints = new CoreGraphics.CGPoint[pathLength];
-
-			for (int i = 0; i < pathLength; i++) {
-				int dash = path.ElementAt(i).Source.IndexOf("-");
-				float yVal = float.Parse(path.ElementAt(i).Source.Substring(dash+1), CultureInfo.InvariantCulture.NumberFormat);
-				float xVal = float.Parse(path.ElementAt(i).Source.Remove(dash), CultureInfo.InvariantCulture.NumberFormat);
-				pathPoints[i] = new CoreGraphics.CGPoint(xVal, yVal);
-
-			}
-
-			//This isn't displaying the paths, seems like it should
-			pathView.setPoints(pathPoints);
-
-		}
-
-		private void StepDetectorOnStep(bool stationaryStart)
-		{
-			Tuple<float, float> tempPos = _col.testStepTrigger();
-			if (!Tuple.Equals(tempPos, realPos))
-			{
-				if (stationaryStart)
-					stepCounter += 2;
-
-				stepCounter++;
-				realPos = tempPos;
-			}
+			*/
 		}
 
         public override void DidReceiveMemoryWarning()

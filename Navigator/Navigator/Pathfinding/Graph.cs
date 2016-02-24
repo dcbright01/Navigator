@@ -12,7 +12,14 @@ using QuickGraph.Algorithms.ShortestPath;
 
 namespace Navigator.Pathfinding
 {
-    public class Graph : UndirectedGraph<string, UndirEdge>
+	public interface IGraph 
+	{
+		List<UndirEdge> FindPath (string start, string end);
+		Tuple<int, int> FindClosestNode (float searchX, float searchY, int searchDistance);
+
+	}
+
+	public class Graph : UndirectedGraph<string, UndirEdge>, IGraph
     {
         
         public Graph()

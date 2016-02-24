@@ -20,9 +20,10 @@ namespace Navigator.iOS
 		//Location manager for heading information
 		CLLocationManager locationManager = null;
 
-		//Instantiate step detector
-		StepDetector stepDetector = new StepDetector();
-	
+		//Instantiate step detector and collision class
+		private IStepDetector _stepDetector = new StepDetector();
+		private ICollision _col;
+
 
 		LocationArrowImageView locationArrow;
 
@@ -34,9 +35,6 @@ namespace Navigator.iOS
 		UIImage floorplanImageNoGrid;
 		UIImage floorplanImageWithGrid;
 
-		private CollisionDan _col = new CollisionDan ();
-
-        int stepCounter = 0;
 
         public ViewController(IntPtr handle) : base(handle)
         {
@@ -62,10 +60,9 @@ namespace Navigator.iOS
 
 
 			//Collision class
-			_col.addGraph(floorPlanGraph);
+			_col = new Collision(_stepDetector,floorPlanGraph);
 			_col.SetLocation(707.0f, 677.0f);
-			_col.passHeading(90);
-			_col.StepDetector = stepDetector;
+			_col.PassHeading(90);
 			_col.PositionChanged += HandleStepsTaken;
 
 
@@ -138,8 +135,7 @@ namespace Navigator.iOS
 		private void HandleUpdatedHeading (object sender, CLHeadingUpdatedEventArgs e)
 		{
 			float newRad = (float) (e.NewHeading.TrueHeading * Math.PI / 180f);
-			_col.passHeading (newRad);
-			debugLabel.Text = "heading"+newRad;
+			_col.PassHeading (newRad);
 
 
 			//floorplanImageView.Layer.AnchorPoint = new CGPoint (locationArrow.X/floorplanImageNoGrid.Size.Width, locationArrow.Y/floorplanImageNoGrid.Size.Height);

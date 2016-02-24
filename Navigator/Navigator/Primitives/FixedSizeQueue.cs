@@ -1,32 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Navigator.Primitives
 {
     public class FixedSizeQueue<T> : Queue<T>
     {
-        private int limit = -1;
-
-        public int Limit
-        {
-            get { return limit; }
-            set { limit = value; }
-        }
-
         public FixedSizeQueue(int limit)
             : base(limit)
         {
-            this.Limit = limit;
+            Limit = limit;
         }
+
+        public int Limit { get; set; } = -1;
 
         public new void Enqueue(T item)
         {
-            if (this.Count >= this.Limit)
+            if (Count >= Limit)
             {
-                this.Dequeue();
+                Dequeue();
             }
             base.Enqueue(item);
         }

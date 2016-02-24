@@ -125,7 +125,6 @@ namespace Navigator.Droid.Helpers
             if (UserPosition != null)
             {
                 // Just some maths to scale the image (we dont want a big arrow at least not for now lol)
-                float zoom = CIVInstance.Scale;
                 if(CurrentUserRepresentation != null)
                     CurrentUserRepresentation.Recycle();
                 var instance = GetUserRepresentationClone();

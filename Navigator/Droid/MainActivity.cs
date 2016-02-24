@@ -48,9 +48,12 @@ namespace Navigator.Droid
             _sensorListener.StepDetector.OnStep += StepDetectorOnStep;
 
             // Decode resources for pathfinding test
-            MapMaker.PlainMap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor);
-            MapMaker.PlainMapGrid = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid);
-            MapMaker.UserRepresentation = BitmapFactory.DecodeResource(Resources, Resource.Drawable.arrow);
+            if(MapMaker.PlainMap == null)
+                MapMaker.PlainMap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor);
+            if (MapMaker.PlainMapGrid == null)
+                MapMaker.PlainMapGrid = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid);
+            if (MapMaker.UserRepresentation == null)
+                MapMaker.UserRepresentation = BitmapFactory.DecodeResource(Resources, Resource.Drawable.arrow);
             MapMaker.Initialize();
 
 

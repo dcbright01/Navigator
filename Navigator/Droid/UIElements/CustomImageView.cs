@@ -56,7 +56,7 @@ namespace Navigator.Droid.UIElements
             }
 
             _gestureDetector = new GestureDetector(_context, new CustomImageViewGestureDetector(this));
-            SetAdjustViewBounds(true);
+            //SetAdjustViewBounds(true);
         }
 
 

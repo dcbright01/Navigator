@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using Navigator.Primitives;
 using QuickGraph;
 using QuickGraph.Algorithms.Observers;
 using QuickGraph.Algorithms.ShortestPath;
@@ -52,6 +53,18 @@ namespace Navigator.Pathfinding
             g.AddEdgeRange(ed);
 
             return g;
+        }
+
+        public string FindClosestNode(int x, int y)
+        {
+            return Vertices.OrderBy(n => NodeDistance(string.Format("{0}-{1}", x, y), n)).First();
+        }
+
+        private float NodeDistance(string n1, string n2)
+        {
+            Vector2 node1 = new Vector2(n1);
+            Vector2 node2 = new Vector2(n2);
+            return node1.Distance2D(node2);
         }
 
         /// <summary>

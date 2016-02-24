@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Views;
 using Android.Widget;
 using Navigator.Droid.Extensions;
+using Navigator.Droid.Helpers;
 using Navigator.Droid.Sensors;
 using Navigator.Droid.UIElements;
 using Navigator.Helpers;
@@ -35,11 +36,26 @@ namespace Navigator.Droid
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+
+            SetContentView(Resource.Layout.ScaleImage);
+
+            // Register our sensor listener
             _sensorManager = (SensorManager) GetSystemService(SensorService);
             _sensorListener = new CustomListener(_sensorManager);
             _sensorListener.AccelerationProcessor.OnValueChanged += AccelerationProcessorOnValueChanged;
             _sensorListener.RotationProcessor.OnValueChanged += RotationProcessorOnValueChanged;
             _sensorListener.StepDetector.OnStep += StepDetectorOnStep;
+
+            // Decode resources for pathfinding test
+            if(MapMaker.PlainMap == null)
+                MapMaker.PlainMap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor);
+            if (MapMaker.PlainMapGrid == null)
+                MapMaker.PlainMapGrid = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid);
+            if (MapMaker.UserRepresentation == null)
+                MapMaker.UserRepresentation = BitmapFactory.DecodeResource(Resources, Resource.Drawable.arrow);
+            MapMaker.Initialize();
+
 
             // Small pathfinding test
 
@@ -58,6 +74,7 @@ namespace Navigator.Droid
 
             var asset = Assets.Open("test.xml");
             var g = Graph.Load(asset);
+            MapMaker.PathfindingGraph = g;
 
             _col.addGraph(g);
             _col.GiveStartingLocation(787.0f, 717.0f);
@@ -66,7 +83,6 @@ namespace Navigator.Droid
 
             // Set nav mode
             ActionBar.NavigationMode = ActionBarNavigationMode.Tabs;
-            SetContentView(Resource.Layout.ScaleImage);
 
             // Register our tabs
             ActionBar.AddNewTab("Main", () =>
@@ -74,6 +90,7 @@ namespace Navigator.Droid
                 inDebug = false;
                 SetContentView(Resource.Layout.ScaleImage);
                 _imgMap = FindViewById<CustomImageView>(Resource.Id.imgMap);
+                MapMaker.CIVInstance = _imgMap;
                 _imgMap.LongPress += ImgMapOnLongPress;
                 // Reset to saved state
                 if (_currentMapImage != null)
@@ -169,137 +186,41 @@ namespace Navigator.Droid
                 .SetPositiveButton("Start Location", (s, args) =>
                 {
                     // User pressed yes
-                    ResetMap();
-
-                    var point = RelativeToAbsoluteCoordinates((int) motionEvent.GetX(), (int) motionEvent.GetY());
-                    startPoint = new Vector2(point[0], point[1]);
-                    DrawOnMap();
+                    MapMaker.StartPoint = MapMaker.RelativeToAbsolute((int) motionEvent.GetX(), (int) motionEvent.GetY());
+                    MapMaker.DrawMap();
+                    _imgMap.SetImageBitmap(MapMaker.CurrentImage);
                 })
                 .SetNegativeButton("End Location", (s, args) =>
                 {
                     // User pressed no
-                    ResetMap();
-
-                    var point = RelativeToAbsoluteCoordinates((int) motionEvent.GetX(), (int) motionEvent.GetY());
-                    endPoint = new Vector2(point[0], point[1]);
-                    DrawOnMap();
+                    MapMaker.EndPoint = MapMaker.RelativeToAbsolute((int)motionEvent.GetX(), (int)motionEvent.GetY());
+                    MapMaker.DrawMap();
+                    _imgMap.SetImageBitmap(MapMaker.CurrentImage);
+                })
+                .SetNeutralButton("Place user", (s, args) =>
+                {
+                    MapMaker.UserPosition = MapMaker.RelativeToAbsolute((int)motionEvent.GetX(), (int)motionEvent.GetY());
+                    MapMaker.DrawMap();
+                    _imgMap.SetImageBitmap(MapMaker.CurrentImage);
                 })
                 .SetMessage("Start or end location?")
                 .SetTitle("Pick some shit")
                 .Show();
         }
 
-        // Draws the current points and lines on the map.
-        private void DrawOnMap()
-        {
-            var myOptions = new BitmapFactory.Options();
-            myOptions.InDither = true;
-            myOptions.InScaled = false;
-            myOptions.InPreferredConfig = Bitmap.Config.Argb8888;
-            myOptions.InPurgeable = true;
-            myOptions.InMutable = true;
-            Bitmap bitmap;
-
-            // If the current map image is not initialised, initialise it to the correct one.
-            if (_currentMapImage == null)
-            {
-                if (!_isDrawingGrid)
-                {
-                    _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor, myOptions);
-                }
-                else
-                {
-                    _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid, myOptions);
-                }
-            }
-
-            bitmap = _currentMapImage;
-
-            var paint = new Paint
-            {
-                AntiAlias = true,
-                Color = Color.Magenta
-            };
-
-            // Draw the damn points.
-            var canvas = new Canvas(bitmap);
-
-            if (startPoint != null)
-            {
-                canvas.DrawCircle(startPoint.X, startPoint.Y, 20, paint);
-            }
-
-            if (endPoint != null)
-            {
-                canvas.DrawCircle(endPoint.X, endPoint.Y, 20, paint);
-            }
-
-            if ((startPoint != null) && (endPoint != null))
-            {
-                paint.StrokeWidth = 10;
-                canvas.DrawLine(startPoint.X, startPoint.Y, endPoint.X, endPoint.Y, paint);
-            }
-
-            // Change the displayed image to the new one and update current map image
-            // to ensure that change is consistent when tabs are changed.
-            _imgMap.SetAdjustViewBounds(true);
-            _currentMapImage = bitmap;
-            _imgMap.SetImageBitmap(_currentMapImage);
-        }
-
-        // Resets the floorplan bitmap to a mutable un-edited version
-        private void ResetMap()
-        {
-            var myOptions = new BitmapFactory.Options();
-            myOptions.InDither = true;
-            myOptions.InScaled = false;
-            myOptions.InPreferredConfig = Bitmap.Config.Argb8888;
-            myOptions.InPurgeable = true;
-            myOptions.InMutable = true;
-
-            if (!_isDrawingGrid)
-            {
-                _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor, myOptions);
-            }
-            else
-            {
-                _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid, myOptions);
-            }
-
-            _imgMap.SetImageBitmap(_currentMapImage);
-        }
-
-        // Translates coordinates of the imageview touch event to coordinates of the bitmap image
-        // so that points can be drawn on the correct place to account for any offset.
-        private float[] RelativeToAbsoluteCoordinates(int x, int y)
-        {
-            float[] point = {x, y};
-            var inverse = new Matrix();
-            _imgMap.ImageMatrix.Invert(inverse);
-            inverse.MapPoints(point);
-            return point;
-        }
-
         private void DrawGridButtonToggle(object sender, EventArgs eventArgs)
         {
-            var myOptions = new BitmapFactory.Options();
-            myOptions.InDither = true;
-            myOptions.InScaled = false;
-            myOptions.InPreferredConfig = Bitmap.Config.Argb8888;
-            myOptions.InPurgeable = true;
-            myOptions.InMutable = true;
-
             if (_btnDrawGridToggle.Checked)
             {
-                _isDrawingGrid = true;
-                _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid, myOptions);
-                DrawOnMap();
+                MapMaker.DrawGrid = true;
+                MapMaker.DrawMap();
+                _imgMap.SetImageBitmap(MapMaker.CurrentImage);
             }
             else
             {
-                _isDrawingGrid = false;
-                _currentMapImage = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor, myOptions);
-                DrawOnMap();
+                MapMaker.DrawGrid = true;
+                MapMaker.DrawMap();
+                _imgMap.SetImageBitmap(MapMaker.CurrentImage);
             }
         }
 

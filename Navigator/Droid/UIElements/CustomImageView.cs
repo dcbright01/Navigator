@@ -4,6 +4,7 @@ using Android.Graphics;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Navigator.Droid.Helpers;
 using Navigator.Primitives;
 
 namespace Navigator.Droid.UIElements
@@ -55,6 +56,7 @@ namespace Navigator.Droid.UIElements
             }
 
             _gestureDetector = new GestureDetector(_context, new CustomImageViewGestureDetector(this));
+            //SetAdjustViewBounds(true);
         }
 
 

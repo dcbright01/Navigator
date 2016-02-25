@@ -27,6 +27,9 @@ namespace Navigator.Pathfinding
         /// <returns></returns>
         public List<UndirEdge> FindPath(string start, string end)
         {
+			var containsStart = Vertices.Contains(start);
+			var containsEnd = Vertices.Contains(end);
+
             var dijkstra = new UndirectedDijkstraShortestPathAlgorithm<string, UndirEdge>(this, edge => 1);
             var observer = new UndirectedVertexPredecessorRecorderObserver<string, UndirEdge>();
             observer.Attach(dijkstra);

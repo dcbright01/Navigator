@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Navigator.Pathfinding;
 using Navigator.Primitives;
+using System.Linq;
 
 namespace Navigator
 {
@@ -100,11 +101,10 @@ namespace Navigator
             PositionChanged(this, args);
         }
 
-
         private int CalculateNearestNode()
         {
             var tempNode = _graph.FindClosestNode(realPosition.X, realPosition.Y, searchDistance);
-
+			var contains = ((Graph) _graph).Vertices.Contains(tempNode.ToPointString());
 
             //case where this is the initial position, figure out how for initial to avoid wall hopping
             if (nearestGraphNode == null)
@@ -139,7 +139,7 @@ namespace Navigator
                 }
                 //} 
             }
-            if (tempNode.IsValidCoordinate)
+            if (!tempNode.IsValidCoordinate)
             {
                 return -1;
             }
@@ -170,7 +170,8 @@ namespace Navigator
                 if (!nearestHolder.Equals(nearestGraphNode))
                 {
                     start = nearestGraphNode.ToPointString();
-                    end = nearestGraphNode.ToPointString();
+					end = nearestHolder.ToPointString();
+
                     var path = _graph.FindPath(start, end);
                     if (path.Count > 2)
                     {

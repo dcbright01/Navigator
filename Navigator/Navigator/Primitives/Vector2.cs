@@ -4,9 +4,6 @@ namespace Navigator.Primitives
 {
     public class Vector2
     {
-        public float X { get; set; }
-        public float Y { get; set; }
-
         public Vector2(float x, float y)
         {
             X = x;
@@ -26,13 +23,19 @@ namespace Navigator.Primitives
                 throw new Exception("Unable to parse a Vector2 from the string");
             }
         }
+
         public Vector2(float[] values)
         {
-            if(values.Length < 2)
-                throw  new Exception("Not enough values to construct Vector2");
+            if (values.Length < 2)
+                throw new Exception("Not enough values to construct Vector2");
             X = values[0];
             Y = values[1];
         }
+
+        public float X { get; set; }
+        public float Y { get; set; }
+
+        public bool IsValidCoordinate { get { return X != -1 && Y != -1; } }
 
         public float Distance2D(Vector2 otherVector)
         {
@@ -44,9 +47,9 @@ namespace Navigator.Primitives
             return string.Format("{0}-{1}", X, Y);
         }
 
-        public static implicit operator float[] (Vector2 instance)
+        public static implicit operator float[](Vector2 instance)
         {
-            return new[] { instance.X, instance.Y};
+            return new[] {instance.X, instance.Y};
         }
     }
 }

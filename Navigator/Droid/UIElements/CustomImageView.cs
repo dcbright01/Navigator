@@ -4,7 +4,6 @@ using Android.Graphics;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Navigator.Droid.Helpers;
 using Navigator.Primitives;
 
 namespace Navigator.Droid.UIElements

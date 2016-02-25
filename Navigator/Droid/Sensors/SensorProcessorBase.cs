@@ -12,6 +12,10 @@ namespace Navigator.Droid.Sensors
         /// </summary>
         public readonly List<SensorType> AcceptedSensorTypes;
 
+        protected DateTime LastReading = DateTime.MinValue;
+
+        protected long ReadingDelay = 0;
+
         /// <summary>
         ///     Keeps track of the last 10 values produced by this sensor processor
         /// </summary>
@@ -22,7 +26,7 @@ namespace Navigator.Droid.Sensors
         {
             ValueHistory = new FixedSizeQueue<T>(10);
             AcceptedSensorTypes = new List<SensorType>();
-            _sensorManager = manager;
+            SensorManager = manager;
         }
 
         /// <summary>
@@ -30,11 +34,12 @@ namespace Navigator.Droid.Sensors
         /// </summary>
         public T Value { get; protected set; }
 
-        protected long ReadingDelay = 0;
-        protected DateTime LastReading = DateTime.MinValue; 
-        public long MsLastReading { get { return (long) DateTime.Now.Subtract(LastReading).TotalMilliseconds; } }
+        public long MsLastReading
+        {
+            get { return (long) DateTime.Now.Subtract(LastReading).TotalMilliseconds; }
+        }
 
-        protected SensorManager _sensorManager { get; private set; }
+        protected SensorManager SensorManager { get; private set; }
 
         public bool HasValue
         {
@@ -45,7 +50,6 @@ namespace Navigator.Droid.Sensors
 
         public void OnSensorChanged(SensorEvent e)
         {
-
             if (!AcceptedSensorTypes.Contains(e.Sensor.Type))
                 return;
 

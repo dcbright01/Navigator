@@ -1,17 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
 using Android.Content.Res;
 using Android.Graphics;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Javax.Crypto.Interfaces;
 using Navigator.Droid.UIElements;
 using Navigator.Pathfinding;
 using Navigator.Primitives;
@@ -19,86 +9,85 @@ using Navigator.Primitives;
 namespace Navigator.Droid.Helpers
 {
     /// <summary>
-    /// Class that will be responsible for drawing the whole bitmap and stuff :P 
+    ///     Class that will be responsible for drawing the whole bitmap and stuff :P
     /// </summary>
-    public static class MapMaker
+    public class MapMaker
     {
-        /// <summary>
-        /// The matrix used for all calculations and whatnot
-        /// </summary>
-        public static Matrix InverseMatrix
+        public BitmapFactory.Options BitmapOptions = new BitmapFactory.Options
         {
-            get { return CIVInstance.ImageMatrix; }
-        }
+            InDither = true,
+            InScaled = true,
+            InPreferredConfig = Bitmap.Config.Argb8888,
+            InPurgeable = true,
+            InMutable = true
+        };
 
-        public static CustomImageView CIVInstance;
+        public CustomImageView CIVInstance;
 
-        #region <StaticImages>
-        public static Bitmap PlainMap;
-       
-        public static Bitmap PlainMapGrid;
-
-        public static Bitmap UserRepresentation;
-        #endregion
-
-        public static bool DrawGrid { get; set; } = false;
-
-        public static Bitmap CurrentImage;
-        public static Bitmap CurrentUserRepresentation;
+        public Bitmap CurrentImage;
+        public Bitmap CurrentUserRepresentation;
+        public Vector2 EndPoint;
 
 
-        public static Bitmap.Config DefaultConfig = Bitmap.Config.Argb8888;
-
-        public static Paint PaintBrush = new Paint()
+        public Paint PaintBrush = new Paint
         {
             AntiAlias = true,
             Color = Color.Magenta
         };
 
-        public static Vector2 StartPoint;
-        public static Vector2 EndPoint;
-        public static Vector2 UserPosition;
-        public static float UserHeading;
-        public static List<UndirEdge> UserPath = new List<UndirEdge>();
-        public static Graph PathfindingGraph;
+        public Graph PathfindingGraph;
 
-        public static BitmapFactory.Options BitmapOptions = new BitmapFactory.Options()
-        {
-            InDither = true,
-            InScaled = true,
-            InPreferredConfig = DefaultConfig,
-            InPurgeable = true,
-            InMutable = true
-        };
+        public Vector2 StartPoint;
+        public float UserHeading;
+        public List<UndirEdge> UserPath = new List<UndirEdge>();
+        public Vector2 UserPosition;
 
-        public static void Initialize()
+        /// <summary>
+        ///     The matrix used for all calculations and whatnot
+        /// </summary>
+        public Matrix InverseMatrix
         {
+            get { return CIVInstance.ImageMatrix; }
+        }
+
+        public bool DrawGrid { get; set; } = false;
+
+        public void Initialize(Resources res)
+        {
+            // Decode resources for pathfinding test
+            if (PlainMap == null)
+                PlainMap = BitmapFactory.DecodeResource(res, Resource.Drawable.dcsFloor);
+            if (PlainMapGrid == null)
+                PlainMapGrid = BitmapFactory.DecodeResource(res, Resource.Drawable.dcsFloorGrid);
+            if (UserRepresentation == null)
+                UserRepresentation = BitmapFactory.DecodeResource(res, Resource.Drawable.arrow);
+
             // Just some checks to see if we have everything
-            if(PlainMap == null)
+            if (PlainMap == null)
                 throw new Exception("No plain map specified");
             if (PlainMapGrid == null)
                 throw new Exception("No plain map grid specified");
         }
 
-        private static Bitmap GetPlainMapClone()
+        private Bitmap GetPlainMapClone()
         {
-            return PlainMap.Copy(DefaultConfig, true);
+            return PlainMap.Copy(Bitmap.Config.Argb8888, true);
         }
 
-        private static Bitmap GetPlainMapGridClone()
+        private Bitmap GetPlainMapGridClone()
         {
-            return PlainMapGrid.Copy(DefaultConfig, true);
+            return PlainMapGrid.Copy(Bitmap.Config.Argb8888, true);
         }
 
-        private static Bitmap GetUserRepresentationClone()
+        private Bitmap GetUserRepresentationClone()
         {
-            return UserRepresentation.Copy(DefaultConfig, true);
+            return UserRepresentation.Copy(Bitmap.Config.Argb8888, true);
         }
 
         /// <summary>
-        /// Loads a clean version of the image (copy)
+        ///     Loads a clean version of the image (copy)
         /// </summary>
-        public static void ResetMap()
+        public void ResetMap()
         {
             // Check if we have a current image 
             if (CurrentImage != null)
@@ -109,15 +98,15 @@ namespace Navigator.Droid.Helpers
             CurrentImage = DrawGrid ? GetPlainMapGridClone() : GetPlainMapClone();
         }
 
-        public static void DrawMap()
+        public void DrawMap()
         {
             // Clean up
             ResetMap();
             // Get out drawing 
             var canvas = new Canvas(CurrentImage);
 
-            if(StartPoint != null)
-                canvas.DrawCircle(StartPoint.X,StartPoint.Y,20,PaintBrush);
+            if (StartPoint != null)
+                canvas.DrawCircle(StartPoint.X, StartPoint.Y, 20, PaintBrush);
 
             if (EndPoint != null)
                 canvas.DrawCircle(EndPoint.X, EndPoint.Y, 20, PaintBrush);
@@ -125,19 +114,20 @@ namespace Navigator.Droid.Helpers
             if (UserPosition != null)
             {
                 // Just some maths to scale the image (we dont want a big arrow at least not for now lol)
-                if(CurrentUserRepresentation != null)
+                if (CurrentUserRepresentation != null)
                     CurrentUserRepresentation.Recycle();
                 var instance = GetUserRepresentationClone();
                 CurrentUserRepresentation = Bitmap.CreateScaledBitmap(instance, 20, 20, true);
                 instance.Recycle();
-                canvas.DrawBitmap(CurrentUserRepresentation, UserPosition.X- CurrentUserRepresentation.Width/2,UserPosition.Y- CurrentUserRepresentation.Height/2,PaintBrush);
+                canvas.DrawBitmap(CurrentUserRepresentation, UserPosition.X - CurrentUserRepresentation.Width/2,
+                    UserPosition.Y - CurrentUserRepresentation.Height/2, PaintBrush);
             }
 
             if (StartPoint != null && EndPoint != null)
             {
                 // Map points 
-                string startPoint = PathfindingGraph.FindClosestNode((int) StartPoint.X, (int) StartPoint.Y);
-                string endPoint = PathfindingGraph.FindClosestNode((int) EndPoint.X, (int)EndPoint.Y);
+                var startPoint = PathfindingGraph.FindClosestNode((int) StartPoint.X, (int) StartPoint.Y);
+                var endPoint = PathfindingGraph.FindClosestNode((int) EndPoint.X, (int) EndPoint.Y);
                 UserPath = PathfindingGraph.FindPath(startPoint, endPoint);
             }
 
@@ -148,15 +138,16 @@ namespace Navigator.Droid.Helpers
                 // If we have some path, draw it
                 foreach (var edge in UserPath)
                 {
-                    Vector2 start = new Vector2(edge.Source);
-                    Vector2 target = new Vector2(edge.Target);
-                    canvas.DrawLine(start.X,start.Y,target.X,target.Y,PaintBrush);
+                    var start = new Vector2(edge.Source);
+                    var target = new Vector2(edge.Target);
+                    canvas.DrawLine(start.X, start.Y, target.X, target.Y, PaintBrush);
                 }
             }
             canvas.Dispose();
+            CIVInstance.SetImageBitmap(CurrentImage);
         }
 
-        public static Vector2 RelativeToAbsolute(int x, int y)
+        public Vector2 RelativeToAbsolute(int x, int y)
         {
             var points = new float[] {x, y};
             var inverse = new Matrix();
@@ -164,9 +155,20 @@ namespace Navigator.Droid.Helpers
             inverse.MapPoints(points);
             return new Vector2(points);
         }
-        public static Vector2 RelativeToAbsolute(Vector2 coordinate)
+
+        public Vector2 RelativeToAbsolute(Vector2 coordinate)
         {
-            return RelativeToAbsolute((int) coordinate.X,(int) coordinate.Y);   
+            return RelativeToAbsolute((int) coordinate.X, (int) coordinate.Y);
         }
+
+        #region <Images>
+
+        public Bitmap PlainMap;
+
+        public Bitmap PlainMapGrid;
+
+        public Bitmap UserRepresentation;
+
+        #endregion
     }
 }

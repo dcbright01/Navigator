@@ -101,7 +101,7 @@
     </XamarinComponentReference>
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\test.xml" />
+    <AndroidAsset Include="Assets\dcsGroundFloor.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\wall.xml" />

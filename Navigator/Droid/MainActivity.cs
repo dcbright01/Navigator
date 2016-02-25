@@ -1,6 +1,5 @@
 ﻿using System;
 using Android.App;
-using Android.Graphics;
 using Android.Hardware;
 using Android.OS;
 using Android.Views;
@@ -10,28 +9,16 @@ using Navigator.Droid.Helpers;
 using Navigator.Droid.Sensors;
 using Navigator.Droid.UIElements;
 using Navigator.Helpers;
-using Navigator.Primitives;
 using Navigator.Pathfinding;
+using Navigator.Primitives;
 
 namespace Navigator.Droid
 {
     [Activity(Label = "Navigator", MainLauncher = true, Icon = "@mipmap/icon")]
     public class MainActivity : Activity, ISensorEventListener
     {
-        #region <ISensorEventListener>
-        public void OnAccuracyChanged(Sensor sensor, SensorStatus accuracy)
-        {
-        }
-
-        public void OnSensorChanged(SensorEvent e)
-        {
-            _sensorListener.OnSensorChanged(e);
-        }
-        #endregion
-
-        private Collision _col = new Collision();
-        private int stepCounter = 0;
-        private Tuple<float, float> realPos;
+        private Collision _collision;
+        private MapMaker _mapMaker;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -45,42 +32,24 @@ namespace Navigator.Droid
             _sensorListener = new CustomListener(_sensorManager);
             _sensorListener.AccelerationProcessor.OnValueChanged += AccelerationProcessorOnValueChanged;
             _sensorListener.RotationProcessor.OnValueChanged += RotationProcessorOnValueChanged;
-            _sensorListener.StepDetector.OnStep += StepDetectorOnStep;
 
-            // Decode resources for pathfinding test
-            if(MapMaker.PlainMap == null)
-                MapMaker.PlainMap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloor);
-            if (MapMaker.PlainMapGrid == null)
-                MapMaker.PlainMapGrid = BitmapFactory.DecodeResource(Resources, Resource.Drawable.dcsFloorGrid);
-            if (MapMaker.UserRepresentation == null)
-                MapMaker.UserRepresentation = BitmapFactory.DecodeResource(Resources, Resource.Drawable.arrow);
-            MapMaker.Initialize();
+            // Class that will handle drawing of the map
+            _mapMaker = new MapMaker();
+            _mapMaker.Initialize(Resources);
+
+            var graphAsset = Assets.Open("dcsGroundFloor.xml");
+            var graphInstance = Graph.Load(graphAsset);
+
+            _mapMaker.PathfindingGraph = graphInstance;
+
+            _collision = new Collision(graphInstance);
 
 
-            // Small pathfinding test
+            setUpUITabs();
+        }
 
-            /*
-            var asset = Assets.Open("test.xml");
-			Stopwatch sw = new Stopwatch ();
-			sw.Start ();
-            var g = Graph.Load(asset);
-			sw.Stop ();
-			long time = (sw.ElapsedMilliseconds / 1000);
-			var start = g.Vertices.First(x=>x=="789-717");
-			var end = g.Vertices.First(x => x == "1479-1167");
-            var path = g.FindPath(start,end);
-            var path2 = g.FindPath(start,end);
-            */
-
-            var asset = Assets.Open("test.xml");
-            var g = Graph.Load(asset);
-            MapMaker.PathfindingGraph = g;
-
-            _col.addGraph(g);
-            _col.GiveStartingLocation(787.0f, 717.0f);
-            realPos = Tuple.Create<float, float>(787.0f, 717.0f);
-            _col.passHeading(90);
-
+        private void setUpUITabs()
+        {
             // Set nav mode
             ActionBar.NavigationMode = ActionBarNavigationMode.Tabs;
 
@@ -90,11 +59,10 @@ namespace Navigator.Droid
                 inDebug = false;
                 SetContentView(Resource.Layout.ScaleImage);
                 _imgMap = FindViewById<CustomImageView>(Resource.Id.imgMap);
-                MapMaker.CIVInstance = _imgMap;
+                _mapMaker.CIVInstance = _imgMap;
                 _imgMap.LongPress += ImgMapOnLongPress;
                 // Reset to saved state
-                if (_currentMapImage != null)
-                    _imgMap.SetImageBitmap(_currentMapImage);
+                _mapMaker.DrawMap();
             });
             ActionBar.AddNewTab("Settings", () =>
             {
@@ -104,7 +72,7 @@ namespace Navigator.Droid
                 _btnDrawGridToggle.Click += DrawGridButtonToggle;
 
                 // Reset to saved state
-                if (_isDrawingGrid)
+                if (_mapMaker.DrawGrid)
                     _btnDrawGridToggle.Checked = true;
             });
             ActionBar.AddNewTab("Debug", () =>
@@ -119,27 +87,6 @@ namespace Navigator.Droid
                 _realX = FindViewById<TextView>(Resource.Id.realX);
                 _realY = FindViewById<TextView>(Resource.Id.realY);
             });
-        }
-
-        private void StepDetectorOnStep(bool stationaryStart)
-        {
-            Tuple<float, float> tempPos = _col.testStepTrigger();
-            if (!Tuple.Equals(tempPos, realPos))
-            {
-                if (stationaryStart)
-                    stepCounter += 2;
-
-                stepCounter++;
-                realPos = tempPos;
-            }
-            if (inDebug)
-            {
-                RunOnUiThread(() => {
-                    _stepText.Text = string.Format("Steps: {0}", stepCounter);
-                });
-                _realX.Text = string.Format("Real X: {0}", realPos.Item1);
-                _realY.Text = string.Format("Real Y: {0}", realPos.Item2);
-            }
         }
 
         private void RotationProcessorOnValueChanged(double value)
@@ -186,22 +133,21 @@ namespace Navigator.Droid
                 .SetPositiveButton("Start Location", (s, args) =>
                 {
                     // User pressed yes
-                    MapMaker.StartPoint = MapMaker.RelativeToAbsolute((int) motionEvent.GetX(), (int) motionEvent.GetY());
-                    MapMaker.DrawMap();
-                    _imgMap.SetImageBitmap(MapMaker.CurrentImage);
+                    _mapMaker.StartPoint = _mapMaker.RelativeToAbsolute((int) motionEvent.GetX(),
+                        (int) motionEvent.GetY());
+                    _mapMaker.DrawMap();
                 })
                 .SetNegativeButton("End Location", (s, args) =>
                 {
                     // User pressed no
-                    MapMaker.EndPoint = MapMaker.RelativeToAbsolute((int)motionEvent.GetX(), (int)motionEvent.GetY());
-                    MapMaker.DrawMap();
-                    _imgMap.SetImageBitmap(MapMaker.CurrentImage);
+                    _mapMaker.EndPoint = _mapMaker.RelativeToAbsolute((int) motionEvent.GetX(), (int) motionEvent.GetY());
+                    _mapMaker.DrawMap();
                 })
                 .SetNeutralButton("Place user", (s, args) =>
                 {
-                    MapMaker.UserPosition = MapMaker.RelativeToAbsolute((int)motionEvent.GetX(), (int)motionEvent.GetY());
-                    MapMaker.DrawMap();
-                    _imgMap.SetImageBitmap(MapMaker.CurrentImage);
+                    _mapMaker.UserPosition = _mapMaker.RelativeToAbsolute((int) motionEvent.GetX(),
+                        (int) motionEvent.GetY());
+                    _mapMaker.DrawMap();
                 })
                 .SetMessage("Start or end location?")
                 .SetTitle("Pick some shit")
@@ -212,22 +158,26 @@ namespace Navigator.Droid
         {
             if (_btnDrawGridToggle.Checked)
             {
-                MapMaker.DrawGrid = true;
-                MapMaker.DrawMap();
-                _imgMap.SetImageBitmap(MapMaker.CurrentImage);
+                _mapMaker.DrawGrid = true;
+                _mapMaker.DrawMap();
             }
             else
             {
-                MapMaker.DrawGrid = true;
-                MapMaker.DrawMap();
-                _imgMap.SetImageBitmap(MapMaker.CurrentImage);
+                _mapMaker.DrawGrid = true;
+                _mapMaker.DrawMap();
             }
         }
 
-        #region < Properties > 
+        #region <ISensorEventListener>
 
-        private Bitmap _currentMapImage;
-        private bool _isDrawingGrid;
+        public void OnAccuracyChanged(Sensor sensor, SensorStatus accuracy)
+        {
+        }
+
+        public void OnSensorChanged(SensorEvent e)
+        {
+            _sensorListener.OnSensorChanged(e);
+        }
 
         #endregion
 
@@ -241,7 +191,6 @@ namespace Navigator.Droid
         #region <Sensors>
 
         private SensorManager _sensorManager;
-        private long initialMilliseconds = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
         private TextView _azimuthText;
         private TextView _stepText;
         private TextView _XAccelText;
@@ -251,13 +200,6 @@ namespace Navigator.Droid
         private TextView _realY;
         private bool inDebug;
         private CustomListener _sensorListener;
-
-        #endregion
-
-        #region <Position Data>
-
-        private Vector2 startPoint;
-        private Vector2 endPoint;
 
         #endregion
     }

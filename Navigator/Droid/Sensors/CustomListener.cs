@@ -1,4 +1,3 @@
-using System;
 using Android.Hardware;
 
 namespace Navigator.Droid.Sensors
@@ -27,17 +26,12 @@ namespace Navigator.Droid.Sensors
         {
             AccelerationProcessor.SensorChangedProcess(e);
             RotationProcessor.SensorChangedProcess(e);
-            if (AccelerationProcessor.HasValue)
-            {
-				StepDetector.passValue(AccelerationProcessor.Value.X, AccelerationProcessor.Value.Y, AccelerationProcessor.Value.Z);
-            }
         }
 
         #region <Sensors>
 
         public Acceleration AccelerationProcessor;
         public Rotation RotationProcessor;
-        public StepDetector StepDetector = new StepDetector();
 
         #endregion
     }

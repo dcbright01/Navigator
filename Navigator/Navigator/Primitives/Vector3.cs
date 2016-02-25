@@ -4,9 +4,7 @@ namespace Navigator.Primitives
 {
     public class Vector3 : Vector2
     {
-        public float Z { get; set; }
-
-        public Vector3(float x, float y,float z) : base(x, y)
+        public Vector3(float x, float y, float z) : base(x, y)
         {
             Z = z;
         }
@@ -18,6 +16,8 @@ namespace Navigator.Primitives
             Z = values[2];
         }
 
+        public float Z { get; set; }
+
         public float Distance3D(Vector3 otherVector)
         {
             return
@@ -26,7 +26,7 @@ namespace Navigator.Primitives
                               Math.Pow(Z - otherVector.Z, 2));
         }
 
-        public static implicit operator float[] (Vector3 instance)
+        public static implicit operator float[](Vector3 instance)
         {
             return new[] {instance.X, instance.Y, instance.Z};
         }

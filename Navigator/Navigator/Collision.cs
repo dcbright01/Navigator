@@ -41,7 +41,7 @@ namespace Navigator
         private readonly Queue<Vector2> _graphPath;
 
         //StepDetector Class
-        private readonly StepDetector _stepDetector;
+        private readonly IStepDetector _stepDetector;
         private float Heading;
         private Vector2 nearestGraphNode;
 
@@ -49,9 +49,9 @@ namespace Navigator
         private Vector2 realPosition;
         //public event HeadingHandler newHeading;
 
-        public Collision(IGraph graph)
+		public Collision(IGraph graph, IStepDetector stepDetector)
         {
-            _stepDetector = new StepDetector();
+			_stepDetector = stepDetector;
             _stepDetector.OnStep += StepTaken;
             _graph = graph;
             _graphPath = new Queue<Vector2>();

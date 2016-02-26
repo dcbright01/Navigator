@@ -4,7 +4,12 @@ namespace Navigator
 {
     public delegate void StepHandler(bool startFromStat);
 
-    public class StepDetector
+	public interface IStepDetector{
+		event StepHandler OnStep;
+		void passValue (double accelValueX, double accelValueY, double accelValueZ) ;
+	}
+
+	public class StepDetector : IStepDetector
     {
         private readonly double[] accelValues = new double[3];
 

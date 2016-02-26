@@ -8,6 +8,7 @@ using CoreMotion;
 using Foundation;
 using Navigator.Pathfinding;
 using UIKit;
+using TinyIoC;
 
 namespace Navigator.iOS
 {
@@ -33,9 +34,9 @@ namespace Navigator.iOS
         private int toggle = 1;
 
 
-        public ViewController(IntPtr handle) : base(handle)
-        {
-        }
+		public ViewController(IntPtr handle) : base(handle)
+		{
+		}
 
         public override void ViewDidLoad()
         {
@@ -57,7 +58,7 @@ namespace Navigator.iOS
 
 
             //Collision class
-            _col = new Collision(floorPlanGraph);
+			_col = new Collision(floorPlanGraph, new StepDetector());
             _col.SetLocation(707.0f, 677.0f);
             _col.PassHeading(90);
             _col.PositionChanged += HandleStepsTaken;

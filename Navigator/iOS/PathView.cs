@@ -33,7 +33,7 @@ namespace Navigator.iOS
 
         public void setPoints(CGPoint[] points)
         {
-            path.AddLines(points);
+			path.AddLines(points);
             SetNeedsDisplay();
         }
 

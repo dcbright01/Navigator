@@ -262,6 +262,7 @@ namespace Navigator.iOS
 
 		public void setStartPoint(nfloat x, nfloat y) {
 			locationArrow.setLocation ((float)x, (float)y);
+			col.SetLocation ((float)x, (float)y);
 		}
 
 		public void setEndPoint(nfloat x, nfloat y) {

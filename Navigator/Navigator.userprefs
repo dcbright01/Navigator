@@ -1,19 +1,20 @@
 ﻿<Properties StartupItem="iOS/Navigator.iOS.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPhone6s.9.1" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="iOS/ViewController.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Navigator/Pathfinding/Graph.cs">
     <Files>
-      <File FileName="Droid/MainActivity.cs" Line="1" Column="1" />
-      <File FileName="iOS/ViewController.cs" Line="224" Column="2" />
+      <File FileName="Droid/MainActivity.cs" Line="42" Column="4" />
+      <File FileName="iOS/ViewController.cs" Line="208" Column="3" />
+      <File FileName="Droid/Sensors/Acceleration.cs" Line="54" Column="46" />
       <File FileName="iOS/Resources/test.xml" Line="1" Column="1" />
-      <File FileName="Navigator/StepDetector.cs" Line="1" Column="1" />
-      <File FileName="iOS/PathView.cs" Line="1" Column="1" />
+      <File FileName="Navigator/StepDetector.cs" Line="146" Column="23" />
+      <File FileName="iOS/PathView.cs" Line="55" Column="63" />
       <File FileName="Navigator/ButterworthLowPassFilter.cs" Line="1" Column="1" />
       <File FileName="Droid/UIElements/CustomImageView.cs" Line="1" Column="1" />
-      <File FileName="Droid/Sensors/Acceleration.cs" Line="1" Column="1" />
       <File FileName="Droid/Sensors/CustomListener.cs" Line="1" Column="1" />
       <File FileName="Droid/Sensors/SensorProcessorBase.cs" Line="1" Column="1" />
       <File FileName="Navigator/Primitives/FixedSizeQueue.cs" Line="1" Column="1" />
-      <File FileName="Navigator/Collision.cs" Line="1" Column="1" />
+      <File FileName="Navigator/Collision.cs" Line="174" Column="6" />
+      <File FileName="Navigator/Pathfinding/Graph.cs" Line="64" Column="31" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

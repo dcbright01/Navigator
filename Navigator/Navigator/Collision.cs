@@ -104,7 +104,7 @@ namespace Navigator
         private int CalculateNearestNode()
         {
             var tempNode = _graph.FindClosestNode(realPosition.X, realPosition.Y, searchDistance);
-			var contains = ((Graph) _graph).Vertices.Contains(tempNode.ToPointString());
+			//var contains = ((Graph) _graph).Vertices.Contains(tempNode.ToPointString());
 
             //case where this is the initial position, figure out how for initial to avoid wall hopping
             if (nearestGraphNode == null)

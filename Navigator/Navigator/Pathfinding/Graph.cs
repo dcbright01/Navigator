@@ -50,11 +50,34 @@ namespace Navigator.Pathfinding
             var tempNode = new Vector2(-1, -1);
             double distanceFromTempToReal = -1;
             double a, b, newDistance;
-
+			int tempX, tempY;
             string nodeCoords;
 
+			int moduloX = (int)searchX % 10;
+			int moduloY = (int)searchY % 10;
+
+			if (moduloX == 6)
+				tempX = (int)searchX;
+			else if (moduloX > 1)
+				tempX = (int)searchX - moduloX + 6;
+			else
+				tempX = (int)searchX - moduloX - 4;
+
+			if (moduloY == 0)
+				tempY = (int)searchY;
+			else if (moduloY >= 5)
+				tempY = (int)searchY + (10 - moduloY);
+			else
+				tempY = (int)searchY - moduloY;
+
+			tempNode = new Vector2 (tempX, tempY);
+
+			return tempNode;
+
+
             //there is a more effecient search that would spiral outwards to a set point before searching the corners of the sqaure that this gets, can implement if need be
-            for (var x = (int) searchX - searchDistance; x <= searchX + searchDistance; x++)
+            
+			/*for (var x = (int) searchX - searchDistance; x <= searchX + searchDistance; x++)
             {
                 for (var y = (int) searchY - searchDistance; y <= searchY + searchDistance; y++)
                 {
@@ -77,6 +100,7 @@ namespace Navigator.Pathfinding
                 }
             }
             return tempNode;
+            */
         }
 
         /// <summary>

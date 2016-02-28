@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Android.Content.Res;
 using Android.Graphics;
 using Navigator.Droid.UIElements;
@@ -61,6 +62,8 @@ namespace Navigator.Droid.Helpers
                 PlainMapGrid = BitmapFactory.DecodeResource(res, Resource.Drawable.dcsFloorGrid);
             if (UserRepresentation == null)
                 UserRepresentation = BitmapFactory.DecodeResource(res, Resource.Drawable.arrow);
+            if(CurrentUserRepresentation == null)
+                CurrentUserRepresentation = Bitmap.CreateScaledBitmap(UserRepresentation, 20, 20, true);
 
             // Just some checks to see if we have everything
             if (PlainMap == null)
@@ -114,11 +117,6 @@ namespace Navigator.Droid.Helpers
             if (UserPosition != null)
             {
                 // Just some maths to scale the image (we dont want a big arrow at least not for now lol)
-                if (CurrentUserRepresentation != null)
-                    CurrentUserRepresentation.Recycle();
-                var instance = GetUserRepresentationClone();
-                CurrentUserRepresentation = Bitmap.CreateScaledBitmap(instance, 20, 20, true);
-                instance.Recycle();
                 canvas.DrawBitmap(CurrentUserRepresentation, UserPosition.X - CurrentUserRepresentation.Width/2,
                     UserPosition.Y - CurrentUserRepresentation.Height/2, PaintBrush);
             }

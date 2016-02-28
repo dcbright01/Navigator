@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Android.App;
 using Android.Hardware;
 using Android.OS;
@@ -45,22 +46,17 @@ namespace Navigator.Droid
 
             _collision = new Collision(graphInstance, new StepDetector());
 
-            rooms = graphInstance.Rooms;
-
-            setUpRoomsSpinner();
             setUpUITabs();
         }
 
         // Prepares the spinner
-        private void setUpRoomsSpinner()
+        private void setUpRoomsSpinner(List<Room> rooms)
         {
-            roomNames = new string[rooms.Count];
-            for(int i = 0; i < roomNames.Length; i++)
-                roomNames[i] = rooms[i].Name;
+            var roomNames = rooms.ConvertAll(r => r.Name);
 
-            Spinner spinner = FindViewById<Spinner>(Resource.Id.roomSpinner);
-            spinner.ItemSelected += new EventHandler<AdapterView.ItemSelectedEventArgs>(spinnerItemSelected);
-            ArrayAdapter<string> adapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem, roomNames);
+            var spinner = FindViewById<Spinner>(Resource.Id.roomSpinner);
+            spinner.ItemSelected += spinnerItemSelected;
+            var adapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem, roomNames);
 
             adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
 
@@ -87,6 +83,8 @@ namespace Navigator.Droid
                 _imgMap = FindViewById<CustomImageView>(Resource.Id.imgMap);
                 _mapMaker.CIVInstance = _imgMap;
                 _imgMap.LongPress += ImgMapOnLongPress;
+                // Set up spinner 
+                setUpRoomsSpinner(_mapMaker.PathfindingGraph.Rooms);
                 // Reset to saved state
                 _mapMaker.DrawMap();
             });
@@ -212,7 +210,6 @@ namespace Navigator.Droid
         private ToggleButton _btnDrawGridToggle;
         private CustomImageView _imgMap;
 
-        private List<Room> rooms;
         private string[] roomNames;
 
         #endregion

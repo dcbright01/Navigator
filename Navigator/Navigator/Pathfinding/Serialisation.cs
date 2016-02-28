@@ -8,6 +8,7 @@ namespace Navigator.Pathfinding
     {
         public List<UndirEdge> Edges = new List<UndirEdge>();
         public List<string> Vertices = new List<string>();
+        public List<Room> Rooms = new List<Room>();
     }
 
     [XmlRoot("E")]
@@ -28,5 +29,14 @@ namespace Navigator.Pathfinding
 
         [XmlAttribute("Target")]
         public new string Target { get; set; }
+    }
+
+    public class Room {
+
+        [XmlAttribute("Name")]
+        public string Name { get; set; }
+
+        [XmlAttribute("Position")]
+        public string Position { get; set; }
     }
 }

@@ -25,6 +25,8 @@ namespace Navigator.Pathfinding
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <returns></returns>
+        public List<Room> Rooms { get; set; }
+
         public List<UndirEdge> FindPath(string start, string end)
         {
 			var containsStart = Vertices.Contains(start);
@@ -126,6 +128,8 @@ namespace Navigator.Pathfinding
                 ed.Add(new UndirEdge(undirEdge.Source, undirEdge.Target));
             }
             g.AddEdgeRange(ed);
+
+            g.Rooms = data.Rooms;
 
             return g;
         }

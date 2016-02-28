@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Android.App;
 using Android.Hardware;
 using Android.OS;
@@ -42,8 +43,9 @@ namespace Navigator.Droid
 
             _mapMaker.PathfindingGraph = graphInstance;
 
-            _collision = new Collision(graphInstance);
+            _collision = new Collision(graphInstance, new StepDetector());
 
+            rooms = graphInstance.Rooms;
 
             setUpUITabs();
         }
@@ -185,6 +187,8 @@ namespace Navigator.Droid
 
         private ToggleButton _btnDrawGridToggle;
         private CustomImageView _imgMap;
+
+        private List<Room> rooms;
 
         #endregion
 

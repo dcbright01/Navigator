@@ -30164,4 +30164,7 @@
     <UndirEdge Source="1246-80" Target="1236-80" />
     <UndirEdge Source="1256-80" Target="1246-80" />
   </Edges>
+  <Rooms>
+  	<Room Name="TestRoom" Position="600-600"/>
+  </Rooms>
 </GraphData>

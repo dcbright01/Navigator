@@ -3,6 +3,10 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="36.5dp"
+        android:id="@+id/roomSpinner" />
     <Navigator.Droid.UIElements.CustomImageView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

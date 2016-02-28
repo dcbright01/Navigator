@@ -47,7 +47,31 @@ namespace Navigator.Droid
 
             rooms = graphInstance.Rooms;
 
+            setUpRoomsSpinner();
             setUpUITabs();
+        }
+
+        // Prepares the spinner
+        private void setUpRoomsSpinner()
+        {
+            roomNames = new string[rooms.Count];
+            for(int i = 0; i < roomNames.Length; i++)
+                roomNames[i] = rooms[i].Name;
+
+            Spinner spinner = FindViewById<Spinner>(Resource.Id.roomSpinner);
+            spinner.ItemSelected += new EventHandler<AdapterView.ItemSelectedEventArgs>(spinnerItemSelected);
+            ArrayAdapter<string> adapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem, roomNames);
+
+            adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
+
+            spinner.Adapter = adapter;
+        }
+
+        private void spinnerItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
+        {
+            Spinner spinner = (Spinner) sender;
+            string toast = string.Format ("The room is {0}", spinner.GetItemAtPosition (e.Position));
+            Toast.MakeText (this, toast, ToastLength.Long).Show();
         }
 
         private void setUpUITabs()
@@ -189,6 +213,7 @@ namespace Navigator.Droid
         private CustomImageView _imgMap;
 
         private List<Room> rooms;
+        private string[] roomNames;
 
         #endregion
 

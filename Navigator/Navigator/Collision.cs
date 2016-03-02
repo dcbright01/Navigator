@@ -32,7 +32,8 @@ namespace Navigator
     public class Collision : ICollision
     {
         //Other values
-        private const float strideLength = 12.0f;
+        private float totalStride = 30.0f;
+        private float strideLength = 12.0f;
         private const int searchDistance = 6;
 
         //graph information
@@ -95,10 +96,31 @@ namespace Navigator
         //Should be made private and removed from interface eventually
         public void StepTaken(bool startFromStat)
         {
-            testStepTrigger();
-            var args = new PositionChangedHandlerEventArgs(realPosition.X, realPosition.Y);
+            int stepIterations = (int)Math.Floor (totalStride / strideLength);
 
-            PositionChanged(this, args);
+            float extraStep = totalStride % strideLength;
+
+            var args = new PositionChangedHandlerEventArgs (realPosition.X, realPosition.Y);
+
+            for (int i = 0; i < stepIterations; i++) {
+            
+                if (i == 0) {
+                    testStepTrigger ();
+                    args = new PositionChangedHandlerEventArgs (realPosition.X, realPosition.Y);
+                } else {
+                    testStepTrigger();
+                    args = new PositionChangedHandlerEventArgs(realPosition.X, realPosition.Y);
+                }
+                PositionChanged(this, args);
+            }
+
+            if (extraStep != 0) {
+                strideLength = extraStep;
+                testStepTrigger();
+                args = new PositionChangedHandlerEventArgs(realPosition.X, realPosition.Y);
+                PositionChanged(this, args);
+                strideLength = 12.0f;
+            }
         }
 
         private int CalculateNearestNode()
@@ -152,7 +174,6 @@ namespace Navigator
             string start, end;
             float x, y;
 
-
             var nHeading = (float) (Math.PI/2 - Heading);
             x = realPosition.X + strideLength*(float) Math.Cos(nHeading);
             y = realPosition.Y - strideLength*(float) Math.Sin(nHeading);
@@ -172,12 +193,16 @@ namespace Navigator
                     start = nearestGraphNode.ToPointString();
 					end = nearestHolder.ToPointString();
 
-                    var path = _graph.FindPath(start, end);
-                    if (path.Count > 2)
-                    {
-                        realPosition = realHolder;
-                        nearestGraphNode = nearestHolder;
+                    if (start != end) {
+                        var path = _graph.FindPath (start, end);
+
+                        if (path.Count > 2)
+                        {
+                            realPosition = realHolder;
+                            nearestGraphNode = nearestHolder;
+                        }
                     }
+
                 }
             }
             else

@@ -61,7 +61,7 @@ namespace Navigator.iOS
             floorPlanGraph = Graph.Load(asset);
 
             //Collision class
-            col = new Collision(floorPlanGraph);
+            col = new Collision(floorPlanGraph, new StepDetector());
             col.SetLocation(707.0f, 677.0f);
             col.PassHeading(90);
             col.PositionChanged += HandleStepsTaken;

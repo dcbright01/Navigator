@@ -36,16 +36,21 @@ namespace Navigator.Pathfinding
             var observer = new UndirectedVertexPredecessorRecorderObserver<string, UndirEdge>();
             observer.Attach(dijkstra);
 
-            dijkstra.Compute(start);
-            IEnumerable<UndirEdge> path = null;
-            try
-            {
-                observer.TryGetPath(end, out path);
+            var nodeCheckX = Vertices.FirstOrDefault(node => node == start);
+            var nodeCheckY = Vertices.FirstOrDefault(node => node == end);
+
+            if (nodeCheckX != null && nodeCheckY != null) {
+                dijkstra.Compute (start);
+                IEnumerable<UndirEdge> path = null;
+                try {
+                    observer.TryGetPath (end, out path);
+                } catch {
+                }
+
+                return path.ToList ();
+            } else {
+                return null;
             }
-            catch
-            {
-            }
-            return path.ToList();
         }
 
         public Vector2 FindClosestNode(float searchX, float searchY, int searchDistance)

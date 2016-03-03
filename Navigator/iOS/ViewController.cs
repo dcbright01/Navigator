@@ -52,7 +52,7 @@ namespace Navigator.iOS
 
             // For accelerometer readings
             var motionManager = new CMMotionManager();
-            motionManager.AccelerometerUpdateInterval = 0.015; // 100Hz
+            motionManager.AccelerometerUpdateInterval = 0.01; // 100Hz
 
             //To handle long presses and bring up path start/end menu
             var longPressManager = new UILongPressGestureRecognizer();
@@ -267,6 +267,13 @@ namespace Navigator.iOS
         public void displayAccelVal(float a) {
             count++;
             debugLabel.Text = "" + count;
+            if (count > 400) {
+                breakpointCheck (a);
+            }
+        }
+        private void breakpointCheck (float a){
+            debugLabel.Text = "" + count;
+
         }
 
 		public void setStartPoint(nfloat x, nfloat y) {

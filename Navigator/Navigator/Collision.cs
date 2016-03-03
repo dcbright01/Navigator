@@ -196,11 +196,12 @@ namespace Navigator
                     if (start != end) {
                         var path = _graph.FindPath (start, end);
 
-                        if (path.Count > 2)
-                        {
+                        if (path == null || path.Count > 2) {
                             realPosition = realHolder;
                             nearestGraphNode = nearestHolder;
                         }
+                    } else {
+                        //realPosition = realHolder;
                     }
 
                 }

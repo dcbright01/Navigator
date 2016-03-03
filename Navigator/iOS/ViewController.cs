@@ -75,7 +75,7 @@ namespace Navigator.iOS
             floorplanImageView = new UIImageView();
 
 			//Load floorplan images
-            floorplanImageNoGrid = UIImage.FromBundle("Images/dcsfloorWideDoors.png");
+            floorplanImageNoGrid = UIImage.FromBundle("Images/dcrFloorFinal.png");
             floorplanImageWithGrid = UIImage.FromBundle("Images/dcsFloorWideDoorsGrid.png");
 
 			//Initiate the location arrow

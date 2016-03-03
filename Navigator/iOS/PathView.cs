@@ -42,15 +42,16 @@ namespace Navigator.iOS
             base.Draw(rect);
 
 
+
             //get graphics context
             using (var g = UIGraphics.GetCurrentContext())
             {
                 //set up drawing attributes
-                g.SetLineWidth(2/_scaleFactor);
-                UIColor.Red.SetStroke();
-
+                g.SetLineWidth(3/_scaleFactor);
+                UIColor.Cyan.SetStroke ();
+                g.SetShadow (new CGSize (1, 1), 10, UIColor.Blue.CGColor);
                 //use a dashed line
-                g.SetLineDash(0, new[] {5, 2/_scaleFactor});
+                //g.SetLineDash(0, new[] {5, 2/_scaleFactor});
 
                 //add geometry to graphics context and draw it
                 g.AddPath(path);

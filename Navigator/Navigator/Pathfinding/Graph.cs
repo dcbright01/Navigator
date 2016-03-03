@@ -35,6 +35,7 @@ namespace Navigator.Pathfinding
             var dijkstra = new UndirectedDijkstraShortestPathAlgorithm<string, UndirEdge>(this, edge => 1);
             var observer = new UndirectedVertexPredecessorRecorderObserver<string, UndirEdge>();
             observer.Attach(dijkstra);
+
             dijkstra.Compute(start);
             IEnumerable<UndirEdge> path = null;
             try
@@ -55,20 +56,20 @@ namespace Navigator.Pathfinding
 			int tempX, tempY;
             string nodeCoords;
 
-			int moduloX = (int)searchX % 10;
-			int moduloY = (int)searchY % 10;
+			int moduloX = (int)searchX % 20;
+			int moduloY = (int)searchY % 20;
 
 			if (moduloX == 6)
 				tempX = (int)searchX;
-			else if (moduloX > 1)
-				tempX = (int)searchX - moduloX + 6;
+			else if (moduloX > 16)
+				tempX = (int)searchX - moduloX + 26;
 			else
-				tempX = (int)searchX - moduloX - 4;
+				tempX = (int)searchX - moduloX + 6;
 
 			if (moduloY == 0)
 				tempY = (int)searchY;
-			else if (moduloY >= 5)
-				tempY = (int)searchY + (10 - moduloY);
+			else if (moduloY >= 10)
+				tempY = (int)searchY + (20 - moduloY);
 			else
 				tempY = (int)searchY - moduloY;
 

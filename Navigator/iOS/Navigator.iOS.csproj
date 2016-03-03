@@ -133,8 +133,11 @@
     <BundleResource Include="Images\location-arrow-solid.png" />
     <BundleResource Include="Images\dcsFloorGrid.png" />
     <BundleResource Include="Images\dcsfloor.png" />
+    <BundleResource Include="Images\dcsfloorWideDoors.png" />
+    <BundleResource Include="Images\dcsfloorWideDoorsGrid.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\test.xml" />
+    <EmbeddedResource Include="Resources\dcsfloorWideDoors.xml" />
   </ItemGroup>
 </Project>

@@ -29,7 +29,7 @@ namespace Navigator.iOS
         private UIImage floorplanImageWithGrid;
 
 		//Keeps track of steps taken
-        private readonly int GlobalStepCounter = 0;
+        private int GlobalStepCounter = 0;
 
 		//Will hold the paths users should follow
 		private readonly PathView pathView = new PathView();
@@ -39,6 +39,8 @@ namespace Navigator.iOS
 
 		//Toggle for button press
         private int toggle = 1;
+
+        private int count = 0;
 
         public ViewController(IntPtr handle) : base(handle)
         {
@@ -50,14 +52,14 @@ namespace Navigator.iOS
 
             // For accelerometer readings
             var motionManager = new CMMotionManager();
-            motionManager.AccelerometerUpdateInterval = 0.01; // 100Hz
+            motionManager.AccelerometerUpdateInterval = 0.015; // 100Hz
 
             //To handle long presses and bring up path start/end menu
             var longPressManager = new UILongPressGestureRecognizer();
 
             //Graph loading code
             var assembly = Assembly.GetExecutingAssembly();
-            var asset = assembly.GetManifestResourceStream("Navigator.iOS.Resources.test.xml");
+            var asset = assembly.GetManifestResourceStream("Navigator.iOS.Resources.dcsfloorWideDoors.xml");
             floorPlanGraph = Graph.Load(asset);
 
             //Collision class
@@ -73,8 +75,8 @@ namespace Navigator.iOS
             floorplanImageView = new UIImageView();
 
 			//Load floorplan images
-            floorplanImageNoGrid = UIImage.FromBundle("Images/dcsfloor.png");
-            floorplanImageWithGrid = UIImage.FromBundle("Images/dcsFloorGrid.png");
+            floorplanImageNoGrid = UIImage.FromBundle("Images/dcsfloorWideDoors.png");
+            floorplanImageWithGrid = UIImage.FromBundle("Images/dcsFloorWideDoorsGrid.png");
 
 			//Initiate the location arrow
             locationArrow = new LocationArrowImageView();
@@ -119,6 +121,7 @@ namespace Navigator.iOS
 
                     col.PassSensorReadings(CollisionSensorType.Accelometer, accelX,
                         accelY, accelZ);
+                    displayAccelVal((float)accelZ);
                 });
 
 			/*
@@ -178,6 +181,7 @@ namespace Navigator.iOS
 
         private void HandleStepsTaken(object s, PositionChangedHandlerEventArgs args)
         {
+            GlobalStepCounter++;
             locationArrow.setLocation(args.newX, args.newY);
             debugLabel.Text = "" + GlobalStepCounter;
         }
@@ -259,6 +263,11 @@ namespace Navigator.iOS
 			}
 			*/      
 		}
+
+        public void displayAccelVal(float a) {
+            count++;
+            debugLabel.Text = "" + count;
+        }
 
 		public void setStartPoint(nfloat x, nfloat y) {
 			locationArrow.setLocation ((float)x, (float)y);

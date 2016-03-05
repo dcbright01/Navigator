@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Android.App;
 using Android.Hardware;
@@ -43,10 +44,27 @@ namespace Navigator.Droid
             var graphInstance = Graph.Load(graphAsset);
 
             _mapMaker.PathfindingGraph = graphInstance;
+            var sw = new Stopwatch();
+            sw.Start();
+            graphInstance.FindClosestNode(686, 620,5);
+            sw.Stop();
+            long time = sw.ElapsedMilliseconds;
 
             _collision = new Collision(graphInstance, new StepDetector());
+            _collision.SetLocation(707.0f, 677.0f);
+            _collision.PassHeading(90);
+            _collision.StepDetector.OnStep += StepDetectorOnStep;
 
             setUpUITabs();
+        }
+
+        private void StepDetectorOnStep(bool startFromStat)
+        {
+            RunOnUiThread(() =>
+            {
+                FindViewById<TextView>(Resource.Id.stepCounter).Text =
+                    ((StepDetector) (_collision.StepDetector)).StepCounter.ToString();
+            });
         }
 
         // Prepares the spinner
@@ -111,10 +129,12 @@ namespace Navigator.Droid
                 _realX = FindViewById<TextView>(Resource.Id.realX);
                 _realY = FindViewById<TextView>(Resource.Id.realY);
             });
+            var t = ActionBar.SelectedTab.Text;
         }
 
         private void RotationProcessorOnValueChanged(double value)
         {
+            _collision.PassHeading((float) value);
             if (inDebug)
             {
                 RunOnUiThread(
@@ -124,6 +144,8 @@ namespace Navigator.Droid
 
         private void AccelerationProcessorOnValueChanged(Vector3 value)
         {
+            // Pass our values
+            _collision.PassSensorReadings(CollisionSensorType.Accelometer, value.X,value.Y,value.Z);
             if (inDebug)
             {
                 RunOnUiThread(() =>

@@ -19,7 +19,7 @@ namespace Navigator
         private double lastTroughValue = -1;
         private readonly ButterworthLowPassFilter lowPassFilter = new ButterworthLowPassFilter();
         private bool stationaryStart;
-        private int stepCounter;
+        public int StepCounter;
         private double troughToPeakDifference = -1;
 
         public event StepHandler OnStep;
@@ -64,7 +64,7 @@ namespace Navigator
                             currentMilliseconds - initialMilliseconds < 2000)
                         {
                             initialMilliseconds = currentMilliseconds;
-                            stepCounter++;
+                            StepCounter++;
                             stationaryStart = false;
                             OnStepTaken();
                         }
@@ -73,8 +73,8 @@ namespace Navigator
                         else if (currentMilliseconds - initialMilliseconds >= 2000)
                         {
                             initialMilliseconds = currentMilliseconds;
-                            stepCounter++;
-                            stepCounter = stepCounter + 2;
+                            StepCounter++;
+                            StepCounter = StepCounter + 2;
                             stationaryStart = true;
                             OnStepTaken();
                         }

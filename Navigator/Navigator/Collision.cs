@@ -43,7 +43,7 @@ namespace Navigator
         private readonly Queue<Vector2> _graphPath;
 
         //StepDetector Class
-        private readonly IStepDetector _stepDetector;
+        public readonly IStepDetector StepDetector;
         private float Heading;
         private Vector2 nearestGraphNode;
 
@@ -53,8 +53,8 @@ namespace Navigator
 
 		public Collision(IGraph graph, IStepDetector stepDetector)
         {
-			_stepDetector = stepDetector;
-            _stepDetector.OnStep += StepTaken;
+			StepDetector = stepDetector;
+            StepDetector.OnStep += StepTaken;
             _graph = graph;
             _graphPath = new Queue<Vector2>();
         }
@@ -82,7 +82,7 @@ namespace Navigator
             switch (s)
             {
                 case CollisionSensorType.Accelometer:
-                    _stepDetector.passValue(xVal, yVal, zVal);
+                    StepDetector.passValue(xVal, yVal, zVal);
                     break;
             }
         }

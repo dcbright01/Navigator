@@ -13,7 +13,7 @@ namespace Navigator.Droid.Sensors
 		private List<float[]> mRotHist = new List<float[]>();
 		private int mRotHistIndex;
 		// Change the value so that the azimuth is stable and fit your requirement
-		private int mHistoryMaxLength = 40;
+		private int mHistoryMaxLength = 100;
 		float[] mGravity;
 		float[] mMagnetic;
 		float[] mRotationMatrix = new float[9];
@@ -82,7 +82,7 @@ namespace Navigator.Droid.Sensors
 		private void setRotHist()
 		{
 			float[] hist = (float[]) mRotationMatrix.Clone();
-			if (mRotHist.Count () == mHistoryMaxLength) 
+			if (mRotHist.Count == mHistoryMaxLength) 
 			{
 				mRotHist.RemoveAt(mRotHistIndex);
 			}
@@ -109,7 +109,7 @@ namespace Navigator.Droid.Sensors
 
 			for (int i = 0; i < 9; i++)
 			{
-				result[i] = result[i] / values.Count(); 
+				result[i] = result[i] / values.Count; 
 			}
 
 			return result;

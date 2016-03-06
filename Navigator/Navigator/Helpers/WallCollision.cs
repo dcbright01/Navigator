@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 
 namespace Navigator.Helpers
 {
+    public interface IGetPixel
+    {
+        int GetPixel(int x, int y);
+    }
+
+
     public class WallCollision
     {
         private bool[,] isWall;
@@ -15,29 +21,19 @@ namespace Navigator.Helpers
         {
             Color.FromArgb(255,255,255,255).ToArgb(),
             Color.FromArgb(0,0,0,0).ToArgb()
-        }; 
+        };
 
-        public WallCollision(int[,] img)
-        {
-            preloadMap(img);
-        }
+        Func<int,int,int> pixelMethod;
 
-        private void preloadMap(int[,] map)
+        public WallCollision(Func<int,int,int> getPixel)
         {
-            isWall = new bool[map.GetLength(0), map.GetLength(1)];
-            for (var x = 0; x < map.GetLength(0); x++)
-            {
-                for (var y = 0; y < map.GetLength(1); y++)
-                {
-                    isWall[x, y] = wallColors.Contains(map[x, y]);
-                }
-            }
+            pixelMethod = getPixel;
         }
 
         public bool IsValidStep(int x1, int y1, int x2, int y2)
         {
             CheckDirection mode = CheckDirection.None;
-            // calculate differences 
+            // calculate differences
             if (x1 > x2)
             {
                 // Left
@@ -64,42 +60,42 @@ namespace Navigator.Helpers
             }
             switch (mode)
             {
-                case CheckDirection.Up:
-                    for (int y = y1; y >= y2; y--)
+            case CheckDirection.Up:
+                for (int y = y1; y >= y2; y--)
+                {
+                    if (wallColors.Contains(pixelMethod(x1, y)))
                     {
-                        if (isWall[x1, y])
-                        {
-                            return false;
-                        }
+                        return false;
                     }
-                    return true;
-                case CheckDirection.Down:
-                    for (int y = y1; y <= y2; y++)
+                }
+                return true;
+            case CheckDirection.Down:
+                for (int y = y1; y <= y2; y++)
+                {
+                    if (wallColors.Contains(pixelMethod(x1, y)))
                     {
-                        if (isWall[x1, y])
-                        {
-                            return false;
-                        }
+                        return false;
                     }
-                    return true;
-                case CheckDirection.Left:
-                    for (int x = x1; x >= x2; x--)
+                }
+                return true;
+            case CheckDirection.Left:
+                for (int x = x1; x >= x2; x--)
+                {
+                    if (wallColors.Contains(pixelMethod(x, y1)))
                     {
-                        if (isWall[x, y1])
-                        {
-                            return false;
-                        }
+                        return false;
                     }
-                    return true;
-                case CheckDirection.Right:
-                    for (int x = x1; x <= x2; x++)
+                }
+                return true;
+            case CheckDirection.Right:
+                for (int x = x1; x <= x2; x++)
+                {
+                    if (wallColors.Contains(pixelMethod(x, y1)))
                     {
-                        if (isWall[x, y1])
-                        {
-                            return false;
-                        }
+                        return false;
                     }
-                    return true;
+                }
+                return true;
             }
             return false;
         }

@@ -9,6 +9,9 @@ using Foundation;
 using Navigator.Pathfinding;
 using UIKit;
 using CoreAnimation;
+using Navigator.Helpers;
+using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace Navigator.iOS
 {
@@ -27,6 +30,7 @@ namespace Navigator.iOS
 		private UIImageView floorplanImageView;
         private UIImage floorplanImageNoGrid;
         private UIImage floorplanImageWithGrid;
+        private UIImage wallCollImg;
 
 		//Keeps track of steps taken
         private int GlobalStepCounter = 0;
@@ -62,10 +66,12 @@ namespace Navigator.iOS
             var asset = assembly.GetManifestResourceStream("Navigator.iOS.Resources.dcsfloorWideDoors.xml");
             floorPlanGraph = Graph.Load(asset);
 
-            //Collision class
+            wallCollImg = UIImage.FromBundle("Images/dcsfloorWideDoors.png");
 
             col = new Collision(floorPlanGraph, new StepDetector());
 
+            ((Collision)col).WallCol = new WallCollision ((x,y) => GetPixelColor(new PointF(x, y), wallCollImg));
+                
             col.SetLocation(707.0f, 677.0f);
             col.PassHeading(90);
             col.PositionChanged += HandleStepsTaken;
@@ -170,6 +176,36 @@ namespace Navigator.iOS
 
 			//Another testing button
             simulationButton.TouchUpInside += delegate { col.StepTaken(false); };
+        }
+
+        private int GetPixelColor(PointF myPoint, UIImage myImage)
+        {
+            var rawData = new byte[4];
+            var handle = GCHandle.Alloc(rawData);
+            int resultColor = 0;
+            try
+            {
+                using (var colorSpace = CGColorSpace.CreateDeviceRGB())
+                {
+                    using (var context = new CGBitmapContext(rawData, 1, 1, 8, 4, colorSpace, CGImageAlphaInfo.PremultipliedLast))
+                    {
+                        context.DrawImage(new RectangleF(-myPoint.X, (float)(myPoint.Y - myImage.Size.Height), (float)myImage.Size.Width, (float)myImage.Size.Height), myImage.CGImage);
+                        float red   = (rawData[0]) / 255.0f;
+                        float green = (rawData[1]) / 255.0f;
+                        float blue  = (rawData[2]) / 255.0f;
+                        float alpha = (rawData[3]) / 255.0f;
+                        resultColor = (((int)rawData[0] & 0xFF) << 24) | //alpha
+                            (((int)rawData[1] & 0xFF) << 16) | //red
+                            (((int)rawData[2] & 0xFF) << 8) | //green
+                            (((int)rawData[3] & 0xFF) << 0); //blue
+                    }
+                }
+            }
+            finally
+            {
+                handle.Free();
+            }
+            return resultColor;
         }
 
         private void HandleUpdatedHeading(object sender, CLHeadingUpdatedEventArgs e)

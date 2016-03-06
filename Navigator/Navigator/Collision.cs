@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Navigator.Pathfinding;
 using Navigator.Primitives;
 using System.Linq;
+using Navigator.Helpers;
 
 namespace Navigator
 {
@@ -50,6 +51,8 @@ namespace Navigator
         //Values that are being tracked
         private Vector2 realPosition;
         //public event HeadingHandler newHeading;
+
+        public WallCollision WallCol;
 
 		public Collision(IGraph graph, IStepDetector stepDetector)
         {
@@ -194,12 +197,14 @@ namespace Navigator
 					end = nearestHolder.ToPointString();
 
                     if (start != end) {
-                        var path = _graph.FindPath (start, end);
 
-                        if (path == null || path.Count > 2) {
+                        if (!WallCol.IsValidStep ((int)nearestGraphNode.X, (int)nearestGraphNode.Y, (int)nearestHolder.X, (int)nearestHolder.Y)) {
+
                             realPosition = realHolder;
                             nearestGraphNode = nearestHolder;
+
                         }
+
                     } else {
                         //realPosition = realHolder;
                     }

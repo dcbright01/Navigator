@@ -25,6 +25,7 @@ namespace Navigator.Pathfinding
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <returns></returns>
+
         public List<Room> Rooms { get; set; }
 
         public List<UndirEdge> FindPath(string start, string end)

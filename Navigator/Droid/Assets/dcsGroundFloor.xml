@@ -30165,6 +30165,18 @@
     <UndirEdge Source="1256-80" Target="1246-80" />
   </Edges>
   <Rooms>
-  	<Room Name="TestRoom" Position="600-600"/>
+    <Room>
+      <Properties>
+        <RoomProperty type="Position" value="600-600" />
+        <RoomProperty type="Name" value="TestRoom" />
+        <RoomProperty type="Occupier" value="Steve Jarvis" />
+      </Properties>
+    </Room>
+    <Room>
+      <Properties>
+        <RoomProperty type="Position" value="300-300" />
+        <RoomProperty type="Name" value="TestRoom2" />
+      </Properties>
+    </Room>
   </Rooms>
 </GraphData>

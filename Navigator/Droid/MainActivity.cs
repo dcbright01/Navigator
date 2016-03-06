@@ -72,7 +72,17 @@ namespace Navigator.Droid
         // Prepares the spinner
         private void setUpRoomsSpinner(List<Room> rooms)
         {
-            var roomNames = rooms.ConvertAll(r => r.Name);
+            //var roomNames = rooms.ConvertAll(r => r.Name);
+            roomNames = new string[rooms.Count];
+            for(int i = 0; i < roomNames.Length; i++)
+            {
+                var properties = rooms[i].Properties;
+                foreach(RoomProperty p in properties)
+                {
+                    if(p.Type == RoomPropertyType.Name)
+                        roomNames[i] = p.Value;
+                }
+            }
 
             var spinner = FindViewById<Spinner>(Resource.Id.roomSpinner);
             spinner.ItemSelected += spinnerItemSelected;

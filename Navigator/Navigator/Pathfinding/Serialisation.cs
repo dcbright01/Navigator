@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 using QuickGraph;
+using Navigator.Primitives;
 
 namespace Navigator.Pathfinding
 {
@@ -32,11 +33,28 @@ namespace Navigator.Pathfinding
     }
 
     public class Room {
+        public List<RoomProperty> Properties { get; set; }
+        public Room() {
+            Properties = new List<RoomProperty>();
+        }
+    }
 
-        [XmlAttribute("Name")]
-        public string Name { get; set; }
+    public class RoomProperty {
 
-        [XmlAttribute("Position")]
-        public string Position { get; set; }
+        [XmlAttribute("type")]
+        public RoomPropertyType Type { get; set; }
+
+        [XmlAttribute("value")]
+        public string Value { get; set; }
+
+        public RoomProperty(RoomPropertyType type, string val) {
+            Type = type;
+            Value = val;
+        }
+
+        public RoomProperty() {
+            Type = RoomPropertyType.None;
+            Value = "";
+        }
     }
 }

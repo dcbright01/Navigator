@@ -1,12 +1,28 @@
+using System;
 using System.Linq;
+using System.Collections.Generic; 
 using Android.Hardware;
+using Navigator.Helpers; 
 
 namespace Navigator.Droid.Sensors
 {
 	public class Rotation : SensorProcessorBase<double>
 	{
-		private float[] _geomagnetic = new float[3];
-		private float[] _gravity = new float[3];
+		// http://stackoverflow.com/questions/17979238/android-getorientation-azimuth-gets-polluted-when-phone-is-tilted/17981374#17981374
+
+		private List<float[]> mRotHist = new List<float[]>();
+		private int mRotHistIndex;
+		// Change the value so that the azimuth is stable and fit your requirement
+		private int mHistoryMaxLength = 40;
+		float[] mGravity;
+		float[] mMagnetic;
+		float[] mRotationMatrix = new float[9];
+		// the direction of the back camera, only valid if the device is tilted up by
+		// at least 25 degrees.
+		private float mFacing = float.NaN;
+
+		float TWENTY_FIVE_DEGREE_IN_RADIAN = 0.436332313f;
+		float ONE_FIFTY_FIVE_DEGREE_IN_RADIAN = 2.7052603f;
 
 		public Rotation(SensorManager manager) : base(manager)
 		{
@@ -16,35 +32,38 @@ namespace Navigator.Droid.Sensors
 
 		public override void SensorChangedProcess(SensorEvent e)
 		{
-			float alpha = 0.97f;
-
 			switch (e.Sensor.Type)
 			{
 			case SensorType.MagneticField:
-				_geomagnetic [0] = alpha * _geomagnetic [0] + (1 - alpha) * e.Values [0];
-				_geomagnetic [1] = alpha * _geomagnetic [1] + (1 - alpha) * e.Values [1];
-				_geomagnetic [2] = alpha * _geomagnetic [2] + (1 - alpha) * e.Values [2];
+				mMagnetic = e.Values.ToArray(); 
 				break;
 			case SensorType.Gravity:
-				_gravity [0] = alpha * _gravity [0] + (1 - alpha) * e.Values [0];
-				_gravity [1] = alpha * _gravity [1] + (1 - alpha) * e.Values [1];
-				_gravity [2] = alpha * _gravity [2] + (1 - alpha) * e.Values [2];
+				mGravity = e.Values.ToArray(); 
 				break;
 			}
 
-			if (_gravity != null && _geomagnetic != null)
+			if (mGravity != null && mMagnetic != null)
 			{
-				var R = new float[9];
-				var I = new float[9];
-				var success = SensorManager.GetRotationMatrix(R, I, _gravity, _geomagnetic);
+				var success = SensorManager.GetRotationMatrix(mRotationMatrix, null, mGravity, mMagnetic);
 				if (success)
 				{
-					float[] remappedRotationMatrix = new float[9];
-					SensorManager.RemapCoordinateSystem (R, Android.Hardware.Axis.X, Android.Hardware.Axis.Z, remappedRotationMatrix);
-
-					var orientation = new float[3];
-					SensorManager.GetOrientation(remappedRotationMatrix, orientation);
-					Value = orientation[0]; // orientation contains: azimut, pitch and roll
+					// inclination is the degree of tilt by the device independent of orientation (portrait or landscape)
+					// if less than 25 or more than 155 degrees the device is considered lying flat
+					float inclination = (float) Math.Acos(mRotationMatrix[8]);
+					if (inclination < TWENTY_FIVE_DEGREE_IN_RADIAN
+					    || inclination > ONE_FIFTY_FIVE_DEGREE_IN_RADIAN) 
+					{
+						// mFacing is undefined, so we need to clear the history
+						clearRotHist ();
+						mFacing = float.NaN;
+					} else 
+					{
+						setRotHist();
+						// mFacing = azimuth is in radian
+						mFacing = findFacing(); 
+					}
+						
+					Value = mFacing; 
 					ValueHistory.Enqueue(Value);
 					if (OnValueChanged != null)
 					{
@@ -52,6 +71,48 @@ namespace Navigator.Droid.Sensors
 					}
 				}
 			}
+		}
+
+		private void clearRotHist()
+		{
+			mRotHist.Clear();
+			mRotHistIndex = 0;
+		}
+
+		private void setRotHist()
+		{
+			float[] hist = (float[]) mRotationMatrix.Clone();
+			if (mRotHist.Count () == mHistoryMaxLength) 
+			{
+				mRotHist.RemoveAt(mRotHistIndex);
+			}
+			mRotHist.Insert(mRotHistIndex++, hist);
+			mRotHistIndex %= mHistoryMaxLength;
+		}
+
+		private float findFacing()
+		{
+			float[] averageRotHist = average(mRotHist);
+			return (float)Math.Atan2 (-averageRotHist [2], -averageRotHist [5]); 
+		}
+
+		public float[] average(List<float[]> values)
+		{
+			float[] result = new float[9];
+			foreach (float[] value in values)
+			{
+				for (int i = 0; i < 9; i++)
+				{
+					result[i] += value[i];
+				}
+			}
+
+			for (int i = 0; i < 9; i++)
+			{
+				result[i] = result[i] / values.Count(); 
+			}
+
+			return result;
 		}
 
 		#region <Event stuff>

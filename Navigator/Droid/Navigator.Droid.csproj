@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\ActionBarExtensions.cs" />
+    <Compile Include="Extensions\BitmapExtensions.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Helpers\MapMaker.cs" />
     <Compile Include="Resources\Resource.designer.cs" />

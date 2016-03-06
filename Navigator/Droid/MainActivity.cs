@@ -24,6 +24,7 @@ namespace Navigator.Droid
         private Collision _collision;
         private MapMaker _mapMaker;
         private WallCollision _walCol;
+        private Bitmap collisionMap;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -52,9 +53,9 @@ namespace Navigator.Droid
             _collision.PassHeading(90);
             _collision.StepDetector.OnStep += StepDetectorOnStep;
 
-            Bitmap map = BitmapFactory.DecodeResource(Resources,Resource.Drawable.dcsFloor);
+            collisionMap = BitmapFactory.DecodeResource(Resources,Resource.Drawable.dcsFloor);
 
-            _walCol = new WallCollision(map.ToColorArray());
+            _walCol = new WallCollision((x,y)=>collisionMap.GetPixel(x,y));
 
             setUpUITabs();
         }

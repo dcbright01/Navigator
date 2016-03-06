@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Android.App;
+using Android.Graphics;
 using Android.Hardware;
 using Android.OS;
 using Android.Views;
@@ -22,6 +23,7 @@ namespace Navigator.Droid
     {
         private Collision _collision;
         private MapMaker _mapMaker;
+        private WallCollision _walCol;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -44,16 +46,15 @@ namespace Navigator.Droid
             var graphInstance = Graph.Load(graphAsset);
 
             _mapMaker.PathfindingGraph = graphInstance;
-            var sw = new Stopwatch();
-            sw.Start();
-            graphInstance.FindClosestNode(686, 620,5);
-            sw.Stop();
-            long time = sw.ElapsedMilliseconds;
 
             _collision = new Collision(graphInstance, new StepDetector());
             _collision.SetLocation(707.0f, 677.0f);
             _collision.PassHeading(90);
             _collision.StepDetector.OnStep += StepDetectorOnStep;
+
+            Bitmap map = BitmapFactory.DecodeResource(Resources,Resource.Drawable.dcsFloor);
+
+            _walCol = new WallCollision(map.ToColorArray());
 
             setUpUITabs();
         }

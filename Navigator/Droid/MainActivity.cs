@@ -51,20 +51,28 @@ namespace Navigator.Droid
             _collision = new Collision(graphInstance, new StepDetector());
             _collision.SetLocation(707.0f, 677.0f);
             _collision.PassHeading(90);
+            
+            _collision.PositionChanged += CollisionOnPositionChanged;
             _collision.StepDetector.OnStep += StepDetectorOnStep;
 
             collisionMap = BitmapFactory.DecodeResource(Resources,Resource.Drawable.dcsFloor);
 
             _walCol = new WallCollision((x,y)=>collisionMap.GetPixel(x,y));
+            _collision.WallCol = _walCol;
 
             setUpUITabs();
+        }
+
+        private void CollisionOnPositionChanged(object sender, PositionChangedHandlerEventArgs args)
+        {
+            _mapMaker.UserPosition = new Vector2(args.newX,args.newY);
         }
 
         private void StepDetectorOnStep(bool startFromStat)
         {
             RunOnUiThread(() =>
             {
-                FindViewById<TextView>(Resource.Id.stepCounter).Text =
+                FindViewById<TextView>(Resource.Id.scSD).Text =
                     ((StepDetector) (_collision.StepDetector)).StepCounter.ToString();
             });
         }
@@ -133,7 +141,7 @@ namespace Navigator.Droid
             {
                 inDebug = true;
                 SetContentView(Resource.Layout.Debug);
-                _stepText = FindViewById<TextView>(Resource.Id.stepCounter);
+                _stepText = FindViewById<TextView>(Resource.Id.scSD);
                 _azimuthText = FindViewById<TextView>(Resource.Id.azimuth);
                 _XAccelText = FindViewById<TextView>(Resource.Id.XAccel);
                 _YAccelText = FindViewById<TextView>(Resource.Id.YAccel);
@@ -141,7 +149,6 @@ namespace Navigator.Droid
                 _realX = FindViewById<TextView>(Resource.Id.realX);
                 _realY = FindViewById<TextView>(Resource.Id.realY);
             });
-            var t = ActionBar.SelectedTab.Text;
         }
 
         private void RotationProcessorOnValueChanged(double value)

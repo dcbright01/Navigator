@@ -54,13 +54,13 @@ namespace Navigator.Droid.Sensors
 					    || inclination > ONE_FIFTY_FIVE_DEGREE_IN_RADIAN) 
 					{
 						// mFacing is undefined, so we need to clear the history
-						clearRotHist ();
+						ClearRotHist ();
 						mFacing = float.NaN;
 					} else 
 					{
-						setRotHist();
+						SetRotHist();
 						// mFacing = azimuth is in radian
-						mFacing = findFacing(); 
+						mFacing = FindFacing(); 
 					}
 						
 					Value = mFacing; 
@@ -73,13 +73,13 @@ namespace Navigator.Droid.Sensors
 			}
 		}
 
-		private void clearRotHist()
+		private void ClearRotHist()
 		{
 			mRotHist.Clear();
 			mRotHistIndex = 0;
 		}
 
-		private void setRotHist()
+		private void SetRotHist()
 		{
 			float[] hist = (float[]) mRotationMatrix.Clone();
 			if (mRotHist.Count == mHistoryMaxLength) 
@@ -90,13 +90,13 @@ namespace Navigator.Droid.Sensors
 			mRotHistIndex %= mHistoryMaxLength;
 		}
 
-		private float findFacing()
+		private float FindFacing()
 		{
-			float[] averageRotHist = average(mRotHist);
+			float[] averageRotHist = Average(mRotHist);
 			return (float)Math.Atan2 (-averageRotHist [2], -averageRotHist [5]); 
 		}
 
-		public float[] average(List<float[]> values)
+		public float[] Average(List<float[]> values)
 		{
 			float[] result = new float[9];
 			foreach (float[] value in values)

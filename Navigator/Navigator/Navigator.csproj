@@ -35,6 +35,7 @@
     <Compile Include="Helpers\WallCollision.cs" />
     <Compile Include="Pathfinding\Serialisation.cs" />
     <Compile Include="Primitives\FixedSizeQueue.cs" />
+    <Compile Include="Primitives\RoomPropertyType.cs" />
     <Compile Include="Primitives\Vector3.cs" />
     <Compile Include="StepDetector.cs" />
     <Compile Include="Pathfinding\Graph.cs" />

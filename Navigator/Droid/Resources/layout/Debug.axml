@@ -28,11 +28,17 @@
         android:layout_height="wrap_content"
         android:id="@+id/ZAccel" />
     <TextView
-        android:text="Steps: ??"
+        android:text="Steps collision: ??"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/stepCounter" />
+        android:id="@+id/scCol" />
+    <TextView
+        android:text="Steps step counter: ??"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scSD" />
     <TextView
         android:text="Real X: "
         android:textAppearance="?android:attr/textAppearanceLarge"

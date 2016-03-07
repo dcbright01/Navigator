@@ -12,7 +12,6 @@ namespace Navigator.Pathfinding
         public List<Room> Rooms = new List<Room>();
     }
 
-    [XmlRoot("E")]
     public class UndirEdge : UndirectedEdge<string>
     {
         public UndirEdge() : base("", "")

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using Android.App;
 using Android.Graphics;
 using Android.Hardware;
@@ -18,13 +20,14 @@ using Navigator.Primitives;
 
 namespace Navigator.Droid
 {
-    [Activity(Label = "Navigator", MainLauncher = true, Icon = "@mipmap/icon")]
+    [Activity(Label = "Navigator", MainLauncher = true, Icon = "@mipmap/icon", Theme = "@android:style/Theme.Holo.Light")]
     public class MainActivity : Activity, ISensorEventListener
     {
         private Collision _collision;
         private MapMaker _mapMaker;
         private WallCollision _walCol;
         private Bitmap collisionMap;
+        private Pathfinding.Pathfinding pf;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -59,6 +62,23 @@ namespace Navigator.Droid
 
             _walCol = new WallCollision((x,y)=>collisionMap.GetPixel(x,y));
             _collision.WallCol = _walCol;
+
+
+            pf = new Pathfinding.Pathfinding(new Dictionary<int, Stream>()
+            {
+                {0,Assets.Open("dcsGroundFloor.xml") },
+                {1,Assets.Open("dcsFloor1.xml") }
+            },Assets.Open("Rooms.xml") );
+            pf.CurrentFloor = 0;
+
+            while (true)
+            {
+                if (pf.Ready)
+                    break;
+                Thread.Sleep(500);
+            }
+
+            var result = pf.FindPath(new GraphLocatable(709 ,247, 1), new GraphLocatable(1256, 80, 0));
 
             setUpUITabs();
         }

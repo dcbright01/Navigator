@@ -7,6 +7,7 @@
         Type,
         Occupier,
         Position,
+        Stairs,
         None
     }
 }

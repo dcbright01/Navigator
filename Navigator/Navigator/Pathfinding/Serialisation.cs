@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using QuickGraph;
 using Navigator.Primitives;
@@ -33,6 +34,23 @@ namespace Navigator.Pathfinding
 
     public class Room {
         public List<RoomProperty> Properties { get; set; }
+
+        [XmlIgnore]
+        public bool IsStairs {
+            get { return Properties.Any(x => x.Type == RoomPropertyType.Stairs && x.Value == "true"); }}
+
+        [XmlIgnore]
+        public int Floor
+        {
+            get { return int.Parse(Properties.First(x => x.Type == RoomPropertyType.Floor).Value); }
+        }
+
+        [XmlIgnore]
+        public Vector2 Position
+        {
+            get { return new Vector2(Properties.First(x => x.Type == RoomPropertyType.Position).Value); }
+        }
+
         public Room() {
             Properties = new List<RoomProperty>();
         }
@@ -45,6 +63,7 @@ namespace Navigator.Pathfinding
 
         [XmlAttribute("value")]
         public string Value { get; set; }
+
 
         public RoomProperty(RoomPropertyType type, string val) {
             Type = type;

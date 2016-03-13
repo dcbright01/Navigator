@@ -19,20 +19,10 @@ namespace Navigator.Pathfinding
 
     public class Graph : UndirectedGraph<string, UndirEdge>, IGraph
     {
-        /// <summary>
-        ///     Finds a path between start and end vertices. It can return NULL if no path if found , check your output
-        /// </summary>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <returns></returns>
-
         public List<Room> Rooms { get; set; }
 
         public List<UndirEdge> FindPath(string start, string end)
         {
-			var containsStart = Vertices.Contains(start);
-			var containsEnd = Vertices.Contains(end);
-
             var dijkstra = new UndirectedDijkstraShortestPathAlgorithm<string, UndirEdge>(this, edge => 1);
             var observer = new UndirectedVertexPredecessorRecorderObserver<string, UndirEdge>();
             observer.Attach(dijkstra);
@@ -83,33 +73,6 @@ namespace Navigator.Pathfinding
 
 			return tempNode;
 
-
-            //there is a more effecient search that would spiral outwards to a set point before searching the corners of the sqaure that this gets, can implement if need be
-            
-			/*for (var x = (int) searchX - searchDistance; x <= searchX + searchDistance; x++)
-            {
-                for (var y = (int) searchY - searchDistance; y <= searchY + searchDistance; y++)
-                {
-                    nodeCoords = x + "-" + y;
-
-                    var nodeCheck = Vertices.FirstOrDefault(node => node == nodeCoords);
-                    if (nodeCheck != null)
-                    {
-                        a = y - searchY;
-                        b = x - searchX;
-                        newDistance = Math.Sqrt(a*a + b*b);
-                        if (distanceFromTempToReal == -1 || newDistance < distanceFromTempToReal)
-                        {
-//first node come across is set as the tempNode or if newDistance is smaller
-                            tempNode = new Vector2(x, y);
-                            distanceFromTempToReal = newDistance;
-                        }
-                            //shouldn't need to deal with case where you are the same distance from multiple nodes, as it won't really effect navigation and rules, if required can be added
-                    }
-                }
-            }
-            return tempNode;
-            */
         }
 
         /// <summary>

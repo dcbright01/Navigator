@@ -105,7 +105,7 @@
     <AndroidAsset Include="Assets\dcsGroundFloor.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\wall.xml" />
+    <AndroidAsset Include="Assets\Rooms.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-nodpi\arrow.png" />
@@ -118,6 +118,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-nodpi\dcsfloorWideDoors.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\dcsFloor1.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

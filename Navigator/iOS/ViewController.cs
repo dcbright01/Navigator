@@ -18,7 +18,7 @@ namespace Navigator.iOS
     public partial class ViewController : UIViewController
     {
         //Instantiate step detector and collision class
-        private ICollision col;
+        private ICollision collisionHandler;
 
 		//Will contain graph data
         private Graph floorPlanGraph;
@@ -66,15 +66,13 @@ namespace Navigator.iOS
             var asset = assembly.GetManifestResourceStream("Navigator.iOS.Resources.dcsfloorWideDoors.xml");
             floorPlanGraph = Graph.Load(asset);
 
-            wallCollImg = UIImage.FromBundle("Images/dcsfloorWideDoors.png");
 
-            col = new Collision(floorPlanGraph, new StepDetector());
+            collisionHandler = new Collision(floorPlanGraph, new StepDetector());
 
-            ((Collision)col).WallCol = new WallCollision ((x,y) => GetPixelColor(new PointF(x, y), wallCollImg));
-                
-            col.SetLocation(707.0f, 677.0f);
-            col.PassHeading(90);
-            col.PositionChanged += HandleStepsTaken;
+
+            collisionHandler.SetLocation(707.0f, 677.0f);
+            collisionHandler.PassHeading(0);
+            collisionHandler.PositionChanged += HandleStepsTaken;
 
 			//Container for floorplan and any overlaid images
             var container = new UIView();
@@ -83,8 +81,8 @@ namespace Navigator.iOS
             floorplanImageView = new UIImageView();
 
 			//Load floorplan images
-            floorplanImageNoGrid = UIImage.FromBundle("Images/dcrFloorFinal.png");
-            floorplanImageWithGrid = UIImage.FromBundle("Images/dcsFloorWideDoorsGrid.png");
+			floorplanImageNoGrid = UIImage.FromBundle("Images/dcsfloorWideDoors.png");
+            floorplanImageWithGrid = UIImage.FromBundle("Images/dcsfloorWideDoorsGrid.png");
 
 			//Initiate the location arrow
             locationArrow = new LocationArrowImageView();
@@ -127,7 +125,7 @@ namespace Navigator.iOS
 					accelY = data.Acceleration.Y*9.8;
 					accelZ = Math.Sqrt(Math.Pow(accelX, 2) + Math.Pow(accelY, 2) + Math.Pow(data.Acceleration.Z*9.8, 2));
 
-                    col.PassSensorReadings(CollisionSensorType.Accelometer, accelX,
+                    collisionHandler.PassSensorReadings(CollisionSensorType.Accelometer, accelX,
                         accelY, accelZ);
                     displayAccelVal((float)accelZ);
                 });
@@ -175,43 +173,14 @@ namespace Navigator.iOS
             };
 
 			//Another testing button
-            simulationButton.TouchUpInside += delegate { col.StepTaken(false); };
+            simulationButton.TouchUpInside += delegate { collisionHandler.StepTaken(false); };
         }
-
-        private int GetPixelColor(PointF myPoint, UIImage myImage)
-        {
-            var rawData = new byte[4];
-            var handle = GCHandle.Alloc(rawData);
-            int resultColor = 0;
-            try
-            {
-                using (var colorSpace = CGColorSpace.CreateDeviceRGB())
-                {
-                    using (var context = new CGBitmapContext(rawData, 1, 1, 8, 4, colorSpace, CGImageAlphaInfo.PremultipliedLast))
-                    {
-                        context.DrawImage(new RectangleF(-myPoint.X, (float)(myPoint.Y - myImage.Size.Height), (float)myImage.Size.Width, (float)myImage.Size.Height), myImage.CGImage);
-                        float red   = (rawData[0]) / 255.0f;
-                        float green = (rawData[1]) / 255.0f;
-                        float blue  = (rawData[2]) / 255.0f;
-                        float alpha = (rawData[3]) / 255.0f;
-                        resultColor = (((int)rawData[0] & 0xFF) << 24) | //alpha
-                            (((int)rawData[1] & 0xFF) << 16) | //red
-                            (((int)rawData[2] & 0xFF) << 8) | //green
-                            (((int)rawData[3] & 0xFF) << 0); //blue
-                    }
-                }
-            }
-            finally
-            {
-                handle.Free();
-            }
-            return resultColor;
-        }
+			
 
         private void HandleUpdatedHeading(object sender, CLHeadingUpdatedEventArgs e)
         {
             var newRad = (float) (e.NewHeading.TrueHeading*Math.PI/180f);
-            col.PassHeading(newRad);
+            collisionHandler.PassHeading(newRad);
 
             //floorplanImageView.Layer.AnchorPoint = new CGPoint (locationArrow.X/floorplanImageNoGrid.Size.Width, locationArrow.Y/floorplanImageNoGrid.Size.Height);
             locationArrow.lookAtHeading(newRad);
@@ -239,13 +208,13 @@ namespace Navigator.iOS
         private void drawPathFromUser(float endX, float endY)
         {
 			//Get nearest node to user location
-            var userNode = floorPlanGraph.FindClosestNode(locationArrow.X, locationArrow.Y, 6);
+            var userNode = floorPlanGraph.FindClosestNode(locationArrow.X, locationArrow.Y);
 
 			//Get x and y of this nearest node
             var pathStart = floorPlanGraph.Vertices.First(x => x == userNode.ToPointString());
 
 			//Get nearest node to end location
-            var destinationNode = floorPlanGraph.FindClosestNode(endX, endY, 6);
+            var destinationNode = floorPlanGraph.FindClosestNode(endX, endY);
 
 			//Get x and y of this node
             var pathEnd = floorPlanGraph.Vertices.First(x => x == destinationNode.ToPointString());
@@ -316,7 +285,7 @@ namespace Navigator.iOS
 
 		public void setStartPoint(nfloat x, nfloat y) {
 			locationArrow.setLocation ((float)x, (float)y);
-			col.SetLocation ((float)x, (float)y);
+			collisionHandler.SetLocation ((float)x, (float)y);
 		}
 
 		public void setEndPoint(nfloat x, nfloat y) {

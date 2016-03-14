@@ -8,13 +8,15 @@ using Navigator.Primitives;
 using QuickGraph;
 using QuickGraph.Algorithms.Observers;
 using QuickGraph.Algorithms.ShortestPath;
+using System.Diagnostics;
 
 namespace Navigator.Pathfinding
 {
     public interface IGraph
     {
         List<UndirEdge> FindPath(string start, string end);
-        Vector2 FindClosestNode(float searchX, float searchY, int searchDistance);
+        Vector2 FindClosestNode(float searchX, float searchY);
+		bool isLinked (Vector2 pos1, Vector2 pos2);
     }
 
     public class Graph : UndirectedGraph<string, UndirEdge>, IGraph
@@ -44,23 +46,22 @@ namespace Navigator.Pathfinding
                 dijkstra.Compute (start);
                 IEnumerable<UndirEdge> path = null;
                 try {
-                    observer.TryGetPath (end, out path);
-                } catch {
+                    observer.TryGetPath (end, out path) ;
+				} catch(Exception ex) {
+					ex.ToString ();
                 }
+
 
                 return path.ToList ();
             } else {
                 return null;
             }
         }
-
-        public Vector2 FindClosestNode(float searchX, float searchY, int searchDistance)
+			
+        public Vector2 FindClosestNode(float searchX, float searchY)
         {
             var tempNode = new Vector2(-1, -1);
-            double distanceFromTempToReal = -1;
-            double a, b, newDistance;
 			int tempX, tempY;
-            string nodeCoords;
 
 			int moduloX = (int)searchX % 20;
 			int moduloY = (int)searchY % 20;
@@ -81,36 +82,25 @@ namespace Navigator.Pathfinding
 
 			tempNode = new Vector2 (tempX, tempY);
 
-			return tempNode;
+			if (this.ContainsVertex (tempNode.ToPointString ()))
+				return tempNode;
+			else
+				return Vector2.Invalid;
 
-
-            //there is a more effecient search that would spiral outwards to a set point before searching the corners of the sqaure that this gets, can implement if need be
-            
-			/*for (var x = (int) searchX - searchDistance; x <= searchX + searchDistance; x++)
-            {
-                for (var y = (int) searchY - searchDistance; y <= searchY + searchDistance; y++)
-                {
-                    nodeCoords = x + "-" + y;
-
-                    var nodeCheck = Vertices.FirstOrDefault(node => node == nodeCoords);
-                    if (nodeCheck != null)
-                    {
-                        a = y - searchY;
-                        b = x - searchX;
-                        newDistance = Math.Sqrt(a*a + b*b);
-                        if (distanceFromTempToReal == -1 || newDistance < distanceFromTempToReal)
-                        {
-//first node come across is set as the tempNode or if newDistance is smaller
-                            tempNode = new Vector2(x, y);
-                            distanceFromTempToReal = newDistance;
-                        }
-                            //shouldn't need to deal with case where you are the same distance from multiple nodes, as it won't really effect navigation and rules, if required can be added
-                    }
-                }
-            }
-            return tempNode;
-            */
         }
+
+		public bool isLinked(Vector2 pos1, Vector2 pos2)
+		{
+			var sw = new Stopwatch ();
+			sw.Start ();
+			var path = FindPath (pos1.ToPointString (), pos2.ToPointString ());
+			sw.Stop ();
+			long timeTaken = sw.ElapsedMilliseconds;
+			if (path.Count <= 3)
+				return true;
+			else
+				return false;
+		}
 
         /// <summary>
         ///     Stream needs to be passed in from specific device as they differ

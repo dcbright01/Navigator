@@ -36,12 +36,8 @@ namespace Navigator
         private float totalStride = 30.0f;
         private float strideLength = 12.0f;
         private const int searchDistance = 6;
-
         //graph information
         private readonly IGraph _graph;
-
-        //path holder
-        private readonly Queue<Vector2> _graphPath;
 
         //StepDetector Class
         public readonly IStepDetector StepDetector;
@@ -59,7 +55,6 @@ namespace Navigator
 			StepDetector = stepDetector;
             StepDetector.OnStep += StepTaken;
             _graph = graph;
-            _graphPath = new Queue<Vector2>();
         }
 
         //Require interfaces that values are passed to
@@ -77,7 +72,7 @@ namespace Navigator
         public void SetLocation(float startX, float startY)
         {
             realPosition = new Vector2(startX, startY);
-            CalculateNearestNode();
+			nearestGraphNode = CalculateNearestNode(realPosition);
         }
 
         public void PassSensorReadings(CollisionSensorType s, double xVal, double yVal, double zVal)
@@ -126,96 +121,31 @@ namespace Navigator
             }
         }
 
-        private int CalculateNearestNode()
+		private Vector2 CalculateNearestNode(Vector2 position)
         {
-            var tempNode = _graph.FindClosestNode(realPosition.X, realPosition.Y, searchDistance);
-			//var contains = ((Graph) _graph).Vertices.Contains(tempNode.ToPointString());
-
-            //case where this is the initial position, figure out how for initial to avoid wall hopping
-            if (nearestGraphNode == null)
-            {
-                if (tempNode.X != -1 && tempNode.Y != -1)
-                {
-                    nearestGraphNode = tempNode;
-                    _graphPath.Enqueue(tempNode);
-                    return 0;
-                }
-            }
-            else if (!nearestGraphNode.Equals(tempNode))
-                // for the case where its not the initial and the previous value is different from current
-            {
-                /*start = nearestGraphNode.Item1.ToString() + "-" + nearestGraphNode.Item2.ToString();
-                end = tempNode.Item1.ToString() + "-" + tempNode.Item2.ToString();
-                var path = g.FindPath(start, end);  
-                if(path.Count < 3)
-                {*/
-                if (_graphPath.Count != 0)
-                {
-                    if (_graphPath.Count == 5)
-                    {
-                        _graphPath.Dequeue();
-                    }
-                }
-                if (tempNode.IsValidCoordinate)
-                {
-                    _graphPath.Enqueue(tempNode);
-                    nearestGraphNode = tempNode;
-                    return 0;
-                }
-                //} 
-            }
-            if (!tempNode.IsValidCoordinate)
-            {
-                return -1;
-            }
-            return 0;
+			var tempNode = _graph.FindClosestNode(position.X, position.Y);
+			return tempNode;
         }
 
         //replace with StepDetection Event trigger
-        private Vector2 testStepTrigger()
+        private void testStepTrigger()
         {
-            string start, end;
-            float x, y;
-
             var nHeading = (float) (Math.PI/2 - Heading);
-            x = realPosition.X + strideLength*(float) Math.Cos(nHeading);
-            y = realPosition.Y - strideLength*(float) Math.Sin(nHeading);
 
+            var tmpX = realPosition.X + strideLength*(float) Math.Cos(nHeading);
+			var tmpY = realPosition.Y - strideLength*(float) Math.Sin(nHeading);
+            var tmpPosition = new Vector2(tmpX, tmpY);
+			var tmpNearestNode = CalculateNearestNode(tmpPosition);
 
-            var newPosition = new Vector2(x, y);
+			if (nearestGraphNode.Equals (tmpNearestNode)) {
+				realPosition = tmpPosition;
+			} else if (tmpNearestNode != Vector2.Invalid) {
+				if (_graph.isLinked(nearestGraphNode, tmpNearestNode)) {
+					realPosition = tmpPosition;
+					nearestGraphNode = tmpNearestNode;
 
-            var realHolder = realPosition;
-            var nearestHolder = nearestGraphNode;
-
-            realPosition = newPosition;
-            var check = CalculateNearestNode();
-            if (check != -1)
-            {
-                if (!nearestHolder.Equals(nearestGraphNode))
-                {
-                    start = nearestGraphNode.ToPointString();
-					end = nearestHolder.ToPointString();
-
-                    if (start != end) {
-
-                        if (!WallCol.IsValidStep ((int)nearestGraphNode.X, (int)nearestGraphNode.Y, (int)nearestHolder.X, (int)nearestHolder.Y)) {
-
-                            realPosition = realHolder;
-                            nearestGraphNode = nearestHolder;
-
-                        }
-
-                    } else {
-                        //realPosition = realHolder;
-                    }
-
-                }
-            }
-            else
-            {
-                realPosition = realHolder;
-            }
-            return realPosition;
+				}
+			}
         }
     }
 
@@ -225,9 +155,9 @@ namespace Navigator
         public float newY;
 
         public PositionChangedHandlerEventArgs(float newX, float newY)
-        {
-            this.newX = newX;
-            this.newY = newY;
-        }
+		{
+			this.newX = newX;
+			this.newY = newY;
+		}
     }
 }

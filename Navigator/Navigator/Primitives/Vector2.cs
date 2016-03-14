@@ -4,6 +4,11 @@ namespace Navigator.Primitives
 {
     public class Vector2
     {
+		public static readonly Vector2 Invalid = new Vector2(-1, -1);
+
+		public float X { get; private set; }
+		public float Y { get; private set; }
+
         public Vector2(float x, float y)
         {
             X = x;
@@ -32,10 +37,18 @@ namespace Navigator.Primitives
             Y = values[1];
         }
 
-        public float X { get; set; }
-        public float Y { get; set; }
 
         public bool IsValidCoordinate { get { return X != -1 && Y != -1; } }
+
+		public override bool Equals (object obj)
+		{
+			var vectorObj = obj as Vector2;
+
+			if (vectorObj != null && vectorObj.X == X && vectorObj.Y == Y)
+				return true;
+			else
+				return false;
+		}
 
         public float Distance2D(Vector2 otherVector)
         {

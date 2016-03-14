@@ -42,25 +42,23 @@
     <Compile Include="Primitives\Vector2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ButterworthLowPassFilter.cs" />
+    <Compile Include="Primitives\RoomPropertyType.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Common.Logging.Core">
       <HintPath>..\packages\Common.Logging.Core.3.0.0\lib\portable-win+net40+sl40+wp7\Common.Logging.Core.dll</HintPath>
     </Reference>
-    <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
-      <HintPath>..\packages\QuickGraphPCL.3.6.61114.2\lib\portable-win+net4+sl5+wp8+win8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\QuickGraph.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="QuickGraph.Graphviz, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
-      <HintPath>..\packages\QuickGraphPCL.3.6.61114.2\lib\portable-win+net4+sl5+wp8+win8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\QuickGraph.Graphviz.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Splat, Version=1.6.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Splat.1.6.2\lib\Portable-net45+win+wpa81+wp80\Splat.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="XLabs.Ioc">
       <HintPath>..\packages\XLabs.IoC.2.0.5782\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1+Xamarin.iOS10\XLabs.Ioc.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3">
+      <HintPath>..\packages\QuickGraphPCL.3.6.61114.2\lib\portable-win+net4+sl5+wp8+win8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\QuickGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Graphviz, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3">
+      <HintPath>..\packages\QuickGraphPCL.3.6.61114.2\lib\portable-win+net4+sl5+wp8+win8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\QuickGraph.Graphviz.dll</HintPath>
+    </Reference>
+    <Reference Include="Splat, Version=1.6.2.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Splat.1.6.2\lib\Portable-net45+win+wpa81+wp80\Splat.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

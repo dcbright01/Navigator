@@ -64,14 +64,24 @@ namespace Navigator.Pathfinding
                 // Floor change 
 
                 // Find the stairs on current floor
-                var stairsCurrentFloor = Rooms.Find(x => x.IsStairs && x.Floor == CurrentFloor);
+                var stairsFromFloor = Rooms.Find(x => x.IsStairs && x.Floor == from.Floor);
                 var stairsTargetFloor = Rooms.Find(x => x.IsStairs && x.Floor == to.Floor);
 
-                if(stairsCurrentFloor == null || stairsTargetFloor == null)
+                if(stairsFromFloor == null || stairsTargetFloor == null)
                     throw new Exception("Couldnt locate any stairs to transition");
 
-                path.Add(from.Floor, _floorGraphs[from.Floor].FindPath(from.ToPointString(), stairsCurrentFloor.Position.ToPointString()));
-                path.Add(to.Floor, _floorGraphs[to.Floor].FindPath(stairsTargetFloor.Position.ToPointString(), to.ToPointString()));
+                int fromFloor = from.Floor;
+                int toFloor = to.Floor;
+
+                var fromFloorGraph = _floorGraphs[fromFloor];
+                var b = fromFloorGraph.ContainsVertex(stairsFromFloor.Position.ToPointString());
+                var toFloorGraph = _floorGraphs[toFloor];
+
+                var pathFromFloor = fromFloorGraph.FindPath(from.ToPointString(), stairsFromFloor.Position.ToPointString());
+                var pathToFloor = toFloorGraph.FindPath(stairsTargetFloor.Position.ToPointString(), to.ToPointString());
+                path.Add(fromFloor,pathFromFloor);
+
+                path.Add(toFloor,pathToFloor);
             }
             else
             {

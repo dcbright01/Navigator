@@ -71,6 +71,7 @@ namespace Navigator.Droid
             },Assets.Open("Rooms.xml") );
             pf.CurrentFloor = 0;
 
+
             while (true)
             {
                 if (pf.Ready)
@@ -78,7 +79,8 @@ namespace Navigator.Droid
                 Thread.Sleep(500);
             }
 
-            var result = pf.FindPath(new GraphLocatable(709 ,247, 1), new GraphLocatable(1256, 80, 0));
+            var result = pf.FindPath(new GraphLocatable(609, 457, 1), new GraphLocatable(1256, 80, 0));
+
 
             setUpUITabs();
         }

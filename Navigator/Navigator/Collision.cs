@@ -51,6 +51,13 @@ namespace Navigator
         //Values that are being tracked
         private Vector2 realPosition;
         //public event HeadingHandler newHeading;
+        private FixedSizeQueue<float> headingQueue = new FixedSizeQueue<float>(15);
+        private double currentTime = Math.Round(DateTime.Now.ToUniversalTime().Subtract(
+            new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+        ).TotalMilliseconds, 0);
+        private double referenceTime = Math.Round(DateTime.Now.ToUniversalTime().Subtract(
+            new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+        ).TotalMilliseconds, 0);
 
         public WallCollision WallCol;
 
@@ -92,7 +99,17 @@ namespace Navigator
 
         public void PassHeading(float nHeading)
         {
+            currentTime = Math.Round(DateTime.Now.ToUniversalTime().Subtract(
+                new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            ).TotalMilliseconds, 0);
             Heading = nHeading;
+            double test = currentTime - referenceTime;
+
+            //if (currentTime - referenceTime > 100) {
+            headingQueue.Enqueue (nHeading);
+            referenceTime = currentTime;
+            //}
+
         }
 
         //method is public for now inorder to manually trigger steps on iOS for testing. 
@@ -104,25 +121,53 @@ namespace Navigator
             float extraStep = totalStride % strideLength;
 
             var args = new PositionChangedHandlerEventArgs (realPosition.X, realPosition.Y);
+            //StepCounter = 1;
+            if (startFromStat == false) {
 
-            for (int i = 0; i < stepIterations; i++) {
-            
-                if (i == 0) {
-                    testStepTrigger ();
-                    args = new PositionChangedHandlerEventArgs (realPosition.X, realPosition.Y);
-                } else {
-                    testStepTrigger();
-                    args = new PositionChangedHandlerEventArgs(realPosition.X, realPosition.Y);
+                for (int i = 0; i < stepIterations; i++) {
+
+                    if (i == 0) {
+                        testStepTrigger (Heading);
+                        args = new PositionChangedHandlerEventArgs (realPosition.X, realPosition.Y);
+                    } else {
+                        testStepTrigger (Heading);
+                        args = new PositionChangedHandlerEventArgs (realPosition.X, realPosition.Y);
+                    }
+                    PositionChanged (this, args);
                 }
-                PositionChanged(this, args);
-            }
 
-            if (extraStep != 0) {
-                strideLength = extraStep;
-                testStepTrigger();
-                args = new PositionChangedHandlerEventArgs(realPosition.X, realPosition.Y);
-                PositionChanged(this, args);
-                strideLength = 12.0f;
+                if (extraStep != 0) {
+                    strideLength = extraStep;
+                    testStepTrigger (Heading);
+                    args = new PositionChangedHandlerEventArgs (realPosition.X, realPosition.Y);
+                    PositionChanged (this, args);
+                    strideLength = 12.0f;
+                }
+            } else {
+                float[] headings = new float[headingQueue.Count];
+                headingQueue.CopyTo (headings,0);
+
+                for (int j = 0; j < 3; j++) {
+                    for (int i = 0; i < stepIterations; i++) {
+
+                        if (i == 0) {
+                            testStepTrigger (headings [4+ (j*4)]);
+                            args = new PositionChangedHandlerEventArgs (realPosition.X, realPosition.Y);
+                        } else {
+                            testStepTrigger (headings [4 + (j*4)]);
+                            args = new PositionChangedHandlerEventArgs (realPosition.X, realPosition.Y);
+                        }
+                        PositionChanged (this, args);
+                    }
+                    if (extraStep != 0) {
+                        strideLength = extraStep;
+                        testStepTrigger (headings [4 + (j*4)]);
+                        args = new PositionChangedHandlerEventArgs (realPosition.X, realPosition.Y);
+                        PositionChanged (this, args);
+                        strideLength = 12.0f;
+                    }
+                }
+
             }
         }
 
@@ -172,12 +217,12 @@ namespace Navigator
         }
 
         //replace with StepDetection Event trigger
-        private Vector2 testStepTrigger()
+        private Vector2 testStepTrigger(float _heading)
         {
             string start, end;
             float x, y;
 
-            var nHeading = (float) (Math.PI/2 - Heading);
+            var nHeading = (float) (Math.PI/2 - _heading);
             x = realPosition.X + strideLength*(float) Math.Cos(nHeading);
             y = realPosition.Y - strideLength*(float) Math.Sin(nHeading);
 

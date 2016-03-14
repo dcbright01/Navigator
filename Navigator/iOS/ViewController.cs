@@ -40,6 +40,7 @@ namespace Navigator.iOS
 
         //Location manager for heading information
         private CLLocationManager locationManager;
+        private CMMotionManager motionManager;
 
 		//Toggle for button press
         private int toggle = 1;
@@ -55,7 +56,7 @@ namespace Navigator.iOS
             base.ViewDidLoad();
 
             // For accelerometer readings
-            var motionManager = new CMMotionManager();
+            motionManager = new CMMotionManager();
             motionManager.AccelerometerUpdateInterval = 0.01; // 100Hz
 
             //To handle long presses and bring up path start/end menu
@@ -175,7 +176,7 @@ namespace Navigator.iOS
             };
 
 			//Another testing button
-            simulationButton.TouchUpInside += delegate { col.StepTaken(false); };
+            simulationButton.TouchUpInside += delegate { col.StepTaken(true); };
         }
 
         private int GetPixelColor(PointF myPoint, UIImage myImage)

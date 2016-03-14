@@ -124,6 +124,9 @@
     </Compile>
     <Compile Include="LocationArrow.cs" />
     <Compile Include="PathView.cs" />
+    <Compile Include="MenuController.cs" />
+    <Compile Include="tableSource.cs" />
+    <Compile Include="MenuController.designer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

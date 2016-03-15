@@ -31,14 +31,18 @@ namespace Navigator.iOS
 
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
+		UISearchBar SearchBar { get; set; }
+
+		[Outlet]
+		[GeneratedCode ("iOS Designer", "1.0")]
+		UITableView SearchPredictionTable { get; set; }
+
+		[Outlet]
+		[GeneratedCode ("iOS Designer", "1.0")]
 		UIButton simulationButton { get; set; }
 
 		void ReleaseDesignerOutlets ()
 		{
-			if (Button != null) {
-				Button.Dispose ();
-				Button = null;
-			}
 			if (debugLabel != null) {
 				debugLabel.Dispose ();
 				debugLabel = null;
@@ -50,6 +54,14 @@ namespace Navigator.iOS
 			if (OptionsButton != null) {
 				OptionsButton.Dispose ();
 				OptionsButton = null;
+			}
+			if (SearchBar != null) {
+				SearchBar.Dispose ();
+				SearchBar = null;
+			}
+			if (SearchPredictionTable != null) {
+				SearchPredictionTable.Dispose ();
+				SearchPredictionTable = null;
 			}
 			if (simulationButton != null) {
 				simulationButton.Dispose ();

@@ -33,7 +33,7 @@ namespace Navigator.iOS
             }
 
             //string[] tableItems = new string[] {"Select Starting Point","Select Destination","About This App"};
-            menuTable.Source = new TableSource(roomNames);
+            //menuTable.Source = new TableSource(roomNames);
 
         
         }

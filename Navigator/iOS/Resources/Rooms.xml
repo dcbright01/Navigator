@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+
+<ArrayOfRoom xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Room>
+    <Properties>
+      <RoomProperty type="Position" value="600-600" />
+      <RoomProperty type="Name" value="TestRoom" />
+      <RoomProperty type="Occupier" value="Steve Jarvis" />
+      <RoomProperty type="Floor" value="0" />
+      <RoomProperty type="Stairs" value="false" />
+    </Properties>
+  </Room>
+  <Room>
+    <Properties>
+      <RoomProperty type="Position" value="300-300" />
+      <RoomProperty type="Name" value="TestRoom2" />
+      <RoomProperty type="Floor" value="0" />
+      <RoomProperty type="Stairs" value="false" />
+    </Properties>
+  </Room>
+  <Room>
+    <Properties>
+      <RoomProperty type="Position" value="649-517" />
+      <RoomProperty type="Stairs" value="true" />
+      <RoomProperty type="Name" value="Stairs" />
+      <RoomProperty type="Floor" value="1" />
+    </Properties>
+  </Room>
+  <Room>
+    <Properties>
+      <RoomProperty type="Position" value="1196-110" />
+      <RoomProperty type="Stairs" value="true" />
+      <RoomProperty type="Name" value="Stairs" />
+      <RoomProperty type="Floor" value="0" />
+    </Properties>
+  </Room>
+ </ArrayOfRoom>

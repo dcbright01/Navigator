@@ -45,11 +45,17 @@ namespace Navigator.Pathfinding
             get { return int.Parse(Properties.First(x => x.Type == RoomPropertyType.Floor).Value); }
         }
 
-        [XmlIgnore]
-        public Vector2 Position
-        {
-            get { return new Vector2(Properties.First(x => x.Type == RoomPropertyType.Position).Value); }
-        }
+		[XmlIgnore]
+		public Vector2 Position
+		{
+			get { return new Vector2(Properties.First(x => x.Type == RoomPropertyType.Position).Value); }
+		}
+
+		[XmlIgnore]
+		public string Name
+		{
+			get { return Properties.First(x => x.Type == RoomPropertyType.Name).Value; }
+		}
 
         public Room() {
             Properties = new List<RoomProperty>();

@@ -12,6 +12,9 @@ using CoreAnimation;
 using Navigator.Helpers;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 
 namespace Navigator.iOS
 {
@@ -36,7 +39,7 @@ namespace Navigator.iOS
         private int GlobalStepCounter = 0;
 
 		//Will hold the paths users should follow
-		private readonly PathView pathView = new PathView();
+		private PathView pathView = new PathView();
 
         //Location manager for heading information
         private CLLocationManager locationManager;
@@ -63,8 +66,28 @@ namespace Navigator.iOS
             var longPressManager = new UILongPressGestureRecognizer();
 
             //Graph loading code
-            var assembly = Assembly.GetExecutingAssembly();
-            var asset = assembly.GetManifestResourceStream("Navigator.iOS.Resources.dcsfloorWideDoors.xml");
+			//Graph loading code
+			var assembly = Assembly.GetExecutingAssembly();
+			var asset = assembly.GetManifestResourceStream("Navigator.iOS.Resources.dcsfloorWideDoors.xml");
+
+			var pf = new Pathfinding.Pathfinding(new Dictionary<int, Stream>()
+				{
+					{0,assembly.GetManifestResourceStream("Navigator.iOS.Resources.dcsfloorWideDoors.xml")},
+					{1,assembly.GetManifestResourceStream("Navigator.iOS.Resources.dcsFloor1.xml")}
+				},assembly.GetManifestResourceStream("Navigator.iOS.Resources.Rooms.xml") );
+			pf.CurrentFloor = 0;
+
+			while (true)
+			{
+				if (pf.Ready)            
+
+					break;
+				Thread.Sleep(500);
+			}
+				
+			//set up the search bar and prediction box
+			var searchController = new CustomSearchController(this, SearchBar, SearchPredictionTable, pf.Rooms);
+		
             floorPlanGraph = Graph.Load(asset);
 
             wallCollImg = UIImage.FromBundle("Images/dcsfloorWideDoors.png");
@@ -157,23 +180,6 @@ namespace Navigator.iOS
             locationManager.StartUpdatingHeading();
 
 			//Button currently used for testing purposes only
-            Button.TouchUpInside += delegate
-            {
-                if (toggle == 1)
-                {
-                    var title = "Set to normal floorplan";
-                    Button.SetTitle(title, UIControlState.Normal);
-                    changeFloorPlanImage(floorplanImageView, floorplanImageWithGrid);
-                    toggle = 0;
-                }
-                else
-                {
-                    var title = "Set to floorplan with grid";
-                    Button.SetTitle(title, UIControlState.Normal);
-                    changeFloorPlanImage(floorplanImageView, floorplanImageNoGrid);
-                    toggle = 1;
-                }
-            };
 
 			//Another testing button
             simulationButton.TouchUpInside += delegate { col.StepTaken(true); };
@@ -191,10 +197,6 @@ namespace Navigator.iOS
                     using (var context = new CGBitmapContext(rawData, 1, 1, 8, 4, colorSpace, CGImageAlphaInfo.PremultipliedLast))
                     {
                         context.DrawImage(new RectangleF(-myPoint.X, (float)(myPoint.Y - myImage.Size.Height), (float)myImage.Size.Width, (float)myImage.Size.Height), myImage.CGImage);
-                        float red   = (rawData[0]) / 255.0f;
-                        float green = (rawData[1]) / 255.0f;
-                        float blue  = (rawData[2]) / 255.0f;
-                        float alpha = (rawData[3]) / 255.0f;
                         resultColor = (((int)rawData[0] & 0xFF) << 24) | //alpha
                             (((int)rawData[1] & 0xFF) << 16) | //red
                             (((int)rawData[2] & 0xFF) << 8) | //green
@@ -239,6 +241,12 @@ namespace Navigator.iOS
 
         private void drawPathFromUser(float endX, float endY)
         {
+			pathView.RemoveFromSuperview ();
+			pathView = new PathView();
+			pathView.ScaleFactor = floorplanView.ZoomScale;
+			pathView.Frame = new CGRect(new CGPoint(0, 0), floorplanImageNoGrid.Size);
+			floorplanImageView.AddSubview(pathView);
+
 			//Get nearest node to user location
             var userNode = floorPlanGraph.FindClosestNode(locationArrow.X, locationArrow.Y, 6);
 
@@ -278,19 +286,11 @@ namespace Navigator.iOS
         private void handleLongPress(UILongPressGestureRecognizer gesture, Graph g)
         {
             //Get x and y of press location
-            var tapX = gesture.LocationInView(floorplanImageView).X;
-            var tapY = gesture.LocationInView(floorplanImageView).Y;
+			var tapX = (float) gesture.LocationInView(floorplanImageView).X;
+			var tapY = (float) gesture.LocationInView(floorplanImageView).Y;
 
 			// Create a new Alert Controller
-			UIAlertController actionSheetAlert = UIAlertController.Create("Options", null, UIAlertControllerStyle.Alert);
-
-			// Add Actions
-			actionSheetAlert.AddAction(UIAlertAction.Create("Cancel",UIAlertActionStyle.Cancel, null));
-			actionSheetAlert.AddAction(UIAlertAction.Create("Set Start Point",UIAlertActionStyle.Default, (action) => setStartPoint(tapX, tapY)));
-			actionSheetAlert.AddAction(UIAlertAction.Create("Set End Point",UIAlertActionStyle.Default, (action) => setEndPoint(tapX, tapY)));
-
-			// Display alert
-			this.PresentViewController(actionSheetAlert,true,null);
+			showContextMenu(tapX,tapY);
 
 			/*
 			CGPoint point = new CGPoint (gesture.LocationInView (floorplanImageView).X, gesture.LocationInView (floorplanImageView).Y);
@@ -301,6 +301,18 @@ namespace Navigator.iOS
 				//presentationPopover.PermittedArrowDirections = UIPopoverArrowDirection.Up;
 			}
 			*/      
+		}
+
+		public void showContextMenu(float locationX, float locationY){
+			UIAlertController actionSheetAlert = UIAlertController.Create("Options", null, UIAlertControllerStyle.Alert);
+
+			// Add Actions
+			actionSheetAlert.AddAction(UIAlertAction.Create("Cancel",UIAlertActionStyle.Cancel, null));
+			actionSheetAlert.AddAction(UIAlertAction.Create("Set Start Point",UIAlertActionStyle.Default, (action) => setStartPoint(locationX, locationY)));
+			actionSheetAlert.AddAction(UIAlertAction.Create("Set End Point",UIAlertActionStyle.Default, (action) => setEndPoint(locationX, locationY)));
+
+			// Display alert
+			this.PresentViewController(actionSheetAlert,true,null);
 		}
 
         public void displayAccelVal(float a) {

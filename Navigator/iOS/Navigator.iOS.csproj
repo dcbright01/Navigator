@@ -127,6 +127,7 @@
     <Compile Include="MenuController.cs" />
     <Compile Include="tableSource.cs" />
     <Compile Include="MenuController.designer.cs" />
+    <Compile Include="CustomSearchController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -138,9 +139,14 @@
     <BundleResource Include="Images\dcsfloor.png" />
     <BundleResource Include="Images\dcsfloorWideDoors.png" />
     <BundleResource Include="Images\dcsfloorWideDoorsGrid.png" />
+    <BundleResource Include="Images\dcrFloorFinal.png" />
+    <BundleResource Include="Resources\AboutAssets.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\test.xml" />
     <EmbeddedResource Include="Resources\dcsfloorWideDoors.xml" />
+    <EmbeddedResource Include="Resources\dcsGroundFloor.xml" />
+    <EmbeddedResource Include="Resources\dcsFloor1.xml" />
+    <EmbeddedResource Include="Resources\Rooms.xml" />
   </ItemGroup>
 </Project>

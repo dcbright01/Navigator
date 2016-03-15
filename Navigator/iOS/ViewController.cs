@@ -50,6 +50,8 @@ namespace Navigator.iOS
 
         private int count = 0;
 
+        private nfloat endX = 0, endY = 0;
+
         public ViewController(IntPtr handle) : base(handle)
         {
         }
@@ -182,7 +184,7 @@ namespace Navigator.iOS
 			//Button currently used for testing purposes only
 
 			//Another testing button
-            simulationButton.TouchUpInside += delegate { col.StepTaken(true); };
+            simulationButton.TouchUpInside += delegate { col.StepTaken(false); };
         }
 
         private int GetPixelColor(PointF myPoint, UIImage myImage)
@@ -225,6 +227,10 @@ namespace Navigator.iOS
             GlobalStepCounter++;
             locationArrow.setLocation(args.newX, args.newY);
             debugLabel.Text = "" + GlobalStepCounter;
+
+            if (GlobalStepCounter % 6 == 0) {
+                setEndPoint (endX, endY);
+            }
         }
 
 
@@ -292,6 +298,8 @@ namespace Navigator.iOS
 			// Create a new Alert Controller
 			showContextMenu(tapX,tapY);
 
+           
+
 			/*
 			CGPoint point = new CGPoint (gesture.LocationInView (floorplanImageView).X, gesture.LocationInView (floorplanImageView).Y);
 
@@ -330,10 +338,21 @@ namespace Navigator.iOS
 		public void setStartPoint(nfloat x, nfloat y) {
 			locationArrow.setLocation ((float)x, (float)y);
 			col.SetLocation ((float)x, (float)y);
+            pathView.RemoveFromSuperview ();
+            pathView = new PathView();
+            pathView.ScaleFactor = floorplanView.ZoomScale;
+            pathView.Frame = new CGRect(new CGPoint(0, 0), floorplanImageNoGrid.Size);
+            floorplanImageView.AddSubview(pathView);
+            SearchBar.ShowsCancelButton = false;
+            SearchBar.ResignFirstResponder();
 		}
 
 		public void setEndPoint(nfloat x, nfloat y) {
-			drawPathFromUser((float) x, (float) y);
+            SearchBar.ShowsCancelButton = false;
+            SearchBar.ResignFirstResponder();
+            endX = x;
+            endY = y;
+            drawPathFromUser((float) x, (float) y);
 		}
 
         public override void DidReceiveMemoryWarning()

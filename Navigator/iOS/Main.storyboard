@@ -17,11 +17,12 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="13" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
-                                <rect key="frame" x="-2" y="-12" width="379" height="669"/>
+                                <rect key="frame" x="-2" y="188" width="379" height="469"/>
                                 <variation key="heightClass=regular-widthClass=compact">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 </variation>
                                 <subviews/>
+                                <color key="backgroundColor" colorSpace="calibratedRGB" red="0.43529411764705883" green="0.4392156862745098" blue="0.43529411764705883" alpha="1"/>
                             </scrollView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="234" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
                                 <rect key="frame" x="0.0" y="631" width="161" height="30"/>
@@ -36,13 +37,13 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="355" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
-                                <rect key="frame" x="39" y="82" width="299" height="211"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="355" translatesAutoresizingMaskIntoConstraints="NO">
+                                <rect key="frame" x="20" y="69" width="335" height="211"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes/>
                             </tableView>
-                            <searchBar contentMode="redraw" id="361" translatesAutoresizingMaskIntoConstraints="NO" placeholder="Search" searchBarStyle="minimal" fixedFrame="YES">
-                                <rect key="frame" x="28" y="46" width="320" height="44"/>
+                            <searchBar contentMode="redraw" id="361" translatesAutoresizingMaskIntoConstraints="NO" placeholder="Search" searchBarStyle="minimal">
+                                <rect key="frame" x="13" y="30" width="348" height="44"/>
                                 <textInputTraits key="textInputTraits"/>
                             </searchBar>
                         </subviews>
@@ -52,6 +53,12 @@
                             <constraint id="266" firstItem="13" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading"/>
                             <constraint id="267" firstItem="13" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailing"/>
                             <constraint id="268" firstItem="13" firstAttribute="bottom" secondItem="8bC-Xf-vdC" secondAttribute="bottom"/>
+                            <constraint id="369" firstItem="361" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="13"/>
+                            <constraint id="370" firstItem="361" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="30"/>
+                            <constraint id="371" firstItem="8bC-Xf-vdC" firstAttribute="trailing" secondItem="361" secondAttribute="trailing" constant="14"/>
+                            <constraint id="372" firstItem="355" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20"/>
+                            <constraint id="373" firstItem="8bC-Xf-vdC" firstAttribute="trailing" secondItem="355" secondAttribute="trailing" constant="20"/>
+                            <constraint id="374" firstItem="355" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="69"/>
                         </constraints>
                     </view>
                     <connections>

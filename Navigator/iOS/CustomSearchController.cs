@@ -39,7 +39,11 @@ namespace Navigator.iOS
 				_searchBar.ShowsCancelButton = true;
 				_searchPredictionTable.Alpha = 1;
 			};
-			_searchBar.OnEditingStopped += (sender, e) => _searchPredictionTable.Alpha = 0;
+            _searchBar.OnEditingStopped += (sender, e) => {
+                _searchPredictionTable.Alpha = 0;
+                _searchBar.ResignFirstResponder ();
+
+            };
 
 		}
 	}

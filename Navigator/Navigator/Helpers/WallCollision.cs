@@ -32,72 +32,70 @@ namespace Navigator.Helpers
 
         public bool IsValidStep(int x1, int y1, int x2, int y2)
         {
+
+            int tempX1 = x1,
+                tempY1 = y1;
             CheckDirection mode = CheckDirection.None;
-            // calculate differences
-            if (x1 > x2)
+
+            while (tempX1 != x2 && tempY1 != y2)
             {
-                // Left
-                mode = CheckDirection.Left;
-            }
-            else if (x2 > x1)
-            {
-                // right
-                mode = CheckDirection.Right;
-            }
-            else // X1 == X2
-            {
-                // Check changes on y
-                if (y1 > y2)
+                int differenceX = Math.Abs(tempX1 - x2);
+                int differenceY = Math.Abs(tempY1 - y2);
+
+                if (differenceX > differenceY)
                 {
-                    // Up
-                    mode = CheckDirection.Up;
-                }
-                else if (y2 > y1)
-                {
-                    // Down
-                    mode = CheckDirection.Down;
-                }
-            }
-            switch (mode)
-            {
-            case CheckDirection.Up:
-                for (int y = y1; y >= y2; y--)
-                {
-                    if (wallColors.Contains(pixelMethod(x1, y)))
+                    // We approach on X
+                    if (tempX1 > x2)
                     {
-                        return false;
+                        // Left
+                        mode = CheckDirection.Left;
+                    }
+                    else if (x2 > tempX1)
+                    {
+                        // right
+                        mode = CheckDirection.Right;
                     }
                 }
-                return true;
-            case CheckDirection.Down:
-                for (int y = y1; y <= y2; y++)
+                else
                 {
-                    if (wallColors.Contains(pixelMethod(x1, y)))
+                    // We approach on Y
+                    if (tempY1 > y2)
                     {
-                        return false;
+                        // Up
+                        mode = CheckDirection.Up;
+                    }
+                    else if (y2 > tempY1)
+                    {
+                        // Down
+                        mode = CheckDirection.Down;
                     }
                 }
-                return true;
-            case CheckDirection.Left:
-                for (int x = x1; x >= x2; x--)
+                switch (mode)
                 {
-                    if (wallColors.Contains(pixelMethod(x, y1)))
-                    {
-                        return false;
-                    }
+                    case CheckDirection.Up:
+                        tempY1--;
+                        if (wallColors.Contains(pixelMethod(tempX1, tempY1)))
+                            return false;
+                        break;
+                    case CheckDirection.Down:
+                        tempY1++;
+                        if (wallColors.Contains(pixelMethod(tempX1, tempY1)))
+                            return false;
+                        break;
+                    case CheckDirection.Left:
+                        tempX1--;
+                        if (wallColors.Contains(pixelMethod(tempX1, tempY1)))
+                            return false;
+                        break;
+                    case CheckDirection.Right:
+                        tempX1++;
+                        if (wallColors.Contains(pixelMethod(tempX1, tempY1)))
+                            return false;
+                        break;
                 }
-                return true;
-            case CheckDirection.Right:
-                for (int x = x1; x <= x2; x++)
-                {
-                    if (wallColors.Contains(pixelMethod(x, y1)))
-                    {
-                        return false;
-                    }
-                }
-                return true;
             }
-            return false;
+            
+            return true;
         }
 
         enum CheckDirection

@@ -74,7 +74,6 @@ namespace Navigator.Pathfinding
                 int toFloor = to.Floor;
 
                 var fromFloorGraph = _floorGraphs[fromFloor];
-                var b = fromFloorGraph.ContainsVertex(stairsFromFloor.Position.ToPointString());
                 var toFloorGraph = _floorGraphs[toFloor];
 
                 var pathFromFloor = fromFloorGraph.FindPath(from.ToPointString(), stairsFromFloor.Position.ToPointString());

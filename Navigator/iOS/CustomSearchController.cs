@@ -25,7 +25,7 @@ namespace Navigator.iOS
 
 			_searchBar.TextChanged += (sender, e) => {
 				owner.InvokeOnMainThread (delegate() {
-					tableSource.tableItems = rooms.FindAll ((room) => room.Name.Contains (e.SearchText)).ToArray ();
+                    tableSource.tableItems = rooms.FindAll ((room) => room.Name.ToLower().Contains (e.SearchText.ToLower())).ToArray ();
 					_searchPredictionTable.ReloadData();
 				});
 			};

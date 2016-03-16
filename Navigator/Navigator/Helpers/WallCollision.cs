@@ -37,7 +37,7 @@ namespace Navigator.Helpers
                 tempY1 = y1;
             CheckDirection mode = CheckDirection.None;
 
-            while (tempX1 != x2 && tempY1 != y2)
+            while (tempX1 != x2 || tempY1 != y2)
             {
                 int differenceX = Math.Abs(tempX1 - x2);
                 int differenceY = Math.Abs(tempY1 - y2);

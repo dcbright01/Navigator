@@ -30,7 +30,30 @@ namespace Navigator.iOS {
             // if there are no cells to reuse, create a new one
 			if (cell == null)
 				cell = new UITableViewCell (UITableViewCellStyle.Default, cellIdentifier);
+            
 			cell.TextLabel.Text = tableItems [indexPath.Row].Name;
+
+            cell.TextLabel.TextColor = UIColor.White;
+            switch (tableItems [indexPath.Row].Type) {
+
+            case "Lab":
+                cell.BackgroundColor = UIColor.FromRGB (158, 30, 98);
+                break;
+            case "Utility":
+                cell.BackgroundColor = UIColor.FromRGB (164, 164, 164);
+                break;
+            case "Office":
+                cell.BackgroundColor = UIColor.FromRGB (11, 39, 63);
+                break;
+            case "Toilet":
+                cell.BackgroundColor = UIColor.FromRGB (191, 185, 73);
+                break;
+            case "Stairs":
+                cell.BackgroundColor = UIColor.FromRGB (208, 74, 45);
+                break;
+
+            }
+
             return cell;
         }
 

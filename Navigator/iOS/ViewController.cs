@@ -52,6 +52,8 @@ namespace Navigator.iOS
 
         private nfloat endX = 0, endY = 0;
 
+        private Pathfinding.Pathfinding pf;
+
         public ViewController(IntPtr handle) : base(handle)
         {
         }
@@ -72,7 +74,7 @@ namespace Navigator.iOS
 			var assembly = Assembly.GetExecutingAssembly();
 			var asset = assembly.GetManifestResourceStream("Navigator.iOS.Resources.dcsfloorWideDoors.xml");
 
-			var pf = new Pathfinding.Pathfinding(new Dictionary<int, Stream>()
+			pf = new Pathfinding.Pathfinding(new Dictionary<int, Stream>()
 				{
 					{0,assembly.GetManifestResourceStream("Navigator.iOS.Resources.dcsfloorWideDoors.xml")},
 					{1,assembly.GetManifestResourceStream("Navigator.iOS.Resources.dcsFloor1.xml")}
@@ -114,7 +116,7 @@ namespace Navigator.iOS
 
 			//Initiate the location arrow
             locationArrow = new LocationArrowImageView();
-            locationArrow.setLocation(707.0f, 677.0f);
+            locationArrow.setLocation(690.0f, 840.0f);
             locationArrow.ScaleFactor = floorplanView.ZoomScale;
             pathView.ScaleFactor = floorplanView.ZoomScale;
 
@@ -226,10 +228,9 @@ namespace Navigator.iOS
         {
             GlobalStepCounter++;
             locationArrow.setLocation(args.newX, args.newY);
-            debugLabel.Text = "" + GlobalStepCounter;
 
-            if (GlobalStepCounter % 6 == 0) {
-                setEndPoint (endX, endY);
+            if (GlobalStepCounter % 12 == 0) {
+                setEndPoint (endX, endY, true);
             }
         }
 
@@ -298,7 +299,7 @@ namespace Navigator.iOS
 			// Create a new Alert Controller
 			showContextMenu(tapX,tapY);
 
-           
+            debugLabel.Text = "" + floorPlanGraph.FindClosestNode ((int)tapX, (int)tapY);
 
 			/*
 			CGPoint point = new CGPoint (gesture.LocationInView (floorplanImageView).X, gesture.LocationInView (floorplanImageView).Y);
@@ -317,11 +318,21 @@ namespace Navigator.iOS
 			// Add Actions
 			actionSheetAlert.AddAction(UIAlertAction.Create("Cancel",UIAlertActionStyle.Cancel, null));
 			actionSheetAlert.AddAction(UIAlertAction.Create("Set Start Point",UIAlertActionStyle.Default, (action) => setStartPoint(locationX, locationY)));
-			actionSheetAlert.AddAction(UIAlertAction.Create("Set End Point",UIAlertActionStyle.Default, (action) => setEndPoint(locationX, locationY)));
+			actionSheetAlert.AddAction(UIAlertAction.Create("Set End Point",UIAlertActionStyle.Default, (action) => setEndPoint(locationX, locationY, true)));
+            actionSheetAlert.AddAction(UIAlertAction.Create("Remove Path",UIAlertActionStyle.Default, (action) => removePath()));
+
 
 			// Display alert
 			this.PresentViewController(actionSheetAlert,true,null);
 		}
+
+        private void removePath() {
+            pathView.RemoveFromSuperview ();
+            pathView = new PathView();
+            pathView.ScaleFactor = floorplanView.ZoomScale;
+            pathView.Frame = new CGRect(new CGPoint(0, 0), floorplanImageNoGrid.Size);
+            floorplanImageView.AddSubview(pathView);
+        }
 
         public void displayAccelVal(float a) {
             count++;
@@ -347,12 +358,14 @@ namespace Navigator.iOS
             SearchBar.ResignFirstResponder();
 		}
 
-		public void setEndPoint(nfloat x, nfloat y) {
+        public void setEndPoint(nfloat x, nfloat y, bool drawPath) {
             SearchBar.ShowsCancelButton = false;
             SearchBar.ResignFirstResponder();
             endX = x;
             endY = y;
-            drawPathFromUser((float) x, (float) y);
+
+            if (drawPath == true)
+                drawPathFromUser((float) x, (float) y);
 		}
 
         public override void DidReceiveMemoryWarning()

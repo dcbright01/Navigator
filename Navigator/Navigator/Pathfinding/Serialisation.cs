@@ -57,6 +57,12 @@ namespace Navigator.Pathfinding
 			get { return Properties.First(x => x.Type == RoomPropertyType.Name).Value; }
 		}
 
+        [XmlIgnore]
+        public string Type
+        {
+            get { return Properties.First(x => x.Type == RoomPropertyType.Type).Value; }
+        }
+
         public Room() {
             Properties = new List<RoomProperty>();
         }

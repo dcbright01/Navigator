@@ -31,6 +31,10 @@ namespace Navigator.iOS
 
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
+		UIButton returnButton { get; set; }
+
+		[Outlet]
+		[GeneratedCode ("iOS Designer", "1.0")]
 		UISearchBar SearchBar { get; set; }
 
 		[Outlet]
@@ -54,6 +58,10 @@ namespace Navigator.iOS
 			if (OptionsButton != null) {
 				OptionsButton.Dispose ();
 				OptionsButton = null;
+			}
+			if (returnButton != null) {
+				returnButton.Dispose ();
+				returnButton = null;
 			}
 			if (SearchBar != null) {
 				SearchBar.Dispose ();

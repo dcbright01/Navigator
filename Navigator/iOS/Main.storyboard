@@ -43,10 +43,16 @@
                                 <prototypes/>
                                 <color key="separatorColor" cocoaTouchSystemColor="darkTextColor"/>
                             </tableView>
-                            <searchBar contentMode="redraw" id="361" translatesAutoresizingMaskIntoConstraints="NO" placeholder="Search" searchBarStyle="minimal">
-                                <rect key="frame" x="13" y="30" width="348" height="44"/>
+                            <searchBar contentMode="redraw" id="361" translatesAutoresizingMaskIntoConstraints="NO" placeholder="Search" searchBarStyle="minimal" misplaced="YES">
+                                <rect key="frame" x="55" y="30" width="306" height="44"/>
                                 <textInputTraits key="textInputTraits"/>
                             </searchBar>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="796" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="1" y="37" width="46" height="30"/>
+                                <state key="normal" title="Button">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" customColorSpace="calibratedWhite" colorSpace="calibratedWhite" white="1" alpha="1"/>
                         <constraints>
@@ -69,6 +75,7 @@
                         <outlet property="debugLabel" destination="259" id="name-outlet-259"/>
                         <outlet property="SearchPredictionTable" destination="355" id="name-outlet-355"/>
                         <outlet property="SearchBar" destination="361" id="name-outlet-361"/>
+                        <outlet property="returnButton" destination="796" id="name-outlet-796"/>
                     </connections>
                     <navigationItem title="Floorplan" id="87" key="navigationItem">
                         <barButtonItem style="plain" id="104" key="rightBarButtonItem">
@@ -80,16 +87,14 @@
                                 <variation key="heightClass=regular-widthClass=compact">
                                     <rect key="frame" x="0.0" y="0.0" width="107" height="30"/>
                                 </variation>
-                                <connections>
-                                    <segue id="135" destination="97" kind="show"/>
-                                </connections>
+                                <connections/>
                             </button>
                         </barButtonItem>
                     </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="632" y="100"/>
+            <point key="canvasLocation" x="925" y="58"/>
         </scene>
         <scene sceneID="40">
             <objects>
@@ -99,30 +104,49 @@
                         <rect key="frame" x="0.0" y="20" width="430" height="44"/>
                     </navigationBar>
                     <connections>
-                        <segue id="88" destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController"/>
+                        <segue id="745" destination="697" kind="relationship" relationship="rootViewController"/>
                     </connections>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="692">
+                        <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    </toolbar>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="45" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-311" y="54"/>
         </scene>
-        <scene sceneID="96">
+        <scene sceneID="696">
             <objects>
-                <viewController id="97" sceneMemberID="viewController">
+                <viewController id="697" sceneMemberID="viewController" customClass="menuController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="94"/>
-                        <viewControllerLayoutGuide type="bottom" id="95"/>
+                        <viewControllerLayoutGuide type="top" id="694"/>
+                        <viewControllerLayoutGuide type="bottom" id="695"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="98">
+                    <view key="view" contentMode="scaleToFill" id="698">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <subviews/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="747" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="125" y="206" width="125" height="68"/>
+                                <state key="normal" title="Button">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue id="830" destination="BYZ-38-t0r" kind="push"/>
+                                </connections>
+                            </button>
+                        </subviews>
                     </view>
+                    <navigationItem title="Title" id="744" key="navigationItem"/>
+                    <connections>
+                        <outlet property="menuPageMapButton" destination="747" id="name-outlet-747"/>
+                    </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="99" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="699" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1419" y="248"/>
+            <point key="canvasLocation" x="290" y="58"/>
         </scene>
     </scenes>
     <resources>
@@ -134,6 +158,7 @@
         <image name="Images/dcsfloorWideDoors.png" width="1373" height="1241"/>
         <image name="Images/dcsfloorWideDoorsGrid.png" width="1373" height="1241"/>
         <image name="Images/dcrFloorFinal.png" width="1373" height="1241"/>
+        <image name="Images/FinalDcsFloor1.png" width="1373" height="1241"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedScreenMetrics key="destination" type="retina47"/>

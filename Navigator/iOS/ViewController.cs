@@ -20,8 +20,10 @@ namespace Navigator.iOS
 {
     public partial class ViewController : UIViewController
     {
+
         //Instantiate step detector and collision class
         private ICollision col;
+        public WallCollision wallColTest;
 
 		//Will contain graph data
         private Graph floorPlanGraph;
@@ -39,7 +41,7 @@ namespace Navigator.iOS
         private int GlobalStepCounter = 0;
 
 		//Will hold the paths users should follow
-		private PathView pathView = new PathView();
+		private PathView pathView;
 
         //Location manager for heading information
         private CLLocationManager locationManager;
@@ -53,6 +55,8 @@ namespace Navigator.iOS
         private nfloat endX = 0, endY = 0;
 
         private Pathfinding.Pathfinding pf;
+
+        private bool pathDisplayed = false;
 
         public ViewController(IntPtr handle) : base(handle)
         {
@@ -99,7 +103,10 @@ namespace Navigator.iOS
             col = new Collision(floorPlanGraph, new StepDetector());
 
             ((Collision)col).WallCol = new WallCollision ((x,y) => GetPixelColor(new PointF(x, y), wallCollImg));
-                
+            wallColTest = new WallCollision ((x,y) => GetPixelColor(new PointF(x, y), wallCollImg));
+
+            pathView = new PathView (wallColTest);
+
             col.SetLocation(707.0f, 677.0f);
             col.PassHeading(90);
             col.PositionChanged += HandleStepsTaken;
@@ -111,14 +118,14 @@ namespace Navigator.iOS
             floorplanImageView = new UIImageView();
 
 			//Load floorplan images
-            floorplanImageNoGrid = UIImage.FromBundle("Images/dcrFloorFinal.png");
+            floorplanImageNoGrid = UIImage.FromBundle("Images/FinalDcsFloor1.png");
             floorplanImageWithGrid = UIImage.FromBundle("Images/dcsFloorWideDoorsGrid.png");
 
 			//Initiate the location arrow
             locationArrow = new LocationArrowImageView();
-            locationArrow.setLocation(690.0f, 840.0f);
             locationArrow.ScaleFactor = floorplanView.ZoomScale;
             pathView.ScaleFactor = floorplanView.ZoomScale;
+            setStartPoint(690.0f, 840.0f);
 
 			//Set sizes for floorplan view and path view
             floorplanView.ContentSize = floorplanImageNoGrid.Size;
@@ -157,7 +164,7 @@ namespace Navigator.iOS
 
                     col.PassSensorReadings(CollisionSensorType.Accelometer, accelX,
                         accelY, accelZ);
-                    displayAccelVal((float)accelZ);
+                    //displayAccelVal((float)accelZ);
                 });
 
 			/*
@@ -187,6 +194,9 @@ namespace Navigator.iOS
 
 			//Another testing button
             simulationButton.TouchUpInside += delegate { col.StepTaken(false); };
+
+            returnButton.TouchUpInside += delegate{ returnToMenu(); };
+
         }
 
         private int GetPixelColor(PointF myPoint, UIImage myImage)
@@ -215,9 +225,13 @@ namespace Navigator.iOS
             return resultColor;
         }
 
+        private void returnToMenu() {
+            
+        }
+
         private void HandleUpdatedHeading(object sender, CLHeadingUpdatedEventArgs e)
         {
-            var newRad = (float) (e.NewHeading.TrueHeading*Math.PI/180f);
+            var newRad = (float) (e.NewHeading.TrueHeading*Math.PI/180f) - 200.0f;
             col.PassHeading(newRad);
 
             //floorplanImageView.Layer.AnchorPoint = new CGPoint (locationArrow.X/floorplanImageNoGrid.Size.Width, locationArrow.Y/floorplanImageNoGrid.Size.Height);
@@ -229,8 +243,9 @@ namespace Navigator.iOS
             GlobalStepCounter++;
             locationArrow.setLocation(args.newX, args.newY);
 
-            if (GlobalStepCounter % 12 == 0) {
-                setEndPoint (endX, endY, true);
+
+            if (GlobalStepCounter % 12 == 0 && pathDisplayed == true) {
+                drawPathFromUser ((float)endX, (float)endY);
             }
         }
 
@@ -249,7 +264,7 @@ namespace Navigator.iOS
         private void drawPathFromUser(float endX, float endY)
         {
 			pathView.RemoveFromSuperview ();
-			pathView = new PathView();
+			pathView = new PathView(wallColTest);
 			pathView.ScaleFactor = floorplanView.ZoomScale;
 			pathView.Frame = new CGRect(new CGPoint(0, 0), floorplanImageNoGrid.Size);
 			floorplanImageView.AddSubview(pathView);
@@ -317,8 +332,8 @@ namespace Navigator.iOS
 
 			// Add Actions
 			actionSheetAlert.AddAction(UIAlertAction.Create("Cancel",UIAlertActionStyle.Cancel, null));
-			actionSheetAlert.AddAction(UIAlertAction.Create("Set Start Point",UIAlertActionStyle.Default, (action) => setStartPoint(locationX, locationY)));
-			actionSheetAlert.AddAction(UIAlertAction.Create("Set End Point",UIAlertActionStyle.Default, (action) => setEndPoint(locationX, locationY, true)));
+            actionSheetAlert.AddAction(UIAlertAction.Create("Set Start Point",UIAlertActionStyle.Default, (action) => {pathDisplayed = false;setStartPoint(locationX, locationY);}));
+            actionSheetAlert.AddAction(UIAlertAction.Create("Set End Point",UIAlertActionStyle.Default, (action) => {pathDisplayed = true;setEndPoint(locationX, locationY);}));
             actionSheetAlert.AddAction(UIAlertAction.Create("Remove Path",UIAlertActionStyle.Default, (action) => removePath()));
 
 
@@ -327,11 +342,13 @@ namespace Navigator.iOS
 		}
 
         private void removePath() {
+            
             pathView.RemoveFromSuperview ();
-            pathView = new PathView();
+            pathView = new PathView(wallColTest);
             pathView.ScaleFactor = floorplanView.ZoomScale;
             pathView.Frame = new CGRect(new CGPoint(0, 0), floorplanImageNoGrid.Size);
             floorplanImageView.AddSubview(pathView);
+            pathDisplayed = false;
         }
 
         public void displayAccelVal(float a) {
@@ -350,7 +367,7 @@ namespace Navigator.iOS
 			locationArrow.setLocation ((float)x, (float)y);
 			col.SetLocation ((float)x, (float)y);
             pathView.RemoveFromSuperview ();
-            pathView = new PathView();
+            pathView = new PathView(wallColTest);
             pathView.ScaleFactor = floorplanView.ZoomScale;
             pathView.Frame = new CGRect(new CGPoint(0, 0), floorplanImageNoGrid.Size);
             floorplanImageView.AddSubview(pathView);
@@ -358,19 +375,22 @@ namespace Navigator.iOS
             SearchBar.ResignFirstResponder();
 		}
 
-        public void setEndPoint(nfloat x, nfloat y, bool drawPath) {
+        public void setEndPoint(nfloat x, nfloat y) {
             SearchBar.ShowsCancelButton = false;
             SearchBar.ResignFirstResponder();
             endX = x;
             endY = y;
 
-            if (drawPath == true)
-                drawPathFromUser((float) x, (float) y);
+            //if (pathDisplayed == true) {
+            drawPathFromUser ((float)x, (float)y);
+           // }
 		}
-
+        int counter2 = 0;
         public override void DidReceiveMemoryWarning()
         {
             base.DidReceiveMemoryWarning();
+            counter2++;
+            debugLabel.Text = "Memory leak" + counter2;
             // Release any cached data, images, etc that aren't in use.		
         }
     }

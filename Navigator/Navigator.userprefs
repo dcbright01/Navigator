@@ -1,6 +1,16 @@
 ﻿<Properties StartupItem="iOS/Navigator.iOS.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPhone6s.9.2" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPhone6.9.1" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="iOS/menuController.cs">
+    <Files>
+      <File FileName="iOS/Main.cs" Line="12" Column="1" />
+      <File FileName="iOS/ViewController.cs" Line="23" Column="1" />
+      <File FileName="iOS/ViewController.designer.cs" Line="1" Column="1" />
+      <File FileName="iOS/AppDelegate.cs" Line="1" Column="1" />
+      <File FileName="iOS/menuController.cs" Line="14" Column="80" />
+      <File FileName="iOS/menuController.designer.cs" Line="1" Column="1" />
+      <File FileName="iOS/PathView.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

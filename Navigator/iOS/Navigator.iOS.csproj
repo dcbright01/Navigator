@@ -124,10 +124,12 @@
     </Compile>
     <Compile Include="LocationArrow.cs" />
     <Compile Include="PathView.cs" />
-    <Compile Include="MenuController.cs" />
     <Compile Include="tableSource.cs" />
-    <Compile Include="MenuController.designer.cs" />
     <Compile Include="CustomSearchController.cs" />
+    <Compile Include="menuController.cs" />
+    <Compile Include="menuController.designer.cs">
+      <DependentUpon>menuController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -141,6 +143,7 @@
     <BundleResource Include="Images\dcsfloorWideDoorsGrid.png" />
     <BundleResource Include="Images\dcrFloorFinal.png" />
     <BundleResource Include="Resources\AboutAssets.txt" />
+    <BundleResource Include="Images\FinalDcsFloor1.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\test.xml" />

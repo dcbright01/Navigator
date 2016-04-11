@@ -42,7 +42,7 @@ namespace Navigator
                 troughToPeakDifference = Math.Abs(accelValues[1] - lastTroughValue);
 
                 // the thresholds that we use in order to filter out false positives
-                if (troughToPeakDifference > 1 && troughToPeakDifference < 6)
+                if (troughToPeakDifference > 1 && troughToPeakDifference < 8)
                 {
                     lastPeakValue = accelValues[1];
                 }
@@ -140,7 +140,8 @@ namespace Navigator
         {
             // double magnitude = Math.Sqrt(Math.Pow(accelValueX, 2) + Math.Pow(accelValueY, 2) + Math.Pow(accelValueZ, 2));
             var magnitude = accelValueZ;
-            return lowPassFilter.getNewFilteredValue(magnitude);
+            // return lowPassFilter.getNewFilteredValue(magnitude);
+			return magnitude;
         }
 
 

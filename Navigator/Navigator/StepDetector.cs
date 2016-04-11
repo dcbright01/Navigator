@@ -42,7 +42,7 @@ namespace Navigator
                 troughToPeakDifference = Math.Abs(accelValues[1] - lastTroughValue);
 
                 // the thresholds that we use in order to filter out false positives
-                if (troughToPeakDifference > 2 && troughToPeakDifference < 6)
+                if (troughToPeakDifference > 1 && troughToPeakDifference < 6)
                 {
                     lastPeakValue = accelValues[1];
                 }
@@ -74,8 +74,7 @@ namespace Navigator
                         {
                             initialMilliseconds = currentMilliseconds;
                             StepCounter++;
-                            StepCounter = StepCounter + 2;
-                            stationaryStart = true;
+                            stationaryStart = false;
                             OnStepTaken();
                         }
                     }

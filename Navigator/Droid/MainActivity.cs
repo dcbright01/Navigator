@@ -92,10 +92,16 @@ namespace Navigator.Droid
 
         private void StepDetectorOnStep(bool startFromStat)
         {
+
             RunOnUiThread(() =>
             {
                 FindViewById<TextView>(Resource.Id.scSD).Text =
                     ((StepDetector) (_collision.StepDetector)).StepCounter.ToString();
+               // FindViewById<TextView>(Resource.Id.scTimer).Text =
+                 //   ((StepDetector)(_collision.StepDetector)).stepMilli.ToString();
+                String s = ((StepDetector)(_collision.StepDetector)).stepMilli.ToString() + ", ";
+                FindViewById<TextView>(Resource.Id.scTimer).Append(s);
+
             });
         }
 
@@ -164,6 +170,7 @@ namespace Navigator.Droid
                 inDebug = true;
                 SetContentView(Resource.Layout.Debug);
                 _stepText = FindViewById<TextView>(Resource.Id.scSD);
+                _stepTime = FindViewById<TextView>(Resource.Id.scTimer);
                 _azimuthText = FindViewById<TextView>(Resource.Id.azimuth);
                 _XAccelText = FindViewById<TextView>(Resource.Id.XAccel);
                 _YAccelText = FindViewById<TextView>(Resource.Id.YAccel);
@@ -282,6 +289,7 @@ namespace Navigator.Droid
         private SensorManager _sensorManager;
         private TextView _azimuthText;
         private TextView _stepText;
+        private TextView _stepTime;
         private TextView _XAccelText;
         private TextView _YAccelText;
         private TextView _ZAccelText;

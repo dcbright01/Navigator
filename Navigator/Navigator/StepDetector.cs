@@ -15,11 +15,13 @@ namespace Navigator
 
         private int functionCalledCounter;
         private long initialMilliseconds = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
+        private long iMilli = DateTime.Now.Ticks / TimeSpan.TicksPerSecond;
         private double lastPeakValue = -1;
         private double lastTroughValue = -1;
         private readonly ButterworthLowPassFilter lowPassFilter = new ButterworthLowPassFilter();
         private bool stationaryStart;
         public int StepCounter;
+        public long stepMilli;
         private double troughToPeakDifference = -1;
 
         public event StepHandler OnStep;
@@ -63,6 +65,11 @@ namespace Navigator
                         if (currentMilliseconds - initialMilliseconds > 300 &&
                             currentMilliseconds - initialMilliseconds < 2000)
                         {
+                            if (StepCounter == 0)
+                            {
+                                iMilli = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                            }
+                            stepMilli = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - iMilli;
                             initialMilliseconds = currentMilliseconds;
                             StepCounter++;
                             stationaryStart = false;
@@ -72,6 +79,11 @@ namespace Navigator
                         // filter misses out on initially 
                         else if (currentMilliseconds - initialMilliseconds >= 2000)
                         {
+                            if(StepCounter == 0)
+                            {
+                                iMilli = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                            }
+                            stepMilli = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - iMilli;
                             initialMilliseconds = currentMilliseconds;
                             StepCounter++;
                             stationaryStart = false;

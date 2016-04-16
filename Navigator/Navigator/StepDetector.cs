@@ -44,7 +44,7 @@ namespace Navigator
                 troughToPeakDifference = Math.Abs(accelValues[1] - lastTroughValue);
 
                 // the thresholds that we use in order to filter out false positives
-                if (troughToPeakDifference > 2 && troughToPeakDifference < 6)
+                if (troughToPeakDifference > 0.1 && troughToPeakDifference < 6)
                 {
                     lastPeakValue = accelValues[1];
                 }
@@ -65,7 +65,7 @@ namespace Navigator
                         if (currentMilliseconds - initialMilliseconds > 200 &&
                             currentMilliseconds - initialMilliseconds < 2500)
                         {
-							if (StepCounter == 0)
+							if (StepCounter == 0) 
 							{
 								iMilli = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 							}
@@ -86,8 +86,7 @@ namespace Navigator
 							stepMilli = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - iMilli;
                             initialMilliseconds = currentMilliseconds;
                             StepCounter++;
-                            StepCounter = StepCounter + 2;
-                            stationaryStart = true;
+                            stationaryStart = false;
                             OnStepTaken();
                         }
                     }

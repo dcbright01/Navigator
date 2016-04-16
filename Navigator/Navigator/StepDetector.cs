@@ -15,11 +15,13 @@ namespace Navigator
 
         private int functionCalledCounter;
         private long initialMilliseconds = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
+		private long iMilli = DateTime.Now.Ticks / TimeSpan.TicksPerSecond;
         private double lastPeakValue = -1;
         private double lastTroughValue = -1;
         private readonly ButterworthLowPassFilter lowPassFilter = new ButterworthLowPassFilter();
         private bool stationaryStart;
         public int StepCounter;
+		public long stepMilli;
         private double troughToPeakDifference = -1;
 
         public event StepHandler OnStep;
@@ -56,13 +58,18 @@ namespace Navigator
                 {
                     var peakToTroughDifference = Math.Abs(lastTroughValue - lastPeakValue);
                     // check if peak to trough value is within +-20% of trough to peak one
-                    if (peakToTroughDifference > 0.8*troughToPeakDifference &&
-                        peakToTroughDifference < 1.2*troughToPeakDifference)
+                    if (peakToTroughDifference > 0.7*troughToPeakDifference &&
+                        peakToTroughDifference < 1.3*troughToPeakDifference)
                     {
                         var currentMilliseconds = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
-                        if (currentMilliseconds - initialMilliseconds > 300 &&
-                            currentMilliseconds - initialMilliseconds < 2000)
+                        if (currentMilliseconds - initialMilliseconds > 200 &&
+                            currentMilliseconds - initialMilliseconds < 2500)
                         {
+							if (StepCounter == 0)
+							{
+								iMilli = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+							}
+							stepMilli = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - iMilli;
                             initialMilliseconds = currentMilliseconds;
                             StepCounter++;
                             stationaryStart = false;
@@ -70,8 +77,13 @@ namespace Navigator
                         }
                         // for gaps of more than 2 seconds we can assume user starts from stationary position, so add the 2 steps that the
                         // filter misses out on initially 
-                        else if (currentMilliseconds - initialMilliseconds >= 2000)
+                        else if (currentMilliseconds - initialMilliseconds >= 2500)
                         {
+							if (StepCounter == 0) 
+							{
+								iMilli = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+							}
+							stepMilli = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - iMilli;
                             initialMilliseconds = currentMilliseconds;
                             StepCounter++;
                             StepCounter = StepCounter + 2;
